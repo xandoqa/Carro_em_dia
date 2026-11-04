@@ -13,7 +13,7 @@ para onde o dinheiro está indo.
 ![Expo SDK 53](https://img.shields.io/badge/Expo-SDK%2053-0F4D45)
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
-![102 testes](https://img.shields.io/badge/testes-102%20passando-2F7D5B)
+![116 testes](https://img.shields.io/badge/testes-116%20passando-2F7D5B)
 
 </div>
 
@@ -94,7 +94,7 @@ mais rápido para ver tudo funcionando, e o que usamos na apresentação.
 ### Verificando
 
 ```bash
-npm test         # 102 testes das regras de negócio, sem emulador
+npm test         # 116 testes das regras de negócio, sem emulador
 npm run typecheck
 npm run lint
 npm run verify   # os três acima
