@@ -7,9 +7,15 @@
  * Conceito: o app e uma caderneta de manutencao com um painel de instrumentos.
  * Numeros sao o conteudo principal, entao eles recebem fonte monoespacada e
  * tamanhos maiores; texto de interface fica em grotesca de sistema.
+ *
+ * Este arquivo nao importa nada da plataforma de proposito: assim ele pode ser
+ * lido por scripts e testes fora do React Native. A parte que depende de
+ * plataforma (as familias tipograficas) mora em `fonts.ts`.
  */
 
-import { Platform } from 'react-native';
+import { fontFamily } from './fonts';
+
+export { fontFamily };
 
 /* -------------------------------------------------------------------------- */
 /* Espacamento                                                                 */
@@ -54,33 +60,6 @@ export const radius = {
 /* -------------------------------------------------------------------------- */
 /* Tipografia                                                                  */
 /* -------------------------------------------------------------------------- */
-
-/**
- * Duas familias, com papeis bem separados:
- *
- *   ui    — grotesca do sistema. Invisivel, legivel, sem download.
- *   meter — monoespacada. Toda medida (km, R$, data, placa) usa esta familia,
- *           porque numeros precisam alinhar em coluna como num odometro.
- *
- * Trocar por uma fonte propria significa mexer so neste bloco.
- */
-export const fontFamily = {
-  ui: Platform.select({
-    ios: 'System',
-    android: 'sans-serif',
-    default: 'System',
-  }) as string,
-  uiMedium: Platform.select({
-    ios: 'System',
-    android: 'sans-serif-medium',
-    default: 'System',
-  }) as string,
-  meter: Platform.select({
-    ios: 'Menlo',
-    android: 'monospace',
-    default: 'monospace',
-  }) as string,
-} as const;
 
 /**
  * Escala tipografica. Os nomes dizem o papel, nao o tamanho, para que trocar

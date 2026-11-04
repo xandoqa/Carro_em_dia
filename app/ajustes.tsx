@@ -16,6 +16,7 @@ import { Button } from '../src/components/base/Button';
 import { Header, Screen } from '../src/components/base/Screen';
 import { Card, Divider, SectionHeader } from '../src/components/base/Surfaces';
 import { Txt } from '../src/components/base/Text';
+import { carregarDadosDemo } from '../src/data/demoData';
 import { preferencesRepository } from '../src/data/preferencesRepository';
 import { clearAll } from '../src/data/storage';
 import { useGarage } from '../src/hooks/useGarage';
@@ -32,6 +33,7 @@ export default function AjustesScreen() {
   const [notificacoes, setNotificacoes] = useState(true);
   const [agendadas, setAgendadas] = useState(0);
   const [antecedencia, setAntecedencia] = useState(7);
+  const [carregandoExemplo, setCarregandoExemplo] = useState(false);
 
   const carregarPreferencias = useCallback(async () => {
     const prefs = await preferencesRepository.get();
@@ -79,6 +81,22 @@ export default function AjustesScreen() {
       return;
     }
     Alert.alert('Aviso enviado', 'Ele deve chegar em alguns segundos.');
+  }
+
+  async function carregarExemplo() {
+    setCarregandoExemplo(true);
+    try {
+      const { veiculos: v, manutencoes: m } = await carregarDadosDemo();
+      await recarregar();
+      Alert.alert(
+        'Dados de exemplo carregados',
+        `${v} veiculos e ${m} registros, com servicos vencidos, proximos do prazo e em dia.`,
+      );
+    } catch {
+      Alert.alert('Nao foi possivel carregar', 'Tente de novo.');
+    } finally {
+      setCarregandoExemplo(false);
+    }
   }
 
   function confirmarLimpeza() {
@@ -184,13 +202,25 @@ export default function AjustesScreen() {
             exceto a consulta publica da tabela FIPE no cadastro de veiculos.
           </Txt>
 
-          <Button
-            label="Apagar todos os dados"
-            variant="ghost"
-            destructive
-            onPress={confirmarLimpeza}
-            style={{ marginTop: theme.spacing.md }}
-          />
+          {/* Util na apresentacao: um app vazio nao mostra historico, nem
+              grafico, nem alerta vencido. */}
+          {veiculos.length === 0 ? (
+            <Button
+              label="Carregar dados de exemplo"
+              variant="secondary"
+              onPress={carregarExemplo}
+              loading={carregandoExemplo}
+              style={{ marginTop: theme.spacing.md }}
+            />
+          ) : (
+            <Button
+              label="Apagar todos os dados"
+              variant="ghost"
+              destructive
+              onPress={confirmarLimpeza}
+              style={{ marginTop: theme.spacing.md }}
+            />
+          )}
         </Card>
 
         <View style={[styles.rodape, { marginTop: theme.spacing.xxl }]}>
