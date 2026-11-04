@@ -7,11 +7,8 @@
  *
  * Como funciona o agendamento:
  *
- * - Lembretes com prazo em data viram uma notificacao marcada para alguns dias
- *   antes do vencimento (a antecedencia fica nas preferencias).
- * - Lembretes so por quilometragem nao tem data para agendar. Para esses, o
- *   app avisa na proxima vez que for aberto, quando o odometro mostrar que o
- *   limite chegou.
+ * - A regra de QUANDO avisar e pura e mora em `domain/notificationSchedule`.
+ *   Este arquivo cuida so de conversar com o sistema operacional.
  * - Antes de reagendar, tudo que estava agendado e cancelado. Assim o usuario
  *   nunca recebe um aviso de algo que ja foi feito.
  */
@@ -20,8 +17,10 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 import type { Lembrete, Veiculo } from '../domain/models';
-import { parseIsoDate } from '../utils/date';
-import { formatKm } from '../utils/format';
+import {
+  calcularDisparo,
+  montarTexto,
+} from '../domain/notificationSchedule';
 import { readJson, storageKeys, writeJson } from '../data/storage';
 
 /** Canal do Android. Sem ele, a notificacao chega sem som nem prioridade. */
@@ -51,10 +50,21 @@ export interface AgendamentoRegistrado {
 /* Permissao e canal                                                           */
 /* -------------------------------------------------------------------------- */
 
+/** Verifica a permissao sem exibir nenhum pedido ao usuario. */
+export async function temPermissao(): Promise<boolean> {
+  const atual = await Notifications.getPermissionsAsync();
+  return atual.granted;
+}
+
 /**
  * Pede permissao se ainda nao houver.
  * Devolve `false` quando o usuario recusou — o app continua funcionando, so
  * sem avisos.
+ *
+ * So deve ser chamada a partir de uma acao do usuario que justifique o
+ * pedido: ligar o interruptor nos ajustes, ou salvar a primeira manutencao.
+ * Pedir permissao na abertura, antes de existir qualquer veiculo, e o jeito
+ * mais rapido de ouvir "nao".
  */
 export async function solicitarPermissao(): Promise<boolean> {
   const atual = await Notifications.getPermissionsAsync();
@@ -80,62 +90,6 @@ export async function prepararCanal(): Promise<void> {
   });
 }
 
-/* -------------------------------------------------------------------------- */
-/* Texto do aviso                                                              */
-/* -------------------------------------------------------------------------- */
-
-/** Monta titulo e corpo. Texto direto, sem alarme desnecessario. */
-export function montarTexto(
-  lembrete: Lembrete,
-  veiculo: Veiculo,
-): { titulo: string; corpo: string } {
-  const titulo =
-    lembrete.status === 'vencido'
-      ? `${lembrete.nome} venceu`
-      : `${lembrete.nome} esta chegando`;
-
-  const partes: string[] = [veiculo.apelido];
-
-  if (lembrete.kmPrevisto !== undefined) {
-    partes.push(`previsto para ${formatKm(lembrete.kmPrevisto)} km`);
-  }
-  if (lembrete.diasRestantes !== undefined && lembrete.diasRestantes >= 0) {
-    partes.push(
-      lembrete.diasRestantes === 0
-        ? 'vence hoje'
-        : `faltam ${lembrete.diasRestantes} ${lembrete.diasRestantes === 1 ? 'dia' : 'dias'}`,
-    );
-  }
-
-  return { titulo, corpo: partes.join(' — ') };
-}
-
-/* -------------------------------------------------------------------------- */
-/* Agendamento                                                                 */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Momento do disparo: `antecedenciaDias` antes da data prevista, na hora
- * escolhida. Devolve `null` quando o lembrete nao tem data ou quando o momento
- * ja passou — nao adianta agendar para ontem.
- */
-export function calcularDisparo(
-  lembrete: Lembrete,
-  antecedenciaDias: number,
-  horaLembrete: number,
-  agora: Date = new Date(),
-): Date | null {
-  if (!lembrete.dataPrevista) return null;
-
-  const prevista = parseIsoDate(lembrete.dataPrevista);
-  const disparo = new Date(prevista);
-  disparo.setDate(disparo.getDate() - antecedenciaDias);
-  disparo.setHours(horaLembrete, 0, 0, 0);
-
-  if (disparo.getTime() <= agora.getTime()) return null;
-  return disparo;
-}
-
 async function cancelarTodos(): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   await writeJson(storageKeys.notificacoes, []);
@@ -156,14 +110,26 @@ export async function reagendar(params: {
   ativado: boolean;
   antecedenciaDias: number;
   horaLembrete: number;
+  /**
+   * Quando `true`, exibe o pedido de permissao se ainda nao houver.
+   * O reagendamento automatico passa `false`: so uma acao do usuario —
+   * ligar o interruptor nos ajustes — justifica abrir o pedido.
+   */
+  solicitar?: boolean;
 }): Promise<number> {
-  const { lembretes, veiculos, ativado, antecedenciaDias, horaLembrete } =
-    params;
+  const {
+    lembretes,
+    veiculos,
+    ativado,
+    antecedenciaDias,
+    horaLembrete,
+    solicitar = false,
+  } = params;
 
   await cancelarTodos();
   if (!ativado) return 0;
 
-  const permitido = await solicitarPermissao();
+  const permitido = solicitar ? await solicitarPermissao() : await temPermissao();
   if (!permitido) return 0;
 
   await prepararCanal();
@@ -241,7 +207,10 @@ export async function enviarTeste(): Promise<boolean> {
   return true;
 }
 
+export { calcularDisparo, montarTexto };
+
 export const notificationService = {
+  temPermissao,
   solicitarPermissao,
   prepararCanal,
   reagendar,

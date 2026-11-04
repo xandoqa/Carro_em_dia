@@ -8,7 +8,7 @@
 
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Segmented } from '../../src/components/base/Field';
@@ -135,7 +135,12 @@ export default function GastosScreen() {
             {/* Indicadores que so existem com dados suficientes. Mostrar
                 "—" em um painel vazio nao ajuda ninguem. */}
             {(consumo !== null || porKm !== null) && (
-              <View style={[styles(theme).indicadores]}>
+              <View
+                style={[
+                  styles.indicadores,
+                  { gap: theme.spacing.sm, marginTop: theme.spacing.md },
+                ]}
+              >
                 {consumo !== null ? (
                   <Readout
                     label="Consumo medio"
@@ -188,10 +193,8 @@ export default function GastosScreen() {
   );
 }
 
-const styles = (theme: ReturnType<typeof useTheme>) => ({
+const styles = StyleSheet.create({
   indicadores: {
-    flexDirection: 'row' as const,
-    gap: theme.spacing.sm,
-    marginTop: theme.spacing.md,
+    flexDirection: 'row',
   },
 });

@@ -22,7 +22,7 @@ baixo, nunca o contrário.
 
 A regra que mais importa: **`src/domain/` não importa nada do React Native**.
 É isso que permite rodar as regras de negócio no Node puro, sem emulador, e é
-por isso que existem 102 testes rodando em menos de um segundo.
+por isso que existem 116 testes rodando em menos de um segundo.
 
 ## Pastas
 
@@ -167,7 +167,7 @@ aviso de algo que já foi feito.
 
 | Comando | O que faz |
 |---------|-----------|
-| `npm test` | 102 testes das camadas puras, no Node, sem emulador |
+| `npm test` | 116 testes das camadas puras, no Node, sem emulador |
 | `npm run typecheck` | TypeScript estrito |
 | `npm run lint` | ESLint + Prettier |
 | `npm run verify` | Os três acima |
