@@ -57,6 +57,8 @@ export default function AjustesScreen() {
       ativado: valor,
       antecedenciaDias: prefs.antecedenciaDias,
       horaLembrete: prefs.horaLembrete,
+      // Ligar o interruptor e a acao que justifica pedir a permissao.
+      solicitar: true,
     });
     setAgendadas(total);
 
