@@ -238,4 +238,11 @@ const styles = StyleSheet.create({
     borderRadius: CURSOR_WIDTH,
     borderWidth: CURSOR_BORDER,
   },
+  pontas: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginTop: 6,
+    gap: 8,
+  },
 });

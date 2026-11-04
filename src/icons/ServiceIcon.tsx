@@ -33,11 +33,11 @@ export function ServiceIcon({
   // Mantem o traco visualmente constante quando o icone muda de tamanho.
   const sw = strokeWidth ?? (size <= 20 ? 1.6 : 1.8);
 
-  const comum = {
+  const comum: Comum = {
     stroke: color,
     strokeWidth: sw,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
     fill: 'none',
   };
 
