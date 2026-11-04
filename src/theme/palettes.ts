@@ -187,7 +187,9 @@ const pista: ThemeDefinition = {
 
     text: '#0B0F0D',
     textMuted: '#454B48',
-    textOnBrand: '#0B0F0D',
+    // A marca deste tema e quase preta, entao o texto sobre ela precisa ser
+    // branco. Repetir a cor de tinta aqui deixaria o botao ilegivel.
+    textOnBrand: '#FFFFFF',
 
     line: '#9BA19E',
     lineStrong: '#0B0F0D',
