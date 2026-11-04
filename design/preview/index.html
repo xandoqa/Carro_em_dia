@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CarroEmDia — Design System</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --meter: "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+  }
+
+  body {
+    font-family: var(--ui);
+    background: #e6e8e4;
+    padding: 28px 16px 60px;
+    color: #15201c;
+  }
+
+  .page { max-width: 1320px; margin: 0 auto; }
+
+  h1 {
+    font-size: 24px; font-weight: 700; letter-spacing: -.4px; margin-bottom: 4px;
+  }
+  .sub { font-size: 14px; color: #5e6b66; margin-bottom: 26px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 20px;
+  }
+
+  /* Um "aparelho" por tema */
+  .phone {
+    border-radius: 26px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.14);
+    box-shadow: 0 10px 30px rgba(0,0,0,.13);
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .themebar {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 12px 16px;
+    background: var(--surfaceRaised);
+    border-bottom: 1px solid var(--line);
+  }
+  .themebar b { font-size: 14px; }
+  .themebar span { font-size: 12px; color: var(--muted); }
+
+  .screen { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ---- objeto: raio 20 ---- */
+  .card {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    padding: 16px;
+  }
+
+  .vhead { display: flex; gap: 12px; align-items: flex-start; }
+  .thumb {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--sunken); border: 1px solid var(--line);
+    display: grid; place-items: center; flex: none;
+  }
+  .vname { font-size: 19px; font-weight: 700; letter-spacing: -.2px; line-height: 1.2; }
+  .vsub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* ---- estado: pílula ---- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 999px; padding: 4px 10px;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .chip .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+  .chip.ok   { background: var(--okSoft);   color: var(--ok); }
+  .chip.warn { background: var(--warnSoft); color: var(--warn); }
+  .chip.late { background: var(--lateSoft); color: var(--late); }
+
+  /* ---- leitura: raio 4 ---- */
+  .readout {
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px 12px;
+  }
+  .rlabel { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+  .rvalue { font-family: var(--meter); font-weight: 700; letter-spacing: -.5px; }
+  .rvalue.xl { font-size: 32px; line-height: 1.08; }
+  .rvalue.lg { font-size: 23px; line-height: 1.15; }
+  .rvalue.md { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+
+  /* ---- faixa de medida: o elemento assinatura ---- */
+  .strip-wrap { margin-top: 12px; }
+  .strip {
+    position: relative; height: 34px;
+    background: var(--sunken);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .strip .scale { position: absolute; inset: 0; }
+  .strip .scale i {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 1px; background: var(--lineStrong); height: 36%;
+  }
+  .strip .scale i.mid { height: 62%; }
+  .strip .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px 0 0 3px; }
+  .strip .cursor { position: absolute; top: 0; bottom: 0; width: 5px; margin-left: -2.5px; border-radius: 5px; border: 1px solid; }
+  .ends {
+    display: flex; justify-content: space-between; margin-top: 6px;
+    font-family: var(--meter); font-size: 13px; font-weight: 600;
+    letter-spacing: .4px; color: var(--muted);
+  }
+
+  /* ---- linhas de registro: sem card, só filete ---- */
+  .ledger { display: flex; flex-direction: column; }
+  .row {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row .ico { width: 24px; height: 24px; flex: none; }
+  .row .mid { flex: 1; min-width: 0; }
+  .row .t { font-size: 15px; font-weight: 600; letter-spacing: -.1px; }
+  .row .m { font-family: var(--meter); font-size: 13px; color: var(--muted); margin-top: 1px; letter-spacing: .3px; }
+  .row .v { font-family: var(--meter); font-size: 16px; font-weight: 600; text-align: right; }
+
+  /* ---- controle: raio 10 ---- */
+  .btn {
+    display: block; width: 100%;
+    border: 0; border-radius: 10px;
+    padding: 14px; font-family: var(--ui);
+    font-size: 15px; font-weight: 700; letter-spacing: .1px;
+    background: var(--brand); color: var(--onBrand);
+    cursor: pointer;
+  }
+  .btn.ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--lineStrong);
+  }
+
+  .tabs { display: flex; gap: 6px; background: var(--sunken); border-radius: 10px; padding: 4px; }
+  .tab {
+    flex: 1; text-align: center; padding: 8px; border-radius: 7px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+  }
+  .tab.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+  .sect { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+  /* barras do relatório */
+  .bars { display: flex; align-items: flex-end; gap: 7px; height: 84px; }
+  .bars div { flex: 1; border-radius: 3px 3px 0 0; background: var(--brand); opacity: .85; }
+  .barlabels { display: flex; gap: 7px; margin-top: 5px; }
+  .barlabels span { flex: 1; text-align: center; font-family: var(--meter); font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>CarroEmDia — sistema visual</h1>
+  <p class="sub">Quatro temas, os mesmos componentes. O raio da borda codifica o que a coisa é: objeto 20, controle 10, leitura 4, estado pílula.</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const THEMES = [
+  { id:'oficina', name:'Oficina', desc:'Claro, verde-petróleo sobre papel cinza.', c:{
+    bg:'#F2F3F0', surface:'#FFFFFF', sunken:'#EDEFEB', surfaceRaised:'#FFFFFF',
+    text:'#15201C', muted:'#5E6B66', onBrand:'#FFFFFF',
+    line:'#D8DCD6', lineStrong:'#A9B2AC',
+    brand:'#0F4D45', brandSoft:'#D7E8E3',
+    ok:'#2F7D5B', okSoft:'#DCEFE4', warn:'#A86D12', warnSoft:'#F6E8CF', late:'#B23A2E', lateSoft:'#F7DFDC' }},
+  { id:'asfalto', name:'Asfalto', desc:'Escuro, verde-petróleo. Padrão no modo escuro.', c:{
+    bg:'#101513', surface:'#171E1B', sunken:'#0C110F', surfaceRaised:'#1F2825',
+    text:'#E8EDE9', muted:'#8D9A94', onBrand:'#06211D',
+    line:'#2A3531', lineStrong:'#415049',
+    brand:'#3FB89F', brandSoft:'#15322D',
+    ok:'#4FBF8B', okSoft:'#13301F', warn:'#E0A33A', warnSoft:'#33260F', late:'#FF6B5B', lateSoft:'#3A1A17' }},
+  { id:'ambar', name:'Âmbar', desc:'Escuro e quente, como a luz do painel à noite.', c:{
+    bg:'#140F0A', surface:'#1C150E', sunken:'#100C07', surfaceRaised:'#251C12',
+    text:'#F2E6D4', muted:'#9C8A72', onBrand:'#1F1405',
+    line:'#33281B', lineStrong:'#4C3C28',
+    brand:'#E8A33D', brandSoft:'#352512',
+    ok:'#9BBF6A', okSoft:'#232B16', warn:'#E8A33D', warnSoft:'#352512', late:'#E2564A', lateSoft:'#361713' }},
+  { id:'pista', name:'Pista', desc:'Claro e de alto contraste, para sol forte.', c:{
+    bg:'#FFFFFF', surface:'#FFFFFF', sunken:'#F0F0EE', surfaceRaised:'#FFFFFF',
+    text:'#0B0F0D', muted:'#454B48', onBrand:'#FFFFFF',
+    line:'#9BA19E', lineStrong:'#0B0F0D',
+    brand:'#1C1C1A', brandSoft:'#FFE38A',
+    ok:'#19663F', okSoft:'#D8EFE2', warn:'#8A5A00', warnSoft:'#FFE9B8', late:'#99241A', lateSoft:'#FBD9D5' }},
+];
+
+const icoOleo = c => `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9.5c2 2.2 3 3.8 3 5.2a3 3 0 0 1-6 0c0-1.4 1-3 3-5.2Z"/><path d="M5 5h7l2 2.5"/><line x1="5" y1="5" x2="5" y2="8"/></svg>`;
+const icoFreio = c => `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="7.6"/><circle cx="11" cy="12" r="2.6"/><path d="M17.4 8.2h2.2a1.4 1.4 0 0 1 1.4 1.4v4.8a1.4 1.4 0 0 1-1.4 1.4h-2.2"/></svg>`;
+const icoComb = c => `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V6a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v14"/><line x1="3.6" y1="20" x2="15.4" y2="20"/><line x1="7" y1="8.4" x2="12" y2="8.4"/><path d="M14 9h3a2 2 0 0 1 2 2v4.4a1.6 1.6 0 0 1-3.2 0V13"/></svg>`;
+const icoCarro = c => `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.2L5.8 8A2 2 0 0 1 7.7 6.7h8.6A2 2 0 0 1 18.2 8L20 12.8V16"/><line x1="3.4" y1="12.8" x2="20.6" y2="12.8"/><circle cx="7.4" cy="16.4" r="1.5"/><circle cx="16.6" cy="16.4" r="1.5"/></svg>`;
+const brand = (c,a) => `<svg viewBox="0 0 32 32" width="22" height="22" fill="none"><path d="M5 23a13 13 0 1 1 22 0" stroke="${c}" stroke-width="2" stroke-linecap="round"/><line x1="6.6" y1="15.4" x2="9.2" y2="16.2" stroke="${c}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="5.4" x2="16" y2="8.1" stroke="${c}" stroke-width="2" stroke-linecap="round"/><line x1="25.4" y1="15.4" x2="22.8" y2="16.2" stroke="${c}" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="23" x2="21.4" y2="13.6" stroke="${a}" stroke-width="2.4" stroke-linecap="round"/><circle cx="16" cy="23" r="2.2" fill="${a}"/></svg>`;
+
+function strip(p, color, ticks=10){
+  const over = p > 1, w = Math.min(p,1)*100;
+  let sc = '';
+  for(let i=1;i<ticks;i++) sc += `<i class="${i===ticks/2?'mid':''}" style="left:${(i/ticks)*100}%"></i>`;
+  return `<div class="strip"><div class="scale">${sc}</div>
+    <div class="fill" style="width:${w}%;background:${color};opacity:${over?1:.4}"></div>
+    <div class="cursor" style="left:${w}%;background:${over?'var(--surface)':color};border-color:${over?color:'var(--surface)'}"></div></div>`;
+}
+
+document.getElementById('grid').innerHTML = THEMES.map(t => {
+  const c = t.c;
+  const vars = Object.entries(c).map(([k,v])=>`--${k}:${v}`).join(';');
+  return `
+  <div class="phone" style="${vars};--bg:${c.bg}">
+    <div class="themebar">${brand(c.text,c.brand)}<b>${t.name}</b><span>${t.desc}</span></div>
+    <div class="screen">
+
+      <!-- Card de veículo: objeto -->
+      <div class="card">
+        <div class="vhead">
+          <div class="thumb">${icoCarro(c.muted)}</div>
+          <div style="flex:1;min-width:0">
+            <div class="vname">Gol do trabalho</div>
+            <div class="vsub">Volkswagen Gol 1.0 · 2018 · BRA 2E19</div>
+          </div>
+          <div class="chip ok"><span class="dot"></span>Em dia</div>
+        </div>
+        <div class="strip-wrap">
+          <div class="rlabel">Troca de óleo e filtro</div>
+          ${strip(0.86, c.ok)}
+          <div class="ends"><span>105.000 km</span><span>115.000 km</span></div>
+        </div>
+      </div>
+
+      <!-- Leituras -->
+      <div style="display:flex;gap:10px">
+        <div class="readout" style="flex:1">
+          <div class="rlabel">Odômetro</div>
+          <div class="rvalue lg">114.500</div>
+        </div>
+        <div class="readout" style="flex:1">
+          <div class="rlabel">Gasto no mês</div>
+          <div class="rvalue lg">420,00</div>
+        </div>
+      </div>
+
+      <!-- Alerta vencido -->
+      <div class="card" style="border-color:${c.late}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div class="vname" style="font-size:16px">Filtro de cabine</div>
+            <div class="vsub">Gol do trabalho</div>
+          </div>
+          <div class="chip late"><span class="dot"></span>Venceu há 300 km</div>
+        </div>
+        <div class="strip-wrap">${strip(1.0, c.late)}
+          <div class="ends"><span>99.200 km</span><span style="color:${c.late}">114.200 km</span></div>
+        </div>
+        <button class="btn" style="margin-top:12px">Registrar como feito</button>
+      </div>
+
+      <!-- Abas -->
+      <div class="tabs">
+        <div class="tab on">Histórico</div><div class="tab">Alertas</div><div class="tab">Gastos</div>
+      </div>
+
+      <!-- Ledger: linhas sem card -->
+      <div class="card" style="padding:4px 16px">
+        <div class="ledger">
+          <div class="row">${`<div class="ico">${icoOleo(c.brand)}</div>`}
+            <div class="mid"><div class="t">Troca de óleo e filtro</div><div class="m">14 mai 2026 · 114.000 km</div></div>
+            <div class="v">280,00</div></div>
+          <div class="row">${`<div class="ico">${icoFreio(c.brand)}</div>`}
+            <div class="mid"><div class="t">Pastilhas dianteiras</div><div class="m">10 fev 2026 · 108.200 km</div></div>
+            <div class="v">340,00</div></div>
+          <div class="row">${`<div class="ico">${icoComb(c.brand)}</div>`}
+            <div class="mid"><div class="t">Abastecimento</div><div class="m">02 fev 2026 · 32,1 L</div></div>
+            <div class="v">180,00</div></div>
+        </div>
+      </div>
+
+      <!-- Relatório -->
+      <div class="card">
+        <div class="rlabel">Evolução mensal</div>
+        <div class="rvalue xl" style="margin:2px 0 12px">R$ 4.230,00</div>
+        <div class="bars">
+          ${[22,46,28,78,100].map(h=>`<div style="height:${h}%"></div>`).join('')}
+        </div>
+        <div class="barlabels">${['jan','fev','mar','abr','mai'].map(m=>`<span>${m}</span>`).join('')}</div>
+      </div>
+
+      <button class="btn">Registrar manutenção</button>
+      <button class="btn ghost">Atualizar quilometragem</button>
+    </div>
+  </div>`;
+}).join('');
+</script>
+</body>
+</html>
