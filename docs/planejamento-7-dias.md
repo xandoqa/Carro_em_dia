@@ -33,7 +33,7 @@ funcionar.
       Prettier, CI.
 - [x] Camada de domínio: modelos, regras de lembrete, agregação de gastos,
       utilidades de data e formatação.
-- [x] **102 testes** cobrindo as regras de negócio.
+- [x] **116 testes** cobrindo as regras de negócio.
 
 ## Dia 2 — Dados e integrações (05/11) — concluído
 
