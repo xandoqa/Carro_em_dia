@@ -80,10 +80,9 @@ npm start
 Leia o QR Code com o Expo Go (Android) ou com a câmera (iOS). Para abrir
 direto num emulador: `npm run android` ou `npm run ios`.
 
-> **Se algo não subir**, rode `npx expo-doctor`: ele aponta incompatibilidade
-> entre as versões das bibliotecas e o SDK instalado, que é a causa mais comum.
-> O `package.json` fixa o SDK 53; para usar um SDK mais novo,
-> `npm install expo@latest && npx expo install --fix`.
+> **📘 [Guia completo de execução](docs/como-rodar.md)** — passo a passo desde
+> a instalação do Node, roteiro para testar cada requisito da disciplina e
+> solução para os erros mais comuns. Se algo não subir, comece por aí.
 
 ### Primeiro uso
 
@@ -277,6 +276,7 @@ Em ordem de utilidade:
 
 ## Documentação
 
+- [**Como rodar o projeto**](docs/como-rodar.md) — instalação, execução e solução de problemas
 - [Arquitetura e decisões técnicas](docs/arquitetura.md)
 - [Planejamento de 7 dias](docs/planejamento-7-dias.md)
 - [Git Flow do projeto](docs/git-flow.md)
