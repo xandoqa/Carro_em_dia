@@ -12,6 +12,7 @@ import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Veiculo } from '../../domain/models';
+import { validarNovoKm } from '../../domain/odometer';
 import { useGarage } from '../../hooks/useGarage';
 import { useTheme } from '../../theme/ThemeProvider';
 import { formatKm, formatKmUnit, parseNumberInput } from '../../utils/format';
@@ -32,11 +33,13 @@ export function UpdateKmSheet({
 }: UpdateKmSheetProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { atualizarKm } = useGarage();
+  const { atualizarKm, corrigirKm, kmMinimoPermitido } = useGarage();
 
   const [valor, setValor] = useState('');
   const [erro, setErro] = useState<string | undefined>();
   const [salvando, setSalvando] = useState(false);
+  /** Guarda o valor menor que o usuario digitou, aguardando confirmacao. */
+  const [correcaoPendente, setCorrecaoPendente] = useState<number | null>(null);
 
   // Comeca em branco a cada abertura, em vez de manter o que foi digitado
   // numa tentativa anterior.
@@ -44,8 +47,11 @@ export function UpdateKmSheet({
     if (visible) {
       setValor('');
       setErro(undefined);
+      setCorrecaoPendente(null);
     }
   }, [visible]);
+
+  const minimo = kmMinimoPermitido(veiculo.id);
 
   async function salvar() {
     const km = parseNumberInput(valor);
@@ -54,10 +60,30 @@ export function UpdateKmSheet({
       setErro('Informe a quilometragem em numeros.');
       return;
     }
-    if (km < veiculo.kmAtual) {
-      setErro(
-        `O odometro nao volta. O valor atual e ${formatKm(veiculo.kmAtual)} km.`,
-      );
+
+    const resultado = validarNovoKm({
+      novo: km,
+      atual: veiculo.kmAtual,
+      minimo,
+    });
+
+    if (resultado.tipo === 'invalido') {
+      setErro(resultado.motivo);
+      return;
+    }
+
+    // Valor menor nao e recusado de vez: quase sempre e correcao de um erro
+    // de digitacao anterior, e sem esta saida o numero errado ficaria preso
+    // para sempre. Pede confirmacao em vez de barrar.
+    if (resultado.tipo === 'correcao') {
+      setErro(undefined);
+      setCorrecaoPendente(km);
+      return;
+    }
+
+    if (resultado.tipo === 'ok') {
+      // Mesmo valor: nada a fazer.
+      onClose();
       return;
     }
 
@@ -67,6 +93,21 @@ export function UpdateKmSheet({
       onClose();
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Nao foi possivel salvar.');
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  async function confirmarCorrecao() {
+    if (correcaoPendente === null) return;
+
+    setSalvando(true);
+    try {
+      await corrigirKm(veiculo.id, correcaoPendente);
+      onClose();
+    } catch (e) {
+      setCorrecaoPendente(null);
+      setErro(e instanceof Error ? e.message : 'Nao foi possivel corrigir.');
     } finally {
       setSalvando(false);
     }
@@ -112,6 +153,7 @@ export function UpdateKmSheet({
           onChangeText={(t: string) => {
             setValor(t);
             if (erro) setErro(undefined);
+            if (correcaoPendente !== null) setCorrecaoPendente(null);
           }}
           error={erro}
           keyboardType="number-pad"
@@ -121,12 +163,49 @@ export function UpdateKmSheet({
           containerStyle={{ marginTop: theme.spacing.lg }}
         />
 
-        <Txt variant="bodySM" tone="muted" style={{ marginTop: theme.spacing.sm }}>
-          Os lembretes sao recalculados com o novo valor.
-        </Txt>
+        {correcaoPendente !== null ? (
+          <View
+            style={[
+              styles.aviso,
+              {
+                backgroundColor: theme.colors.warnSoft,
+                borderColor: theme.colors.warn,
+                borderRadius: theme.radius.control,
+                padding: theme.spacing.md,
+                marginTop: theme.spacing.md,
+              },
+            ]}
+            accessibilityRole="alert"
+          >
+            <Txt variant="titleSM" tone="warn">
+              Baixar o odometro?
+            </Txt>
+            <Txt variant="bodySM" tone="muted" style={{ marginTop: 4 }}>
+              O valor vai de {formatKm(veiculo.kmAtual)} para{' '}
+              {formatKm(correcaoPendente)} km. Faca isso so para corrigir um
+              erro de digitacao — os lembretes serao recalculados.
+            </Txt>
+          </View>
+        ) : (
+          <Txt
+            variant="bodySM"
+            tone="muted"
+            style={{ marginTop: theme.spacing.sm }}
+          >
+            Os lembretes sao recalculados com o novo valor.
+          </Txt>
+        )}
 
         <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.lg }}>
-          <Button label="Salvar" onPress={salvar} loading={salvando} />
+          {correcaoPendente !== null ? (
+            <Button
+              label="Confirmar correcao"
+              onPress={confirmarCorrecao}
+              loading={salvando}
+            />
+          ) : (
+            <Button label="Salvar" onPress={salvar} loading={salvando} />
+          )}
           <Button label="Cancelar" variant="ghost" onPress={onClose} />
         </View>
       </View>
@@ -147,5 +226,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: 14,
+  },
+  aviso: {
+    borderWidth: 1,
   },
 });

@@ -42,6 +42,7 @@ function Navegacao() {
           name="manutencao/nova"
           options={{ presentation: 'modal' }}
         />
+        <Stack.Screen name="manutencao/[id]" />
         <Stack.Screen name="aparencia" />
         <Stack.Screen name="ajustes" />
       </Stack>

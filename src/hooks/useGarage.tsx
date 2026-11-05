@@ -54,6 +54,10 @@ interface GarageContextValue {
   criarVeiculo: (dados: NovoVeiculo) => Promise<Veiculo>;
   atualizarVeiculo: (id: string, patch: Partial<NovoVeiculo>) => Promise<void>;
   atualizarKm: (id: string, km: number) => Promise<void>;
+  /** Baixa o odometro para desfazer erro de digitacao. */
+  corrigirKm: (id: string, km: number) => Promise<void>;
+  /** Maior km ja registrado no historico do veiculo. */
+  kmMinimoPermitido: (veiculoId: string) => number;
   removerVeiculo: (id: string) => Promise<void>;
 
   criarManutencao: (dados: NovaManutencao) => Promise<Manutencao>;
@@ -170,6 +174,27 @@ export function GarageProvider({ children }: { children: ReactNode }) {
     [recarregar],
   );
 
+  const corrigirKm = useCallback(
+    async (id: string, km: number) => {
+      await garageRepository.corrigirKm(id, km);
+      await recarregar();
+    },
+    [recarregar],
+  );
+
+  /**
+   * Calculado do estado ja em memoria, e nao do disco: a folha de correcao
+   * precisa do valor para montar a mensagem antes de o usuario confirmar.
+   */
+  const kmMinimoPermitido = useCallback(
+    (veiculoId: string) => {
+      const doVeiculo = manutencoes.filter((m) => m.veiculoId === veiculoId);
+      if (doVeiculo.length === 0) return 0;
+      return Math.max(...doVeiculo.map((m) => m.km));
+    },
+    [manutencoes],
+  );
+
   const removerVeiculo = useCallback(
     async (id: string) => {
       await garageRepository.removerVeiculo(id);
@@ -238,6 +263,8 @@ export function GarageProvider({ children }: { children: ReactNode }) {
       criarVeiculo,
       atualizarVeiculo,
       atualizarKm,
+      corrigirKm,
+      kmMinimoPermitido,
       removerVeiculo,
       criarManutencao,
       atualizarManutencao,
@@ -257,6 +284,8 @@ export function GarageProvider({ children }: { children: ReactNode }) {
       criarVeiculo,
       atualizarVeiculo,
       atualizarKm,
+      corrigirKm,
+      kmMinimoPermitido,
       removerVeiculo,
       criarManutencao,
       atualizarManutencao,
