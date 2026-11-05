@@ -13,7 +13,7 @@ para onde o dinheiro está indo.
 ![Expo SDK 53](https://img.shields.io/badge/Expo-SDK%2053-0F4D45)
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
-![116 testes](https://img.shields.io/badge/testes-116%20passando-2F7D5B)
+![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
 
 </div>
 
@@ -93,7 +93,7 @@ mais rápido para ver tudo funcionando, e o que usamos na apresentação.
 ### Verificando
 
 ```bash
-npm test         # 116 testes das regras de negócio, sem emulador
+npm test         # 127 testes das regras de negócio, sem emulador
 npm run typecheck
 npm run lint
 npm run verify   # os três acima
@@ -107,11 +107,11 @@ npm run verify   # os três acima
 | Notificação | [`src/services/notificationService.ts`](src/services/notificationService.ts) |
 | Requisição de Web Service | [`src/services/fipeService.ts`](src/services/fipeService.ts) — tabela FIPE pela BrasilAPI |
 | Persistência de dados | [`src/data/`](src/data/) — AsyncStorage |
-| Mínimo 4 telas interativas | 9 telas |
+| Mínimo 4 telas interativas | 10 telas |
 | GitHub com Git Flow | `main` / `develop` / `feature/*` — ver [`docs/git-flow.md`](docs/git-flow.md) |
 | Finalidade além de ver informações | Registra serviços, calcula prazos, agenda avisos, gera relatório |
 
-### As 9 telas
+### As 10 telas
 
 | # | Tela | Arquivo |
 |---|------|---------|
@@ -123,7 +123,8 @@ npm run verify   # os três acima
 | 6 | Histórico | `app/veiculo/historico.tsx` |
 | 7 | Registrar manutenção | `app/manutencao/nova.tsx` |
 | 8 | Aparência | `app/aparencia.tsx` |
-| 9 | Ajustes | `app/ajustes.tsx` |
+| 9 | Editar manutenção | `app/manutencao/[id].tsx` |
+| 10 | Ajustes | `app/ajustes.tsx` |
 
 ## Como os lembretes funcionam
 
@@ -268,10 +269,9 @@ Em ordem de utilidade:
 
 1. **Exportar o histórico em PDF** — útil de verdade na hora de vender o
    veículo, e já consta como ideia futura na documentação original.
-2. **Editar uma manutenção registrada** — hoje só dá para excluir e refazer.
-3. **Login e sincronização** — a camada de dados já é assíncrona, então trocar
+2. **Login e sincronização** — a camada de dados já é assíncrona, então trocar
    o AsyncStorage por um backend não exige mexer em nenhuma tela.
-4. **Testes de componente** — hoje a cobertura é das regras de negócio; a UI é
+3. **Testes de componente** — hoje a cobertura é das regras de negócio; a UI é
    verificada à mão.
 
 ## Documentação

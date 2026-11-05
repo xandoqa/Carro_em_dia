@@ -16,6 +16,7 @@ import {
   type NovoVeiculo,
   type Veiculo,
 } from '../domain/models';
+import { kmMinimoPermitido as minimoDoHistorico } from '../domain/odometer';
 import { normalizePlaca } from '../utils/format';
 import { generateId, readJson, storageKeys, writeJson } from './storage';
 
@@ -92,7 +93,9 @@ async function atualizarVeiculo(
 /**
  * Atualiza o odometro.
  * Recusa valor menor que o atual: odometro nao anda para tras, e aceitar isso
- * bagunçaria todos os lembretes do veiculo.
+ * por engano bagunçaria todos os lembretes do veiculo.
+ *
+ * Para desfazer um erro de digitacao, use `corrigirKm`.
  */
 async function atualizarKm(id: string, km: number): Promise<Veiculo> {
   const veiculo = await obterVeiculo(id);
@@ -101,6 +104,46 @@ async function atualizarKm(id: string, km: number): Promise<Veiculo> {
   if (km < veiculo.kmAtual) {
     throw new Error(
       `A quilometragem nao pode ser menor que a atual (${veiculo.kmAtual.toLocaleString('pt-BR')} km).`,
+    );
+  }
+
+  return atualizarVeiculo(id, { kmAtual: km });
+}
+
+/**
+ * Menor odometro que ainda faz sentido para o veiculo: o maior km ja
+ * registrado numa manutencao. Nao da para ter rodado menos que o ultimo
+ * servico feito.
+ */
+async function kmMinimoPermitido(veiculoId: string): Promise<number> {
+  const historico = await listarManutencoes(veiculoId);
+  return minimoDoHistorico(historico, veiculoId);
+}
+
+/**
+ * Corrige o odometro para baixo, desfazendo um erro de digitacao.
+ *
+ * Existe porque `atualizarKm` so aceita valores maiores, e registrar uma
+ * manutencao com km maior sobe o odometro automaticamente. Sem esta funcao,
+ * quem digitasse 1.145.000 em vez de 114.500 ficaria preso: o valor inflado
+ * nao poderia ser desfeito por nenhum caminho do app.
+ *
+ * O piso e o maior km do historico, porque abaixo disso o dado seria
+ * incoerente com os servicos ja registrados.
+ */
+async function corrigirKm(id: string, km: number): Promise<Veiculo> {
+  const veiculo = await obterVeiculo(id);
+  if (!veiculo) throw new Error('Veiculo nao encontrado.');
+
+  if (km < 0) {
+    throw new Error('A quilometragem nao pode ser negativa.');
+  }
+
+  const minimo = await kmMinimoPermitido(id);
+  if (km < minimo) {
+    throw new Error(
+      `Ha uma manutencao registrada em ${minimo.toLocaleString('pt-BR')} km. ` +
+        'Corrija ou exclua esse registro antes de baixar o odometro.',
     );
   }
 
@@ -206,6 +249,8 @@ export const garageRepository = {
   criarVeiculo,
   atualizarVeiculo,
   atualizarKm,
+  corrigirKm,
+  kmMinimoPermitido,
   removerVeiculo,
 
   listarManutencoes,
