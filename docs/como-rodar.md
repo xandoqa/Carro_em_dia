@@ -267,7 +267,7 @@ km maior) e **agrega** (relatório de gastos, consumo médio, custo por km).
 npm test
 ```
 
-✅ Deve terminar com `# pass 116` e `# fail 0`.
+✅ Deve terminar com `# pass 127` e `# fail 0`.
 
 Os testes rodam no Node puro, sem emulador, em menos de um segundo. Eles cobrem
 as regras de negócio: cálculo de lembretes, agregação de gastos, aritmética de
@@ -388,7 +388,7 @@ app recarrega sozinho.
 | `npm run android` | Abre no emulador Android |
 | `npm run ios` | Abre no simulador iOS (só Mac) |
 | `npm run web` | Abre no navegador |
-| `npm test` | Roda os 116 testes |
+| `npm test` | Roda os 127 testes |
 | `npm run typecheck` | Confere os tipos do TypeScript |
 | `npm run lint` | Confere estilo e problemas comuns |
 | `npm run lint:fix` | Corrige o que dá para corrigir sozinho |
