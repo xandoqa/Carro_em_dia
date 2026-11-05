@@ -24,12 +24,14 @@ export interface MaintenanceDetailSheetProps {
   manutencao: Manutencao | null;
   onClose: () => void;
   onDelete: (manutencao: Manutencao) => void;
+  onEdit: (manutencao: Manutencao) => void;
 }
 
 export function MaintenanceDetailSheet({
   manutencao,
   onClose,
   onDelete,
+  onEdit,
 }: MaintenanceDetailSheetProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -169,11 +171,25 @@ export function MaintenanceDetailSheet({
           ) : null}
 
           <Button
+            label="Editar registro"
+            variant="secondary"
+            onPress={() => onEdit(manutencao)}
+            icon={
+              <Ionicons
+                name="create-outline"
+                size={18}
+                color={theme.colors.brand}
+              />
+            }
+            style={{ marginTop: theme.spacing.xl }}
+          />
+
+          <Button
             label="Excluir registro"
             variant="ghost"
             destructive
             onPress={() => onDelete(manutencao)}
-            style={{ marginTop: theme.spacing.xl }}
+            style={{ marginTop: theme.spacing.sm }}
           />
         </ScrollView>
       </View>

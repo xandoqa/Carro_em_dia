@@ -239,6 +239,12 @@ export default function HistoricoScreen() {
         manutencao={detalhe}
         onClose={() => setDetalhe(null)}
         onDelete={confirmarExclusao}
+        onEdit={(m) => {
+          // Fecha a folha antes de navegar, senao ela fica por cima da tela
+          // de edicao ao voltar.
+          setDetalhe(null);
+          router.push(`/manutencao/${m.id}`);
+        }}
       />
     </View>
   );
