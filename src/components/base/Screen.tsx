@@ -11,7 +11,10 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   View,
@@ -37,6 +40,19 @@ export interface ScreenProps {
   /** Espaco extra no fim, para o conteudo nao ficar sob um botao fixo. */
   bottomInset?: number;
   contentStyle?: StyleProp<ViewStyle>;
+  /**
+   * Liga o puxar-para-atualizar. Sem isso, a unica forma de recarregar seria
+   * fechar e abrir o app — e puxar a lista e o gesto que todo mundo tenta
+   * primeiro.
+   */
+  onRefresh?: () => void | Promise<void>;
+  /** Avisado a cada rolagem, para telas que encolhem algo conforme desce. */
+  onScroll?: (offsetY: number) => void;
+  /**
+   * Afasta o conteudo do teclado nos formularios. Sem isso, no iOS o campo
+   * de baixo fica atras do teclado e o usuario digita as cegas.
+   */
+  avoidKeyboard?: boolean;
 }
 
 export function Screen({
@@ -45,14 +61,28 @@ export function Screen({
   flush = false,
   bottomInset = 0,
   contentStyle,
+  onRefresh,
+  onScroll,
+  avoidKeyboard = false,
 }: ScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const [atualizando, setAtualizando] = React.useState(false);
 
   const padding: ViewStyle = {
     paddingHorizontal: flush ? 0 : theme.layout.gutter,
     paddingBottom: insets.bottom + theme.spacing.xl + bottomInset,
   };
+
+  const handleRefresh = React.useCallback(async () => {
+    if (!onRefresh) return;
+    setAtualizando(true);
+    try {
+      await onRefresh();
+    } finally {
+      setAtualizando(false);
+    }
+  }, [onRefresh]);
 
   if (!scroll) {
     return (
@@ -62,15 +92,48 @@ export function Screen({
     );
   }
 
-  return (
+  const conteudo = (
     <ScrollView
       style={[styles.raiz, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={[padding, contentStyle]}
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
+      scrollEventThrottle={16}
+      onScroll={
+        onScroll
+          ? (e: { nativeEvent: { contentOffset: { y: number } } }) =>
+              onScroll(e.nativeEvent.contentOffset.y)
+          : undefined
+      }
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl
+            refreshing={atualizando}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.brand}
+            colors={[theme.colors.brand]}
+            progressBackgroundColor={theme.colors.surface}
+          />
+        ) : undefined
+      }
     >
       {children}
     </ScrollView>
+  );
+
+  if (!avoidKeyboard) return conteudo;
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.raiz}
+      // No Android o sistema ja redimensiona a janela; no iOS nao, entao so
+      // ali o deslocamento precisa ser feito a mao.
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={insets.top}
+    >
+      {conteudo}
+    </KeyboardAvoidingView>
   );
 }
 
