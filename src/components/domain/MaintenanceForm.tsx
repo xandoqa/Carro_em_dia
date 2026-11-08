@@ -28,8 +28,10 @@ import { today } from '../../utils/date';
 import { formatDate } from '../../utils/date';
 import { formatKm, parseNumberInput } from '../../utils/format';
 import { Button } from '../base/Button';
+import { DateSheet } from '../base/DateSheet';
 import { useFeedback } from '../base/Feedback';
 import { Field } from '../base/Field';
+import { PickerField } from '../base/PickerSheet';
 import { Card, SectionHeader } from '../base/Surfaces';
 import { Txt } from '../base/Text';
 import { ServiceTypeGrid } from './ServiceTypeGrid';
@@ -120,6 +122,7 @@ export function MaintenanceForm({
 
   const [erros, setErros] = useState<Erros>({});
   const [salvando, setSalvando] = useState(false);
+  const [escolhendoData, setEscolhendoData] = useState(false);
 
   const definicao = tiposManutencao[tipo];
   const veiculo = veiculoId ? veiculoPorId(veiculoId) : undefined;
@@ -294,17 +297,15 @@ export function MaintenanceForm({
         ) : null}
 
         <View style={{ flexDirection: 'row', gap: theme.spacing.md }}>
-          <Field
-            label="Data"
-            placeholder="2026-05-18"
-            value={data}
-            onChangeText={setData}
-            error={erros.data}
-            hint={ISO.test(data) ? formatDate(data) : 'AAAA-MM-DD'}
-            maxLength={10}
-            numeric
-            containerStyle={{ flex: 1 }}
-          />
+          <View style={{ flex: 1 }}>
+            <PickerField
+              label="Data"
+              selectedLabel={ISO.test(data) ? formatDate(data) : undefined}
+              placeholder="Escolher data"
+              onPress={() => setEscolhendoData(true)}
+              error={erros.data}
+            />
+          </View>
           <Field
             label="Quilometragem"
             placeholder={placeholderKm}
@@ -444,6 +445,17 @@ export function MaintenanceForm({
         />
         <Button label="Cancelar" variant="ghost" onPress={onCancelar} />
       </View>
+
+      <DateSheet
+        visible={escolhendoData}
+        value={data}
+        onSelect={(nova) => {
+          setData(nova);
+          if (erros.data) setErros((e) => ({ ...e, data: undefined }));
+        }}
+        onClose={() => setEscolhendoData(false)}
+        title="Data do servico"
+      />
     </>
   );
 }
