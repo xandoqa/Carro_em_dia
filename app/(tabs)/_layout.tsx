@@ -6,6 +6,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
@@ -20,8 +21,21 @@ export default function TabsLayout() {
 
   const pendentes = contagem.vencido + contagem.atencao;
 
+  /**
+   * Retorno tatil ao trocar de aba.
+   *
+   * Em app de celular o toque na barra inferior quase sempre responde com uma
+   * vibracao curta; sem ela a navegacao parece lenta mesmo quando nao e.
+   */
+  const aoTocarAba = () => {
+    if (Platform.OS !== 'web') {
+      void Haptics.selectionAsync();
+    }
+  };
+
   return (
     <Tabs
+      screenListeners={{ tabPress: aoTocarAba }}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.brand,

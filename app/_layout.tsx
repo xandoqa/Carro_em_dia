@@ -12,7 +12,9 @@ import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { FeedbackProvider } from '../src/components/base/Feedback';
 import { GarageProvider } from '../src/hooks/useGarage';
+import { useNotificationNavigation } from '../src/hooks/useNotificationNavigation';
 import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
 
 /**
@@ -21,6 +23,9 @@ import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
  */
 function Navegacao() {
   const theme = useTheme();
+
+  // Tocar num aviso abre o veiculo a que ele pertence.
+  useNotificationNavigation();
 
   return (
     <>
@@ -36,7 +41,8 @@ function Navegacao() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="veiculo/novo" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="veiculo/[id]" />
+        <Stack.Screen name="veiculo/[id]/index" />
+        <Stack.Screen name="veiculo/[id]/editar" />
         <Stack.Screen name="veiculo/historico" />
         <Stack.Screen
           name="manutencao/nova"
@@ -55,9 +61,13 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <GarageProvider>
-            <Navegacao />
-          </GarageProvider>
+          {/* O feedback fica por fora da garagem para que uma falha ao
+              carregar os dados ainda possa ser anunciada. */}
+          <FeedbackProvider>
+            <GarageProvider>
+              <Navegacao />
+            </GarageProvider>
+          </FeedbackProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

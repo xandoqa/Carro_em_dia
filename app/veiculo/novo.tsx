@@ -17,6 +17,7 @@ import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../../src/components/base/Button';
+import { useFeedback } from '../../src/components/base/Feedback';
 import { Field, Segmented } from '../../src/components/base/Field';
 import {
   PickerField,
@@ -58,6 +59,7 @@ export default function NovoVeiculoScreen() {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { mostrar } = useFeedback();
   const { criarVeiculo, veiculos } = useGarage();
 
   const [tipo, setTipo] = useState<TipoVeiculo>('carro');
@@ -208,6 +210,7 @@ export default function NovoVeiculoScreen() {
         fipeCodigo: modeloCodigo,
         fipeValor: fipe.referencia?.valor,
       });
+      mostrar(`${apelido.trim()} cadastrado`);
       router.back();
     } catch (erro) {
       Alert.alert(
@@ -223,7 +226,7 @@ export default function NovoVeiculoScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen>
+      <Screen avoidKeyboard>
         <Header title="Novo veiculo" back />
 
         <Segmented<TipoVeiculo>

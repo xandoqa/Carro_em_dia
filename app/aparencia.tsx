@@ -6,7 +6,6 @@
  * tema escolhido.
  */
 
-import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,7 +25,6 @@ import type { ThemeDefinition } from '../src/theme/palettes';
 
 export default function AparenciaScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { preference, available, setPreference } = useThemePreference();
 

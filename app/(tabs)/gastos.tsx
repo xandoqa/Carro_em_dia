@@ -38,7 +38,7 @@ export default function GastosScreen() {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { veiculos, manutencoes, carregando } = useGarage();
+  const { veiculos, manutencoes, carregando, recarregar } = useGarage();
 
   /** `undefined` significa "todos os veiculos". */
   const [veiculoId, setVeiculoId] = useState<string | undefined>(undefined);
@@ -69,7 +69,7 @@ export default function GastosScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen>
+      <Screen onRefresh={recarregar}>
         <Header
           title="Gastos"
           subtitle={nomeVeiculo ?? 'Todos os veiculos'}
