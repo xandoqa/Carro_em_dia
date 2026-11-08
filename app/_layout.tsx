@@ -12,6 +12,7 @@ import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { FeedbackProvider } from '../src/components/base/Feedback';
 import { GarageProvider } from '../src/hooks/useGarage';
 import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
 
@@ -55,9 +56,13 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <GarageProvider>
-            <Navegacao />
-          </GarageProvider>
+          {/* O feedback fica por fora da garagem para que uma falha ao
+              carregar os dados ainda possa ser anunciada. */}
+          <FeedbackProvider>
+            <GarageProvider>
+              <Navegacao />
+            </GarageProvider>
+          </FeedbackProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
