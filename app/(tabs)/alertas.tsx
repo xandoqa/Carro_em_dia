@@ -26,7 +26,8 @@ export default function AlertasScreen() {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { lembretes, veiculos, contagem, carregando, veiculoPorId } = useGarage();
+  const { lembretes, veiculos, contagem, carregando, veiculoPorId, recarregar } =
+    useGarage();
 
   const [filtro, setFiltro] = useState<Filtro>('pendentes');
 
@@ -60,7 +61,7 @@ export default function AlertasScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen>
+      <Screen onRefresh={recarregar}>
         <Header
           title="Alertas"
           subtitle={

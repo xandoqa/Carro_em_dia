@@ -9,43 +9,43 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Alert, Image, StyleSheet, View } from 'react-native';
+import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button } from '../../src/components/base/Button';
-import { Segmented } from '../../src/components/base/Field';
+import { Button } from '../../../src/components/base/Button';
+import { Segmented } from '../../../src/components/base/Field';
 import {
   EmptyState,
   Header,
   Loading,
   Screen,
-} from '../../src/components/base/Screen';
+} from '../../../src/components/base/Screen';
 import {
   Card,
   Readout,
   SectionHeader,
-} from '../../src/components/base/Surfaces';
-import { StatusChip } from '../../src/components/base/StatusChip';
-import { Txt } from '../../src/components/base/Text';
-import { CategoryBreakdown } from '../../src/components/charts/CategoryBreakdown';
-import { AlertCard } from '../../src/components/domain/AlertCard';
-import { MaintenanceRow } from '../../src/components/domain/MaintenanceRow';
-import { MeasureStrip } from '../../src/components/domain/MeasureStrip';
-import { UpdateKmSheet } from '../../src/components/domain/UpdateKmSheet';
-import { VehicleGlyph } from '../../src/components/domain/VehicleGlyph';
+} from '../../../src/components/base/Surfaces';
+import { StatusChip } from '../../../src/components/base/StatusChip';
+import { Txt } from '../../../src/components/base/Text';
+import { CategoryBreakdown } from '../../../src/components/charts/CategoryBreakdown';
+import { AlertCard } from '../../../src/components/domain/AlertCard';
+import { MaintenanceRow } from '../../../src/components/domain/MaintenanceRow';
+import { MeasureStrip } from '../../../src/components/domain/MeasureStrip';
+import { UpdateKmSheet } from '../../../src/components/domain/UpdateKmSheet';
+import { VehicleGlyph } from '../../../src/components/domain/VehicleGlyph';
 import {
   filtrarManutencoes,
   periodoMes,
   resumirGastos,
-} from '../../src/domain/expenses';
-import { useGarage } from '../../src/hooks/useGarage';
-import { useTheme } from '../../src/theme/ThemeProvider';
+} from '../../../src/domain/expenses';
+import { useGarage } from '../../../src/hooks/useGarage';
+import { useTheme } from '../../../src/theme/ThemeProvider';
 import {
   formatCurrency,
   formatKmUnit,
   formatPlaca,
   formatRestante,
-} from '../../src/utils/format';
+} from '../../../src/utils/format';
 
 type Aba = 'historico' | 'alertas' | 'gastos';
 
@@ -144,6 +144,28 @@ export default function PainelVeiculoScreen() {
           title={veiculo.apelido}
           subtitle={`${veiculo.marca} ${veiculo.modelo} · ${veiculo.ano}`}
           back
+          right={
+            <Pressable
+              onPress={() => router.push(`/veiculo/${veiculo.id}/editar`)}
+              accessibilityRole="button"
+              accessibilityLabel="Editar veiculo"
+              hitSlop={10}
+              style={({ pressed }: { pressed: boolean }) => [
+                styles.acaoHeader,
+                {
+                  minWidth: theme.layout.touchTarget,
+                  minHeight: theme.layout.touchTarget,
+                  opacity: pressed ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Ionicons
+                name="create-outline"
+                size={22}
+                color={theme.colors.text}
+              />
+            </Pressable>
+          }
         />
 
         <Card flush style={{ overflow: 'hidden' }}>
@@ -454,6 +476,11 @@ function GastosAba({
 }
 
 const styles = StyleSheet.create({
+  acaoHeader: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: -10,
+  },
   capa: {
     height: 160,
     alignItems: 'center',
