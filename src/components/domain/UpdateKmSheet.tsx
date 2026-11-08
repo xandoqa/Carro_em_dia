@@ -17,6 +17,7 @@ import { useGarage } from '../../hooks/useGarage';
 import { useTheme } from '../../theme/ThemeProvider';
 import { formatKm, formatKmUnit, parseNumberInput } from '../../utils/format';
 import { Button } from '../base/Button';
+import { useFeedback } from '../base/Feedback';
 import { Field } from '../base/Field';
 import { Txt } from '../base/Text';
 
@@ -33,6 +34,7 @@ export function UpdateKmSheet({
 }: UpdateKmSheetProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const { mostrar } = useFeedback();
   const { atualizarKm, corrigirKm, kmMinimoPermitido } = useGarage();
 
   const [valor, setValor] = useState('');
@@ -90,6 +92,7 @@ export function UpdateKmSheet({
     setSalvando(true);
     try {
       await atualizarKm(veiculo.id, km);
+      mostrar(`Odometro em ${formatKm(km)} km`);
       onClose();
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Nao foi possivel salvar.');
@@ -104,6 +107,7 @@ export function UpdateKmSheet({
     setSalvando(true);
     try {
       await corrigirKm(veiculo.id, correcaoPendente);
+      mostrar(`Odometro corrigido para ${formatKm(correcaoPendente)} km`);
       onClose();
     } catch (e) {
       setCorrecaoPendente(null);

@@ -511,6 +511,20 @@
     display: grid; place-items: center;
   }
 
+  /* Botão flutuante: sempre alcançável com o polegar. */
+  .fab {
+    position: absolute;
+    right: 16px; bottom: 92px;
+    display: flex; align-items: center; gap: 8px;
+    height: 56px; padding: 0 20px 0 16px;
+    border: 0; border-radius: 999px;
+    font: inherit; font-size: 15px; font-weight: 700;
+    cursor: pointer; z-index: 8;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+  }
+  .fab:active { transform: scale(.97); }
+  .centro { text-align: center; margin-top: 20px; }
+
   .indicador {
     position: absolute; bottom: 8px; left: 50%;
     transform: translateX(-50%);

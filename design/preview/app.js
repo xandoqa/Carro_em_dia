@@ -349,7 +349,11 @@ TELAS.garagem = () => ({
       </div>${UI.avancar(c().textMuted)}
     </div>`, { accent: c().late, acao: 'alertas' })}
   <div class="pilha">${VEICULOS.map(cartaoVeiculo).join('')}</div>
-  ${botao('Cadastrar outro veículo', { variante: 'secondary', acao: 'novoVeiculo' })}
+  <p class="dica centro" style="color:${c().textMuted}">Puxe a lista para baixo para atualizar.</p>
+  <button class="fab" data-ir="novoVeiculo"
+    style="background:${c().brand};color:${c().textOnBrand}">
+    ${UI.mais(c().textOnBrand, 26)}<span>Novo veículo</span>
+  </button>
 `});
 
 TELAS.alertas = () => {
