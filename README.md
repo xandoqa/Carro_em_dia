@@ -50,14 +50,25 @@ O CarroEmDia guarda esse histórico e avisa **antes** do prazo vencer.
 
 ## Como ficou
 
-As quatro paletas, com os mesmos componentes:
+Garagem, painel do veículo e alertas, nos quatro temas:
 
 <div align="center">
-<img src="design/preview/temas.png" width="900" alt="Os quatro temas do CarroEmDia lado a lado" />
+<img src="design/preview/temas.png" width="920" alt="Telas do CarroEmDia nos temas Oficina, Asfalto, Âmbar e Pista" />
 </div>
 
-Abra `design/preview/index.html` no navegador para ver o sistema visual
-completo.
+### Protótipo navegável
+
+Abra **[`design/preview/index.html`](design/preview/index.html)** no navegador:
+é o app inteiro em HTML, com as 10 telas clicáveis e troca de tema ao vivo.
+Nenhuma instalação, nenhum servidor — dois cliques no arquivo e funciona.
+
+Serve para ver o app antes de rodar o Expo, revisar o design sem build e
+demonstrar na apresentação caso algo dê errado com o celular. Toque nos
+cartões para navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
+
+> É uma maquete fiel, não o app: usa os mesmos tokens de
+> `design/tokens/tokens.json`, mas as regras de negócio de verdade vivem em
+> `src/domain`.
 
 ## Rodando o projeto
 
