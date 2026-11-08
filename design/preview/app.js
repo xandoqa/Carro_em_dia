@@ -453,7 +453,10 @@ TELAS.gastos = () => {
 TELAS.painel = () => ({
   tab: 'veiculos',
   html: `
-  ${cabecalho('Gol do trabalho', 'Volkswagen Gol 1.0 Flex · 2018', { voltar: true })}
+  ${cabecalho('Gol do trabalho', 'Volkswagen Gol 1.0 Flex · 2018', {
+    voltar: true,
+    acao: `<button class="icone-btn" data-ir="editarVeiculo" aria-label="Editar veículo">${UI.lapis(c().text, 22)}</button>`,
+  })}
   ${cartao(`
     <div class="capa" style="background:${c().surfaceSunken}">${glifo('carro', c().line, 56)}</div>
     <div class="capa-corpo">
@@ -585,6 +588,35 @@ TELAS.novoVeiculo = () => ({
   </div>
   ${botao('Salvar veículo', { acao: 'garagem' })}
   ${botao('Cancelar', { variante: 'ghost', acao: 'garagem' })}
+`});
+
+TELAS.editarVeiculo = () => ({
+  tab: 'veiculos',
+  html: `
+  ${cabecalho('Editar veículo', 'Gol do trabalho', { voltar: true })}
+  ${segmentado([['carro', 'Carro'], ['moto', 'Moto']], 'carro', 'tipoVeiculo')}
+  <div class="foto-slot" style="background:${c().surfaceSunken};border-color:${c().line}">
+    ${glifo('carro', c().textMuted, 40)}
+    <span class="dica" style="color:${c().textMuted}">Adicionar foto (opcional)</span>
+  </div>
+  <div class="form">
+    ${campo('Apelido', 'Gol do trabalho')}
+    <div class="duo">
+      ${campo('Marca', 'Volkswagen')}
+      ${campo('Modelo', 'Gol 1.0 Flex')}
+    </div>
+    <div class="duo">
+      ${campo('Ano', '2018', { mono: true })}
+      ${campo('Placa', 'BRA2E19', { mono: true })}
+    </div>
+    ${seletor('Combustível', 'Flex')}
+  </div>
+  <p class="dica" style="color:${c().textMuted};margin-top:16px">
+    A quilometragem é atualizada no painel do veículo, onde ela tem regra própria.</p>
+  <div style="margin-top:24px">
+    ${botao('Salvar alterações', { acao: 'painel' })}
+    ${botao('Cancelar', { variante: 'ghost', acao: 'painel' })}
+  </div>
 `});
 
 TELAS.novaManutencao = () => ({
@@ -862,7 +894,7 @@ function abas(ativa) {
 /** Telas que são modais sobre a anterior e não aparecem no seletor lateral. */
 const TELAS_DE_PILHA = new Set([
   'painel', 'historico', 'novoVeiculo', 'novaManutencao',
-  'editarManutencao', 'aparencia', 'ajustes',
+  'editarManutencao', 'editarVeiculo', 'aparencia', 'ajustes',
 ]);
 
 function render() {
@@ -909,7 +941,8 @@ function render() {
 }
 
 const NAV = [
-  ['garagem', 'Garagem'], ['painel', 'Painel do veículo'], ['historico', 'Histórico'],
+  ['garagem', 'Garagem'], ['painel', 'Painel do veículo'],
+  ['editarVeiculo', 'Editar veículo'], ['historico', 'Histórico'],
   ['alertas', 'Alertas'], ['gastos', 'Gastos'], ['novoVeiculo', 'Cadastrar veículo'],
   ['novaManutencao', 'Registrar manutenção'], ['editarManutencao', 'Editar manutenção'],
   ['aparencia', 'Aparência'], ['ajustes', 'Ajustes'],
