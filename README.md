@@ -59,16 +59,28 @@ Garagem, painel do veículo e alertas, nos quatro temas:
 ### Protótipo navegável
 
 Abra **[`design/preview/index.html`](design/preview/index.html)** no navegador:
-é o app inteiro em HTML, com as 10 telas clicáveis e troca de tema ao vivo.
-Nenhuma instalação, nenhum servidor — dois cliques no arquivo e funciona.
+são as 11 telas clicáveis, com troca de tema ao vivo. Nenhuma instalação,
+nenhum servidor — dois cliques no arquivo e funciona. Toque nos cartões para
+navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
 
-Serve para ver o app antes de rodar o Expo, revisar o design sem build e
-demonstrar na apresentação caso algo dê errado com o celular. Toque nos
-cartões para navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
-
-> É uma maquete fiel, não o app: usa os mesmos tokens de
-> `design/tokens/tokens.json`, mas as regras de negócio de verdade vivem em
-> `src/domain`.
+> ### ⚠️ O protótipo não é o aplicativo
+>
+> | | O app | O protótipo |
+> |---|---|---|
+> | Onde | `app/` e `src/` | `design/preview/` |
+> | Tecnologia | **React Native** (React 19, Expo 53) | HTML, CSS e JavaScript puro |
+> | Arquivos | 67 em TypeScript | 2 |
+> | Regras de negócio | Sim — calcula prazos, salva, notifica, consulta a FIPE | Nenhuma: é uma fotografia navegável |
+> | Vale nota | Sim | Não |
+>
+> O protótipo foi escrito sem framework **de propósito**: ele precisa abrir
+> sem `npm install`, sem build e sem servidor — se dependesse de React,
+> dependeria justamente do que ele existe para dispensar.
+>
+> Ele usa os mesmos tokens de `design/tokens/tokens.json`, então desenha as
+> telas com fidelidade. Serve para ver o resultado antes de conseguir rodar o
+> Expo, revisar o design sem build, e como plano B se o celular falhar na
+> apresentação. **Na apresentação, o que se mostra é o app no celular.**
 
 ## Rodando o projeto
 
