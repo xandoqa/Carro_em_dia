@@ -118,11 +118,11 @@ npm run verify   # os três acima
 | Notificação | [`src/services/notificationService.ts`](src/services/notificationService.ts) |
 | Requisição de Web Service | [`src/services/fipeService.ts`](src/services/fipeService.ts) — tabela FIPE pela BrasilAPI |
 | Persistência de dados | [`src/data/`](src/data/) — AsyncStorage |
-| Mínimo 4 telas interativas | 10 telas |
+| Mínimo 4 telas interativas | 11 telas |
 | GitHub com Git Flow | `main` / `develop` / `feature/*` — ver [`docs/git-flow.md`](docs/git-flow.md) |
 | Finalidade além de ver informações | Registra serviços, calcula prazos, agenda avisos, gera relatório |
 
-### As 10 telas
+### As 11 telas
 
 | # | Tela | Arquivo |
 |---|------|---------|
@@ -130,12 +130,13 @@ npm run verify   # os três acima
 | 2 | Alertas | `app/(tabs)/alertas.tsx` |
 | 3 | Gastos | `app/(tabs)/gastos.tsx` |
 | 4 | Cadastro de veículo | `app/veiculo/novo.tsx` |
-| 5 | Painel do veículo | `app/veiculo/[id].tsx` |
-| 6 | Histórico | `app/veiculo/historico.tsx` |
-| 7 | Registrar manutenção | `app/manutencao/nova.tsx` |
-| 8 | Aparência | `app/aparencia.tsx` |
-| 9 | Editar manutenção | `app/manutencao/[id].tsx` |
-| 10 | Ajustes | `app/ajustes.tsx` |
+| 5 | Painel do veículo | `app/veiculo/[id]/index.tsx` |
+| 6 | Editar veículo | `app/veiculo/[id]/editar.tsx` |
+| 7 | Histórico | `app/veiculo/historico.tsx` |
+| 8 | Registrar manutenção | `app/manutencao/nova.tsx` |
+| 9 | Aparência | `app/aparencia.tsx` |
+| 10 | Editar manutenção | `app/manutencao/[id].tsx` |
+| 11 | Ajustes | `app/ajustes.tsx` |
 
 ## Como os lembretes funcionam
 
@@ -278,16 +279,21 @@ assets/images/    ícone, splash, favicon
 
 Em ordem de utilidade:
 
-1. **Exportar o histórico em PDF** — útil de verdade na hora de vender o
-   veículo, e já consta como ideia futura na documentação original.
-2. **Login e sincronização** — a camada de dados já é assíncrona, então trocar
+1. **Exportar o histórico** — a documentação justifica o app em parte pela
+   venda do veículo, e hoje não há como tirar o histórico de dentro dele.
+2. **Guardar as fotos no diretório do app** — hoje elas apontam para o cache do
+   sistema, que pode ser limpo.
+3. **Adiar um lembrete** — um alerta que não some deixa de ser lido.
+4. **Login e sincronização** — a camada de dados já é assíncrona, então trocar
    o AsyncStorage por um backend não exige mexer em nenhuma tela.
-3. **Testes de componente** — hoje a cobertura é das regras de negócio; a UI é
-   verificada à mão.
+
+Cada um está detalhado, com o porquê e o caminho,
+em [`docs/melhorias.md`](docs/melhorias.md).
 
 ## Documentação
 
 - [**Como rodar o projeto**](docs/como-rodar.md) — instalação, execução e solução de problemas
+- [Melhorias: o que foi corrigido e o que fica mapeado](docs/melhorias.md)
 - [Arquitetura e decisões técnicas](docs/arquitetura.md)
 - [Planejamento de 7 dias](docs/planejamento-7-dias.md)
 - [Git Flow do projeto](docs/git-flow.md)
