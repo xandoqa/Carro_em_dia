@@ -66,7 +66,7 @@ export default function EditarManutencaoScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen>
+      <Screen avoidKeyboard>
         <Header title="Editar manutencao" subtitle={nome} back />
         <MaintenanceForm
           manutencao={manutencao}

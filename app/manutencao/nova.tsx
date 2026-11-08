@@ -46,7 +46,7 @@ export default function NovaManutencaoScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen>
+      <Screen avoidKeyboard>
         <Header title="Registrar manutencao" back />
         <MaintenanceForm
           veiculoIdInicial={params.veiculoId}

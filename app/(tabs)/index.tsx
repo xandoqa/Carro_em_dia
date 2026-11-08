@@ -8,21 +8,21 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button } from '../../src/components/base/Button';
+import { Fab } from '../../src/components/base/Fab';
 import {
   EmptyState,
   ErrorNotice,
   Header,
-  Loading,
   Screen,
 } from '../../src/components/base/Screen';
 import { Card } from '../../src/components/base/Surfaces';
 import { Txt } from '../../src/components/base/Text';
 import { VehicleCard } from '../../src/components/domain/VehicleCard';
+import { GarageSkeleton } from '../../src/components/domain/VehicleCardSkeleton';
 import { useGarage } from '../../src/hooks/useGarage';
 import { BrandMark } from '../../src/icons/ServiceIcon';
 import { useTheme } from '../../src/theme/ThemeProvider';
@@ -33,6 +33,10 @@ export default function GaragemScreen() {
   const insets = useSafeAreaInsets();
   const { veiculos, lembretes, contagem, carregando, erro, recarregar } =
     useGarage();
+
+  // O botão flutuante encolhe assim que a lista sai do topo, para não cobrir
+  // o conteúdo enquanto o usuário percorre os veículos.
+  const [rolou, setRolou] = useState(false);
 
   /** Lembrete mais urgente de cada veiculo. A lista ja vem ordenada. */
   const prioritarioPorVeiculo = useMemo(() => {
@@ -47,7 +51,11 @@ export default function GaragemScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
-      <Screen bottomInset={72}>
+      <Screen
+        bottomInset={88}
+        onRefresh={recarregar}
+        onScroll={(y) => setRolou(y > 24)}
+      >
         <Header
           title="Minha garagem"
           subtitle={
@@ -84,7 +92,7 @@ export default function GaragemScreen() {
         ) : null}
 
         {carregando ? (
-          <Loading label="Carregando sua garagem" />
+          <GarageSkeleton />
         ) : veiculos.length === 0 ? (
           <EmptyState
             icon={
@@ -142,15 +150,30 @@ export default function GaragemScreen() {
               ))}
             </View>
 
-            <Button
-              label="Cadastrar outro veiculo"
-              variant="secondary"
-              onPress={() => router.push('/veiculo/novo')}
-              style={{ marginTop: theme.spacing.lg }}
-            />
+            <Txt
+              variant="bodySM"
+              tone="muted"
+              align="center"
+              style={{ marginTop: theme.spacing.xl }}
+            >
+              Puxe a lista para baixo para atualizar.
+            </Txt>
           </>
         )}
       </Screen>
+
+      {/* So aparece com veiculos cadastrados: na tela vazia o convite ja e o
+          botao do estado vazio, e dois convites competiriam. */}
+      {!carregando && veiculos.length > 0 ? (
+        <Fab
+          label="Novo veiculo"
+          icon={
+            <Ionicons name="add" size={26} color={theme.colors.textOnBrand} />
+          }
+          onPress={() => router.push('/veiculo/novo')}
+          compact={rolou}
+        />
+      ) : null}
     </View>
   );
 }

@@ -28,6 +28,7 @@ import { today } from '../../utils/date';
 import { formatDate } from '../../utils/date';
 import { formatKm, parseNumberInput } from '../../utils/format';
 import { Button } from '../base/Button';
+import { useFeedback } from '../base/Feedback';
 import { Field } from '../base/Field';
 import { Card, SectionHeader } from '../base/Surfaces';
 import { Txt } from '../base/Text';
@@ -69,6 +70,7 @@ export function MaintenanceForm({
   onCancelar,
 }: MaintenanceFormProps) {
   const theme = useTheme();
+  const { mostrar } = useFeedback();
   const { veiculos, criarManutencao, atualizarManutencao, veiculoPorId } =
     useGarage();
 
@@ -225,8 +227,10 @@ export function MaintenanceForm({
 
       if (manutencao) {
         await atualizarManutencao(manutencao.id, dados);
+        mostrar('Manutencao atualizada');
       } else {
         await criarManutencao(dados);
+        mostrar('Manutencao registrada');
       }
 
       onSalvo();
