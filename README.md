@@ -15,6 +15,13 @@ para onde o dinheiro está indo.
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
 
+<br>
+
+Desenvolvido em dupla por **Alexandre Rodrigues Costa** e
+**Felipe do Nascimento Vitelli Peixoto**
+<br>
+<sub>Engenharia de Software · Universidade Católica de Brasília</sub>
+
 </div>
 
 ---
@@ -316,6 +323,28 @@ em [`docs/melhorias.md`](docs/melhorias.md).
 ## Equipe
 
 Universidade Católica de Brasília — Engenharia de Software
+
+### Desenvolvimento
+
+**O desenvolvimento do aplicativo e todas as atualizações foram feitos em
+dupla por Alexandre Rodrigues Costa e Felipe do Nascimento Vitelli Peixoto.**
+
+A dupla trabalhou assim, do começo ao fim do projeto:
+
+| Etapa | Responsável |
+|-------|-------------|
+| Escrita do código | Felipe |
+| Correções e ajustes | Alexandre |
+| Análise e revisão do código | Alexandre e Felipe, juntos |
+
+Cada funcionalidade passava pelas três etapas antes de ser integrada na
+`develop`: Felipe implementava, Alexandre revisava e corrigia, e os dois
+analisavam o resultado juntos antes do merge. É essa revisão a quatro olhos
+que está por trás das correções registradas em
+[`docs/melhorias.md`](docs/melhorias.md) — vários dos defeitos listados ali
+apareceram justamente na etapa de análise conjunta.
+
+### Grupo
 
 | Integrante | Matrícula |
 |------------|-----------|

@@ -109,7 +109,25 @@ Ver o grafo:
 git log --oneline --graph --all
 ```
 
-## Combinados do grupo
+## Quem desenvolveu
+
+O desenvolvimento e as atualizações foram feitos em dupla por **Alexandre
+Rodrigues Costa** e **Felipe do Nascimento Vitelli Peixoto**.
+
+O ciclo de cada `feature/` seguiu sempre a mesma ordem:
+
+```
+Felipe implementa  →  Alexandre revisa e corrige  →  os dois analisam juntos
+                                                              │
+                                                     merge em develop
+```
+
+Nenhuma branch foi integrada sem passar pela análise conjunta. Essa etapa é a
+que mais rendeu: boa parte dos defeitos registrados em
+[melhorias.md](melhorias.md) — como o odômetro que não podia ser corrigido e os
+lembretes vencidos que nunca notificavam — apareceu na revisão, não na escrita.
+
+## Combinados da dupla
 
 1. Ninguém faz commit direto em `main` nem em `develop`.
 2. Uma `feature/` por assunto. Se a branch está crescendo demais, provavelmente
@@ -119,3 +137,4 @@ git log --oneline --graph --all
 5. Apagar a branch depois do merge.
 6. Se a mudança altera comportamento, o README ou os docs mudam no mesmo
    commit.
+7. Nada entra na `develop` sem a análise conjunta da dupla.
