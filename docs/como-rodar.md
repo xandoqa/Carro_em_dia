@@ -402,6 +402,10 @@ app recarrega sozinho.
 
 ## 11. Trabalhando em equipe
 
+O desenvolvimento é feito em dupla por **Alexandre** e **Felipe**: Felipe
+escreve o código, Alexandre revisa e corrige, e os dois analisam o resultado
+juntos antes de integrar na `develop`.
+
 ### Antes de começar a mexer
 
 ```bash
@@ -433,6 +437,7 @@ Depois abra o Pull Request no GitHub, com `develop` como destino.
 3. `npm run verify` tem que passar antes do PR.
 4. Merge sempre com `--no-ff`.
 5. Se o comportamento mudou, atualize o README ou os docs no mesmo commit.
+6. Nada entra na `develop` sem a análise conjunta da dupla.
 
 Detalhes completos em [git-flow.md](git-flow.md).
 
