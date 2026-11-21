@@ -402,9 +402,9 @@ app recarrega sozinho.
 
 ## 11. Trabalhando em equipe
 
-O desenvolvimento é feito em dupla por **Alexandre** e **Felipe**: Felipe
-escreve o código, Alexandre revisa e corrige, e os dois analisam o resultado
-juntos antes de integrar na `develop`.
+O desenvolvimento é feito por **Alexandre**, em dupla com **Felipe**:
+Alexandre escreve o código, Felipe revisa e corrige, e os dois analisam o
+resultado juntos antes de integrar na `develop`.
 
 ### Antes de começar a mexer
 

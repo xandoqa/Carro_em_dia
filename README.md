@@ -17,7 +17,7 @@ para onde o dinheiro está indo.
 
 <br>
 
-Desenvolvido em dupla por **Alexandre Rodrigues Costa** e
+Desenvolvido por **Alexandre Rodrigues Costa**, em dupla com
 **Felipe do Nascimento Vitelli Peixoto**
 <br>
 <sub>Engenharia de Software · Universidade Católica de Brasília</sub>
@@ -333,12 +333,12 @@ A dupla trabalhou assim, do começo ao fim do projeto:
 
 | Etapa | Responsável |
 |-------|-------------|
-| Escrita do código | Felipe |
-| Correções e ajustes | Alexandre |
+| Escrita do código | Alexandre |
+| Correções e ajustes | Felipe |
 | Análise e revisão do código | Alexandre e Felipe, juntos |
 
 Cada funcionalidade passava pelas três etapas antes de ser integrada na
-`develop`: Felipe implementava, Alexandre revisava e corrigia, e os dois
+`develop`: Alexandre implementava, Felipe revisava e corrigia, e os dois
 analisavam o resultado juntos antes do merge. É essa revisão a quatro olhos
 que está por trás das correções registradas em
 [`docs/melhorias.md`](docs/melhorias.md) — vários dos defeitos listados ali
