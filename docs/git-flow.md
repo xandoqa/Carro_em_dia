@@ -111,13 +111,14 @@ git log --oneline --graph --all
 
 ## Quem desenvolveu
 
-O desenvolvimento e as atualizações foram feitos em dupla por **Alexandre
-Rodrigues Costa** e **Felipe do Nascimento Vitelli Peixoto**.
+O desenvolvimento e as atualizações foram feitos por **Alexandre Rodrigues
+Costa**, em dupla com **Felipe do Nascimento Vitelli Peixoto**. Todos os
+commits do repositório são de Alexandre.
 
 O ciclo de cada `feature/` seguiu sempre a mesma ordem:
 
 ```
-Felipe implementa  →  Alexandre revisa e corrige  →  os dois analisam juntos
+Alexandre implementa  →  Felipe revisa e corrige  →  os dois analisam juntos
                                                               │
                                                      merge em develop
 ```
