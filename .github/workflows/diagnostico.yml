@@ -68,15 +68,15 @@ jobs:
 
       - name: Bundle iOS (o que o Expo Go do iPhone carrega)
         continue-on-error: true
-        run: npx expo export --platform ios --output-dir /tmp/out-ios
+        run: npx expo export --platform ios --output-dir dist-ios
 
       - name: Bundle Android
         continue-on-error: true
-        run: npx expo export --platform android --output-dir /tmp/out-android
+        run: npx expo export --platform android --output-dir dist-android
 
       - name: Bundle web
         continue-on-error: true
-        run: npx expo export --platform web --output-dir /tmp/out-web
+        run: npx expo export --platform web --output-dir dist-web
 
       - name: Lockfile (gzip + base64, entre marcadores)
         run: |
