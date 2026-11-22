@@ -8,7 +8,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import { Txt } from '../../src/components/base/Text';

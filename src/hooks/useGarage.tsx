@@ -13,7 +13,7 @@
  * possibilidade de ficarem defasados em relacao ao odometro.
  */
 
-import React, {
+import {
   createContext,
   useCallback,
   useContext,

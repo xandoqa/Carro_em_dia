@@ -6,7 +6,6 @@
  * numa faixa rolavel resolve em um toque e deixa a garagem visivel.
  */
 
-import React from 'react';
 import {
   Pressable,
   ScrollView,

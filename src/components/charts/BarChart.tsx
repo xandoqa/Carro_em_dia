@@ -13,7 +13,6 @@
  * - a altura e proporcional ao maior valor do periodo, nunca a um teto fixo.
  */
 
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useReducedMotion,

@@ -7,7 +7,6 @@
  * uma vez e mais rapido e deixa claro o que o app sabe registrar.
  */
 
-import React from 'react';
 import {
   Pressable,
   StyleSheet,

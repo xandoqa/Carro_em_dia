@@ -5,7 +5,6 @@
  * que trocar a escala tipografica valha para o app inteiro.
  */
 
-import React from 'react';
 import {
   Text as RNText,
   type StyleProp,

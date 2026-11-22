@@ -6,7 +6,6 @@
  * vez de enfeite.
  */
 
-import React from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import type { StatusLembrete } from '../../domain/models';

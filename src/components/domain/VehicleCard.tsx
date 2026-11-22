@@ -5,7 +5,6 @@
  * qual veiculo, como ele esta, e quanto falta para o proximo servico.
  */
 
-import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import type { Lembrete, Veiculo } from '../../domain/models';

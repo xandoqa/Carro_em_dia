@@ -11,7 +11,6 @@
  * que pareçam do mesmo conjunto.
  */
 
-import React from 'react';
 import Svg, { Circle, Line, Path, Rect } from 'react-native-svg';
 
 import type { TipoManutencaoId } from '../domain/models';
