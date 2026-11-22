@@ -110,6 +110,23 @@ function portaLivre(porta) {
   });
 }
 
+/**
+ * Como recuperar um arquivo alterado ou ausente.
+ *
+ * Quem clonou com git restaura em um comando. Quem baixou o .zip nao tem
+ * historico nenhum, entao mandar `git checkout` seria dar um comando que
+ * falha — a pior coisa que um diagnostico pode fazer.
+ */
+const USA_GIT = fs.existsSync(path.join(RAIZ, '.git'));
+
+function comoRecuperar(arquivo) {
+  if (USA_GIT) return `git checkout ${arquivo}`;
+  return (
+    `Baixe o projeto de novo e copie ${arquivo} para esta pasta: ` +
+    'https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip'
+  );
+}
+
 /** 'linux' | 'darwin' | 'win32' em nome legível. */
 const SISTEMA = { linux: 'Linux', darwin: 'macOS', win32: 'Windows' }[process.platform]
   ?? process.platform;
@@ -186,8 +203,10 @@ function checarDependencias() {
       titulo: 'package.json ilegível',
       porque: 'O arquivo está ausente ou com JSON inválido (vírgula sobrando, chave não fechada).',
       onde: 'package.json',
-      solucao: 'Restaure o arquivo a partir do repositório.',
-      comando: 'git checkout package.json',
+      solucao: USA_GIT
+        ? 'Restaure o arquivo a partir do repositorio.'
+        : 'Baixe o projeto de novo e copie o arquivo que falta.',
+      comando: comoRecuperar('package.json'),
     });
     return false;
   }
@@ -284,7 +303,7 @@ function checarExpo() {
         solucao:
           "Troque o plugin por 'react-native-worklets/plugin', ou restaure a versão " +
           'do repositório, que detecta o nome certo sozinha.',
-        comando: 'git checkout babel.config.js',
+        comando: comoRecuperar('babel.config.js'),
       });
     } else if (maior < 4 && fixaNovo && !temWorklets) {
       problema({
@@ -294,8 +313,8 @@ function checarExpo() {
           `O Reanimated ${maior} não traz o pacote react-native-worklets, mas o ` +
           'babel.config.js pede o plugin dele. O bundle falha logo no início.',
         onde: 'babel.config.js',
-        solucao: 'Restaure a versão do repositório, que detecta o nome certo sozinha.',
-        comando: 'git checkout babel.config.js',
+        solucao: 'Restaure a versao original do arquivo, que detecta o nome certo sozinha.',
+        comando: comoRecuperar('babel.config.js'),
       });
     } else {
       ok(`Reanimated ${maior} com o plugin de Babel correspondente`);
@@ -324,14 +343,20 @@ function checarArquivosEssenciais() {
         titulo: `Arquivo essencial ausente: ${arquivo}`,
         porque: paraQue,
         onde: arquivo,
-        solucao: 'Restaure o arquivo a partir do repositório.',
-        comando: `git checkout ${arquivo}`,
+        solucao: USA_GIT
+          ? 'Restaure o arquivo a partir do repositorio.'
+          : 'Baixe o projeto de novo e copie o arquivo que falta.',
+        comando: comoRecuperar(arquivo),
       });
     }
   }
   if (!faltou) ok(`${essenciais.length} arquivos essenciais presentes`);
 
   // O Expo falha ao iniciar se o app.json aponta para uma imagem que não existe.
+  // Se o arquivo nem existe, o problema ja foi reportado acima: repetir aqui
+  // so transformaria uma causa em dois alarmes.
+  if (!existe('app.json')) return;
+
   const app = lerJson('app.json');
   if (!app?.expo) {
     problema({
@@ -339,8 +364,10 @@ function checarArquivosEssenciais() {
       titulo: 'app.json sem a chave "expo"',
       porque: 'Todo o conteúdo precisa estar dentro de { "expo": { ... } }.',
       onde: 'app.json',
-      solucao: 'Restaure o arquivo a partir do repositório.',
-      comando: 'git checkout app.json',
+      solucao: USA_GIT
+        ? 'Restaure o arquivo a partir do repositorio.'
+        : 'Baixe o projeto de novo e copie o arquivo que falta.',
+      comando: comoRecuperar('app.json'),
     });
     return;
   }
@@ -359,8 +386,10 @@ function checarArquivosEssenciais() {
       titulo: 'app.json aponta para imagens que não existem',
       porque: 'O Expo falha ao iniciar quando o ícone ou a splash não são encontrados.',
       onde: semImagem.join(', '),
-      solucao: 'Restaure os arquivos de imagem do repositório.',
-      comando: 'git checkout assets/',
+      solucao: USA_GIT
+        ? 'Restaure os arquivos de imagem do repositorio.'
+        : 'Baixe o projeto de novo e copie a pasta assets.',
+      comando: comoRecuperar('assets/'),
     });
   } else {
     ok('Ícone, splash e favicon no lugar');

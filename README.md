@@ -91,15 +91,27 @@ navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
 
 ## Rodando o projeto
 
-**Precisa de:** Node 20 ou mais novo, Git, e o app **Expo Go** no celular (ou um
-emulador Android / simulador iOS).
+**Precisa de:** Node 20 ou mais novo e o app **Expo Go** no celular (ou um
+emulador Android / simulador iOS). Git é opcional.
+
+**Sem Git**, baixando o
+[.zip do projeto](https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip):
+
+```bash
+unzip Carro_em_dia-main.zip
+cd Carro_em_dia-main
+
+npm run setup     # instala, alinha as versões e verifica o ambiente
+npm start         # inicia o app
+```
+
+**Com Git:**
 
 ```bash
 git clone https://github.com/xandoqa/Carro_em_dia.git
 cd Carro_em_dia
-
-npm run setup     # instala, alinha as versões e verifica o ambiente
-npm start         # inicia o app
+npm run setup
+npm start
 ```
 
 Leia o QR Code com o Expo Go (Android) ou com a câmera (iOS). Para abrir
