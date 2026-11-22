@@ -13,6 +13,83 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.6.0] — 2026-11-22
+
+O projeto passa a instalar e compilar numa máquina limpa — verificado, não
+suposto. Até aqui nenhuma instalação tinha sido feita fora da máquina do
+Alexandre, e o ambiente onde o código é mantido não alcança o registro do npm.
+A saída foi usar o **GitHub Actions como máquina de teste**: os servidores do
+GitHub alcançam o npm, e cada problema abaixo foi encontrado lá, com log.
+
+### Corrigido
+- **O CI nunca tinha rodado.** Faltava o `package-lock.json`, e o workflow
+  quebrava no segundo passo desde o primeiro commit — um ❌ em cada commit do
+  repositório.
+- **`package.json` misturado entre dois SDKs**: `expo` no 53, parte das
+  dependências de desenvolvimento no 58. Cada instalação tentava acertar isso
+  com `expo install --fix` e tropeçava no conflito que ela mesma criava. As 23
+  dependências agora estão nas versões que o próprio Expo declara para o
+  **SDK 58** — o único que o Expo Go das lojas abre.
+- **`expo-font` voltou.** O `@expo/vector-icons`, que desenha os ícones das
+  abas, o exige. Eu o removi na 1.5.0 achando que não era usado; o
+  `expo-doctor` apontou.
+- **`react-native-worklets` adicionado**, exigido pelo Reanimated 4.
+- **Três campos do `app.json` que o SDK 58 removeu**: `newArchEnabled` (a nova
+  arquitetura virou obrigatória), `android.edgeToEdgeEnabled` (idem) e
+  `splash`, que virou configuração do plugin `expo-splash-screen`. O
+  `doctor` lê a imagem da splash no lugar novo.
+- **Lint que nunca rodou.** O `.eslintrc.js` estendia `prettier` e carregava o
+  plugin `prettier` sem declarar nenhum dos dois. Fica só o
+  `eslint-config-prettier`; a formatação é do Prettier, em `npm run format`.
+- **Regra nova do React, `set-state-in-effect`, em quatro lugares.** Estado
+  zerado ao abrir uma folha (`UpdateKmSheet`, `DateSheet`) ou ao trocar
+  carro/moto (`useFipe`) passou a ser ajustado durante a renderização,
+  comparando com o valor anterior — o padrão que a documentação do React
+  recomenda. Num efeito, a tela renderizava uma vez com o dado velho. As
+  buscas assíncronas (`useFipe`, `ajustes.tsx`) só mudam estado na resposta.
+- **Cor dos ícones das abas**: o tipo passou a incluir `number`; um auxiliar
+  devolve só texto, que é o que as cores do tema são.
+- **Tipos do Node não eram carregados** — o tsconfig base do Expo 58 restringe
+  os `@types`. Uma referência em `src/types/node.d.ts` os inclui sem
+  sobrescrever a lista do Expo.
+- `import/namespace` do ESLint desligada para TypeScript: acusava
+  `AndroidImportance` como inexistente, sendo que ele existe e compila. O
+  compilador faz essa checagem com mais precisão.
+
+### Alterado
+- **`npm run setup` usa `npm ci`.** Instala exatamente o conjunto do
+  `package-lock.json`, que é o mesmo que passa no CI. Não resolve versão na
+  hora, então não há conflito possível, e apaga o `node_modules` antigo antes.
+  **Deixou de pular sozinho para o SDK mais recente**: versão nova não testada
+  é risco, não melhoria. Atualizar o SDK é decisão e tem comando próprio,
+  `npm run sdk:atualizar`.
+- **CI completo**, a cada push em `main` e `develop`: `npm ci`, conferência
+  das versões com o SDK, `expo-doctor`, teste do plugin de Babel, diagnóstico,
+  tipos, lint, testes, e **compilação para iPhone, Android e web**.
+
+### Adicionado
+- **Fluxo por Pull Request.** Tudo passa a entrar em `develop` e `main` por PR,
+  com o CI rodando antes do merge. Os commits de merge são criados e assinados
+  pelo próprio GitHub, então aparecem como **Verified** com o Alexandre como
+  autor — sem depender de chave de assinatura em máquina nenhuma. A chave do
+  ambiente onde o código é mantido não serve para isso: o GitHub recusou
+  cadastrá-la na conta do Alexandre porque ela já pertence a outra conta.
+- **Tags publicadas pelo GitHub Actions** (`versoes.yml`). A cada push em
+  `main`, a versão do `package.json` vira tag. Na primeira execução, publica
+  também as 19 versões de 1.0.0 a 1.5.6, que existiam só localmente — o envio
+  de tags era bloqueado no ambiente de desenvolvimento.
+
+### Verificado
+- Medido no CI que o plugin de worklets roda **uma vez só**: a saída do Babel
+  com o `babel.config.js` do projeto é idêntica à do preset puro. Rodar duas
+  vezes compilaria sem erro e quebraria as animações no aparelho — por isso o
+  teste virou passo permanente do CI (`scripts/ci/testar-babel.cjs`).
+- Resultado da primeira execução verde: `expo-doctor` 20/20, 0 erros de tipo,
+  0 problemas de lint, 127/127 testes, bundles de iPhone (4,7 MB), Android
+  (4,7 MB) e web gerados.
+
+---
+
 ## [1.5.6] — 2026-11-22
 
 ### Corrigido
@@ -396,6 +473,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.6.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.0
 [1.5.6]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.6
 [1.5.5]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.5
 [1.5.4]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.4

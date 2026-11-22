@@ -165,13 +165,57 @@ que mais rendeu: boa parte dos defeitos registrados em
 [melhorias.md](melhorias.md) — como o odômetro que não podia ser corrigido e os
 lembretes vencidos que nunca notificavam — apareceu na revisão, não na escrita.
 
+## Pull Requests e commits verificados
+
+A partir da versão 1.6.0, tudo entra em `develop` e em `main` **por Pull
+Request**, nunca por `git push` direto:
+
+```
+feature/x  ──PR──▶  develop  ──PR──▶  main
+           squash             merge
+```
+
+| Etapa | Como o PR é mesclado | Por quê |
+|-------|----------------------|---------|
+| `feature/*` → `develop` | **Squash** | A funcionalidade vira um commit só, com descrição completa |
+| `develop` → `main` | **Merge commit** | Preserva o histórico da `develop` e marca a entrega |
+
+Duas coisas vêm de graça com isso:
+
+1. **O CI roda antes do merge.** O PR mostra ✅ ou ❌ para instalação,
+   `expo-doctor`, tipos, lint, testes e compilação para iPhone, Android e web.
+2. **Os commits saem Verified.** Quem cria o commit de merge é o próprio
+   GitHub, que o assina com a chave dele. O autor continua sendo quem abriu o
+   PR. Não depende de nenhuma chave configurada na máquina.
+
+Para mesclar: abra o PR no GitHub, espere o ✅ do CI e use o botão
+*Squash and merge* (feature → develop) ou *Create a merge commit*
+(develop → main).
+
+### Commits anteriores à 1.6.0
+
+Os commits de antes foram enviados por `git push` direto, então aparecem sem
+selo ou como *Unverified* (assinados com uma chave que não é da conta). Para
+deixá-los Verified é preciso assiná-los de novo com uma chave cadastrada na
+conta — e isso reescreve todo o histórico, o que exige `git push --force` em
+todas as branches. Se quiser fazer (de preferência depois de uma entrega, não
+antes):
+
+```bash
+npm run assinar -- --historico
+```
+
+O script cria a chave SSH **na sua máquina**, mostra a pública para cadastrar
+em [github.com/settings/ssh/new](https://github.com/settings/ssh/new) como
+**Signing Key**, assina o histórico e cria uma branch de backup antes.
+
 ## Combinados da dupla
 
-1. Ninguém faz commit direto em `main` nem em `develop`.
+1. Ninguém faz commit direto em `main` nem em `develop` — tudo por PR.
 2. Uma `feature/` por assunto. Se a branch está crescendo demais, provavelmente
    são duas.
-3. Antes de abrir PR, rodar `npm run verify`.
-4. Merge sempre com `--no-ff`.
+3. Antes de abrir PR, rodar `npm run verify`. O CI roda de novo no PR.
+4. Só mesclar com o CI verde.
 5. Apagar a branch depois do merge.
 6. Se a mudança altera comportamento, o README ou os docs mudam no mesmo
    commit.
@@ -180,42 +224,17 @@ lembretes vencidos que nunca notificavam — apareceu na revisão, não na escri
 ## Versões
 
 O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/). Todas
-as versões estão no [CHANGELOG.md](../CHANGELOG.md).
+as versões estão no [CHANGELOG.md](../CHANGELOG.md), e cada uma tem uma tag
+`vX.Y.Z` no GitHub.
 
 ### Publicar uma versão nova
 
-```bash
-# 1. Some a entrada no topo do CHANGELOG.md e atualize "version" no package.json
-# 2. Commit e merge em main, como sempre
-# 3. Crie e publique a tag:
-git tag -a v1.4.1 -m "CarroEmDia 1.4.1 — resumo"
-git push origin v1.4.1
-```
+1. Some a entrada no topo do `CHANGELOG.md` e atualize `"version"` no
+   `package.json`.
+2. Leve para `main` pelo PR, como sempre.
 
-Para enviar de uma vez todas as tags que ainda não subiram:
-
-```bash
-npm run versoes
-```
-
-### Commits verificados
-
-O GitHub mostra o selo **Verified** em commits assinados. Para configurar:
-
-```bash
-npm run assinar
-```
-
-O script cria a chave SSH de assinatura **na sua máquina**, configura o Git e
-mostra a chave pública para você cadastrar em
-[github.com/settings/ssh/new](https://github.com/settings/ssh/new) — escolhendo
-o tipo **Signing Key**, não Authentication Key.
-
-Para assinar também os commits antigos:
-
-```bash
-npm run assinar -- --historico
-```
-
-> Isso reescreve o histórico: todos os hashes mudam e o envio precisa ser
-> forçado. O script cria um branch de backup antes.
+**A tag é criada sozinha.** O workflow
+[`versoes.yml`](../.github/workflows/versoes.yml) roda a cada push em `main` e
+cria `v<versão do package.json>` se ela ainda não existir. Ele também publicou
+as versões de 1.0.0 a 1.5.6, que tinham sido criadas localmente mas nunca
+chegaram ao GitHub.

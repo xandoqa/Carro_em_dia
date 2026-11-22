@@ -10,11 +10,12 @@ Registre o que foi feito, saiba quanto falta para o próximo serviço e veja
 para onde o dinheiro está indo.
 
 [![CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml/badge.svg)](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml)
-![Expo SDK atual](https://img.shields.io/badge/Expo-SDK%20atual-0F4D45)
-![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
+![Expo SDK 58](https://img.shields.io/badge/Expo-SDK%2058-0F4D45)
+![React 19.3](https://img.shields.io/badge/React-19.3-0F4D45)
+![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.6](https://img.shields.io/badge/vers%C3%A3o-1.5.6-0F4D45)
+![versão 1.6.0](https://img.shields.io/badge/vers%C3%A3o-1.6.0-0F4D45)
 
 <br>
 
@@ -151,13 +152,15 @@ Você **não digita nenhum destes nomes** — estão declarados no `package.json
 vêm no `npm run setup`. A lista está aqui porque a disciplina pede as
 dependências documentadas.
 
-> **Sobre as versões abaixo.** Quem manda nelas é o SDK do Expo, não esta
-> tabela: o `npm run setup` pergunta ao Expo qual versão de cada biblioteca
-> combina com o SDK instalado e reescreve o `package.json`. Então a coluna aqui
-> é referência do que o projeto usa hoje — a verdade está sempre no
-> `package.json`, e `npm ls --depth=0` mostra o que está instalado de fato.
+> **Sobre as versões.** O projeto está no **Expo SDK 58**, com **React 19.3**
+> e **React Native 0.88**. Cada versão exata está travada no
+> `package-lock.json`, que é o que o `npm run setup` instala — o mesmo conjunto
+> que o [CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml)
+> instala, verifica e compila para iPhone, Android e web a cada push. Por isso
+> a tabela não repete os números: a fonte é o `package.json`, e
+> `npm ls --depth=0` mostra o que está instalado de fato.
 
-**Dependências de execução (21):**
+**Dependências de execução (23):**
 
 | Pacote | O que faz no projeto |
 |--------|----------------------|
@@ -182,8 +185,10 @@ dependências documentadas.
 | `expo-splash-screen` | Tela de abertura |
 | `expo-status-bar` | Cor da barra de status conforme o tema |
 | `expo-asset` | Carrega ícone e splash — **exigido pelo build web** |
+| `expo-font` | Carrega a fonte dos ícones — **exigido pelo `@expo/vector-icons`** |
+| `react-native-worklets` | Executa as animações fora da thread de JS — **exigido pelo Reanimated 4** |
 
-**Dependências de desenvolvimento (6)** — não vão para o aplicativo:
+**Dependências de desenvolvimento (8)** — não vão para o aplicativo:
 
 | Pacote | Para que |
 |--------|----------|
@@ -192,6 +197,7 @@ dependências documentadas.
 | `tsx` | Roda os testes em TypeScript sem compilar |
 | `eslint` | Análise estática |
 | `eslint-config-expo` | Regras de ESLint do Expo |
+| `eslint-config-prettier` | Desliga as regras de ESLint que brigam com o Prettier |
 | `prettier` | Formatação |
 | `@types/node` | Tipos do Node, usados pelos testes e scripts |
 
@@ -207,7 +213,7 @@ dependências documentadas.
 # Linux e macOS — pelo nvm, que não exige sudo
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 # feche e reabra o terminal
-nvm install 20
+nvm install 22
 ```
 
 No Windows, baixe o instalador LTS em [nodejs.org](https://nodejs.org/) e marque
@@ -255,8 +261,10 @@ cd Carro_em_dia-main
 npm run setup
 ```
 
-Um comando que faz quatro coisas: atualiza o Expo para a versão corrente, baixa
-as 27 dependências, alinha as versões ao SDK instalado e roda o diagnóstico.
+Instala **exatamente** as versões do `package-lock.json` (`npm ci`) — as
+mesmas que passam no CI — e roda o diagnóstico no fim. Não resolve versão
+nenhuma na hora, então não existe conflito possível, e apaga qualquer
+`node_modules` antigo antes, desfazendo instalações pela metade.
 **Demora de 2 a 5 minutos** e baixa cerca de 700 MB — é a única etapa pesada.
 
 Ao final, se aparecer aviso de vulnerabilidades:
@@ -538,6 +546,7 @@ usuário. O detalhamento está em [`docs/melhorias.md`](docs/melhorias.md).
 | **Contraste ilegível no tema Pista** | O botão primário era quase preto sobre quase preto. Achado renderizando os temas lado a lado. | Média |
 | **Faixa de medida apagada** | O elemento assinatura era o menos legível do cartão, e as marcas de escala sumiam justamente quando o prazo vencia. | Baixa |
 | **Gráfico de barras invisível** | No protótipo, `align-items: flex-end` zerava a altura das colunas e as barras não apareciam. | Baixa |
+| **O projeto não instalava numa máquina limpa** | O `package.json` estava metade no SDK 53, metade no 58; o `app.json` tinha três campos que o SDK 58 removeu; faltavam `expo-font`, `react-native-worklets` e `eslint-config-prettier`; e não havia `package-lock.json`, então o CI nunca tinha rodado. Achado usando o GitHub Actions como máquina de teste. | **Alta** |
 
 ### Infraestrutura
 
@@ -545,10 +554,14 @@ usuário. O detalhamento está em [`docs/melhorias.md`](docs/melhorias.md).
 |-------|----------------|
 | **Diagnóstico no terminal** (`npm run doctor`) | Verifica Node, dependências, versão do SDK, plugin de Babel, arquivos, porta e o limite de inotify no Linux. Para cada problema diz o que aconteceu, por quê, qual arquivo, como resolver e o comando. Roda sem dependência instalada — precisa funcionar justamente quando o `npm install` falhou. |
 | **Verificação antes de iniciar** | `npm start` roda o diagnóstico antes do Expo e explica, em vez de deixar o bundler falhar com mensagem crua. |
-| **`npm run setup`** | Instala, alinha as versões ao SDK e verifica, em um comando. A segunda etapa é tão importante quanto a primeira e era fácil de esquecer. |
+| **`npm run setup`** | Instala as versões travadas no `package-lock.json` com `npm ci` e verifica, em um comando. Mesmo conjunto que passa no CI, sem conflito de versão possível. |
+| **CI no GitHub Actions** | A cada push em `main` e `develop`, numa máquina limpa: instala, confere as versões com o SDK, roda o `expo-doctor`, tipos, lint e testes, e **compila o app para iPhone, Android e web**. É a prova de que o projeto funciona fora da máquina de quem o escreveu. |
+| **`package-lock.json`** | Trava as 902 versões exatas. Sem ele, cada instalação resolvia as versões de novo, e a de uma máquina podia não ser a de outra. |
 | **Versionamento semântico** | 11 tags de `v1.0.0` a `v1.4.1`, com CHANGELOG. Antes eram 46 commits sem nenhuma versão: não dava para dizer o que mudou entre dois momentos nem voltar a um estado conhecido. |
 | **Script de publicação de versões** | Envia as tags pendentes de uma vez. |
-| **Script de assinatura** | Configura commits verificados, gerando a chave na máquina de quem roda. |
+| **Fluxo por Pull Request** | Tudo entra em `develop` e `main` por PR, com o CI rodando antes. O GitHub cria e assina os commits de merge, que aparecem como **Verified** com o Alexandre como autor. |
+| **Tags automáticas** | O workflow `versoes.yml` transforma cada versão do `package.json` em tag `vX.Y.Z` ao chegar em `main`. |
+| **Script de assinatura** | Para assinar o histórico anterior à 1.6.0 com uma chave própria (`npm run assinar -- --historico`). Reescreve o histórico; ver `docs/git-flow.md`. |
 | **127 testes** | Cobrem as regras de negócio, rodando no Node sem emulador em menos de dois segundos. Foram eles que revelaram o prazo invisível. |
 | **CI no GitHub Actions** | Typecheck, lint e testes a cada push. |
 | **Execução a partir do `.zip`** | Dá para rodar sem Git. |
@@ -686,8 +699,8 @@ em [`docs/melhorias.md`](docs/melhorias.md).
 
 | Problema | Causa | Solução |
 |----------|-------|---------|
-| *"Project is incompatible with this version of Expo Go"* | SDK instalado mais antigo que o Expo Go da loja | `npm run sdk:atualizar` |
-| `Unable to resolve module <nome>` no navegador | O bundler web carrega arquivos `.web.js` que o celular não usa, e esbarra em pacotes ausentes. **Não afeta o Expo Go.** | `npm run sdk:atualizar` |
+| *"Project is incompatible with this version of Expo Go"* | O Expo Go do celular é de um SDK diferente do 58. Acontece quando a loja já lançou o Expo Go de um SDK mais novo | Atualize o Expo Go na loja; se a loja já estiver num SDK novo, `npm run sdk:atualizar` |
+| `Unable to resolve module <nome>` | Instalação incompleta ou com versões misturadas | `npm run setup` — reinstala as versões travadas, que compilam no CI |
 | `ENOSPC: System limit for number of file watchers` (Linux) | Limite do inotify baixo demais para o Metro | `echo fs.inotify.max_user_watches=524288 \| sudo tee -a /etc/sysctl.conf && sudo sysctl -p` |
 | QR Code não conecta | Celular e computador em redes diferentes, ou firewall | `npm run start:tunnel` |
 | Erro de worklet ao abrir | `babel.config.js` editado à mão | `git checkout babel.config.js && npm run start:limpo` |

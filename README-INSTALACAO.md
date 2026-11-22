@@ -12,12 +12,18 @@ Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
 
 > ### Já tem o projeto e nada funciona?
 >
+> Pegue a versão mais nova do projeto (`git pull`, ou baixe o `.zip` de novo) e
+> rode:
+>
 > ```bash
-> npm run sdk:atualizar
+> npm run setup
 > ```
 >
-> Busca o Expo SDK atual, alinha todas as bibliotecas a ele e verifica. É o que
-> resolve a maior parte dos erros de quem instalou e travou.
+> Ele apaga o `node_modules` que estiver lá e reinstala **exatamente** as
+> versões que passam no [CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml)
+> — onde o projeto é instalado do zero e compilado para iPhone, Android e web a
+> cada mudança. Desfaz qualquer instalação pela metade ou com versões
+> misturadas.
 
 ---
 
@@ -521,19 +527,22 @@ disco**.
 npm run setup
 ```
 
-Esse comando faz três coisas, nesta ordem:
+Esse comando faz duas coisas:
 
 | Etapa | O que faz |
 |-------|-----------|
-| `npm install` | Baixa as bibliotecas listadas no `package.json` |
-| `npx expo install --fix` | Ajusta as versões para combinarem com o SDK do Expo |
+| `npm ci` | Apaga o `node_modules` antigo, se houver, e instala **exatamente** as versões do `package-lock.json` |
 | `node scripts/doctor.mjs` | Verifica se ficou tudo certo e avisa o que falta |
 
-**A segunda etapa é tão importante quanto a primeira.** Ela corrige versões
-incompatíveis que causam a maior parte dos erros estranhos de inicialização.
+O `package-lock.json` é gerado e testado no
+[CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml): a cada
+mudança, uma máquina limpa instala o projeto, roda o `expo-doctor`, os tipos, o
+lint e os testes, e compila o app para iPhone, Android e web. O que você instala
+é o mesmo conjunto que passou ali — **Expo SDK 58, React 19.3, React Native
+0.88**.
 
-> Demora alguns minutos na primeira vez, quase tudo em download. Se ele alterar
-> o `package.json`, está correto — é o esperado.
+> Demora alguns minutos na primeira vez, quase tudo em download. Se o `npm ci`
+> falhar por algum motivo, o script tenta a instalação comum sozinho e avisa.
 
 ### 6.3 Confirmar que deu certo
 
@@ -593,12 +602,12 @@ npm run web
 > sistema do celular) e a câmera/galeria se comportam de forma diferente. Serve
 > para conferir layout rapidamente, não para testar o app de verdade.
 
-> **Se o navegador der `Unable to resolve module ...`:** o bundler web carrega
-> arquivos `.web.js` que o celular nem usa, então ele esbarra em pacotes que o
-> app não precisa. Isso **não afeta o Expo Go**. Resolva com:
+> **Se o navegador der `Unable to resolve module ...`:** é instalação
+> incompleta ou com versões misturadas — a compilação web passa no CI. Reinstale
+> as versões travadas:
 >
 > ```bash
-> npm run sdk:atualizar
+> npm run setup
 > ```
 
 ### 7.5 Teclas úteis enquanto roda
@@ -858,8 +867,8 @@ Esse é o diagnóstico oficial do Expo e checa coisas que o nosso não cobre.
 | Comando | O que faz |
 |---------|-----------|
 | `npm run setup` | Instala com o SDK **atual** e verifica. **Use na primeira vez.** |
-| `npm run sdk:atualizar` | Atualiza o Expo para a versão atual e realinha tudo |
-| `npm run setup:fixo` | Instala com as versões fixadas no `package.json` |
+| `npm run sdk:atualizar` | Sobe o Expo para um SDK **mais novo que o 58** e realinha as bibliotecas. As versões novas **não** foram testadas no CI — use só quando for atualizar o projeto de propósito |
+| `npm run setup:fixo` | Igual ao `npm run setup` (mantido por compatibilidade) |
 | `npm start` | Inicia o app (verifica o ambiente antes) |
 | `npm run start:limpo` | Inicia limpando o cache do bundler |
 | `npm run start:tunnel` | Inicia por túnel, para redes que bloqueiam |
