@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.4.0](https://img.shields.io/badge/vers%C3%A3o-1.4.0-0F4D45)
+![versão 1.4.1](https://img.shields.io/badge/vers%C3%A3o-1.4.1-0F4D45)
 
 <br>
 
@@ -23,7 +23,27 @@ Desenvolvido por **Alexandre Rodrigues Costa**, em dupla com
 <br>
 <sub>Engenharia de Software · Universidade Católica de Brasília</sub>
 
+<br>
+
+**[📘 Como instalar e rodar](README-INSTALACAO.md)** ·
+[Histórico de versões](CHANGELOG.md) ·
+[Arquitetura](docs/arquitetura.md)
+
 </div>
+
+---
+
+> ## 🚀 Quer só rodar o projeto?
+>
+> ### **→ [README-INSTALACAO.md](README-INSTALACAO.md) ←**
+>
+> Tutorial passo a passo para **Linux, Windows e macOS**: o que instalar, como
+> conferir, como executar e como resolver os erros mais comuns. Escrito para
+> quem nunca viu o projeto.
+>
+> **Com pressa?** Baixe o
+> [.zip](https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip),
+> extraia e rode `npm run setup` seguido de `npm start`.
 
 ---
 
@@ -118,7 +138,7 @@ npm start
 Leia o QR Code com o Expo Go (Android) ou com a câmera (iOS). Para abrir
 direto num emulador: `npm run android` ou `npm run ios`.
 
-> **📘 [Tutorial completo de instalação](docs/como-rodar.md)** — passo a passo
+> **📘 [Tutorial completo de instalação](README-INSTALACAO.md)** — passo a passo
 > para **Linux, Windows e macOS**, desde instalar o Node até resolver os erros
 > mais comuns. Se algo não subir, comece por aí.
 
@@ -432,7 +452,7 @@ O fluxo de trabalho da dupla e as regras de branch estão em
 
 ## Documentação
 
-- [**Como instalar e rodar**](docs/como-rodar.md) — tutorial para Linux, Windows e macOS
+- [**Como instalar e rodar**](README-INSTALACAO.md) — tutorial para Linux, Windows e macOS
 - [**Histórico de versões**](CHANGELOG.md) — o que mudou em cada versão
 - [**Validação**](docs/validacao.md) — o que foi testado, o que falta testar e o roteiro de verificação
 - [Melhorias: o que foi corrigido e o que fica mapeado](docs/melhorias.md)

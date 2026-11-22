@@ -1,5 +1,8 @@
 # Como instalar e rodar o CarroEmDia
 
+> Este é o guia de instalação. Para entender o que o projeto é, as decisões
+> técnicas e a arquitetura, veja o [README principal](README.md).
+
 Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
 **macOS**.
 
@@ -675,4 +678,4 @@ Esse é o diagnóstico oficial do Expo e checa coisas que o nosso não cobre.
 1. `npm run doctor` — resolve a maioria dos casos.
 2. Leia a mensagem de erro inteira; o Expo costuma dizer o comando que resolve.
 3. [Documentação do Expo](https://docs.expo.dev) (em inglês).
-4. Veja a [arquitetura do projeto](arquitetura.md) para entender a estrutura.
+4. Veja a [arquitetura do projeto](docs/arquitetura.md) para entender a estrutura.
