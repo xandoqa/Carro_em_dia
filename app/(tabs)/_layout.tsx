@@ -14,6 +14,16 @@ import { Txt } from '../../src/components/base/Text';
 import { useGarage } from '../../src/hooks/useGarage';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
+/**
+ * A cor que a barra de abas entrega ao ícone é tipada como `ColorValue`, que
+ * inclui `null` e `number`; o `@expo/vector-icons` aceita só texto. As cores
+ * da barra vêm do tema, que são sempre texto (`#0F4D45`), então qualquer outra
+ * coisa cai no padrão do ícone em vez de quebrar a tipagem.
+ */
+function corDoIcone(cor: unknown): string | undefined {
+  return typeof cor === 'string' ? cor : undefined;
+}
+
 export default function TabsLayout() {
   const theme = useTheme();
   const { contagem } = useGarage();
@@ -60,7 +70,7 @@ export default function TabsLayout() {
         options={{
           title: 'Veiculos',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="car-sport-outline" size={size} color={color ?? undefined} />
+            <Ionicons name="car-sport-outline" size={size} color={corDoIcone(color)} />
           ),
         }}
       />
@@ -70,7 +80,7 @@ export default function TabsLayout() {
           title: 'Alertas',
           tabBarIcon: ({ color, size }) => (
             <View>
-              <Ionicons name="notifications-outline" size={size} color={color ?? undefined} />
+              <Ionicons name="notifications-outline" size={size} color={corDoIcone(color)} />
               {pendentes > 0 ? (
                 <View
                   style={[
@@ -106,7 +116,7 @@ export default function TabsLayout() {
         options={{
           title: 'Gastos',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color ?? undefined} />
+            <Ionicons name="stats-chart-outline" size={size} color={corDoIcone(color)} />
           ),
         }}
       />

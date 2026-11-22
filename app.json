@@ -6,14 +6,7 @@
     "orientation": "portrait",
     "scheme": "carroemdia",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0F4D45"
-    },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "br.ucb.carroemdia",
@@ -28,7 +21,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0F4D45"
       },
-      "edgeToEdgeEnabled": true,
       "permissions": ["READ_MEDIA_IMAGES", "CAMERA", "POST_NOTIFICATIONS"]
     },
     "web": {
@@ -38,6 +30,15 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0F4D45"
+        }
+      ],
       [
         "expo-notifications",
         {
