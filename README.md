@@ -14,6 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
+![versão 1.4.0](https://img.shields.io/badge/vers%C3%A3o-1.4.0-0F4D45)
 
 <br>
 
@@ -432,6 +433,7 @@ O fluxo de trabalho da dupla e as regras de branch estão em
 ## Documentação
 
 - [**Como instalar e rodar**](docs/como-rodar.md) — tutorial para Linux, Windows e macOS
+- [**Histórico de versões**](CHANGELOG.md) — o que mudou em cada versão
 - [**Validação**](docs/validacao.md) — o que foi testado, o que falta testar e o roteiro de verificação
 - [Melhorias: o que foi corrigido e o que fica mapeado](docs/melhorias.md)
 - [Arquitetura e decisões técnicas](docs/arquitetura.md)

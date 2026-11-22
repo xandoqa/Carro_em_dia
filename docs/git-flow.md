@@ -139,3 +139,46 @@ lembretes vencidos que nunca notificavam — apareceu na revisão, não na escri
 6. Se a mudança altera comportamento, o README ou os docs mudam no mesmo
    commit.
 7. Nada entra na `develop` sem a análise conjunta da dupla.
+
+## Versões
+
+O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/). Todas
+as versões estão no [CHANGELOG.md](../CHANGELOG.md).
+
+### Publicar uma versão nova
+
+```bash
+# 1. Some a entrada no topo do CHANGELOG.md e atualize "version" no package.json
+# 2. Commit e merge em main, como sempre
+# 3. Crie e publique a tag:
+git tag -a v1.4.1 -m "CarroEmDia 1.4.1 — resumo"
+git push origin v1.4.1
+```
+
+Para enviar de uma vez todas as tags que ainda não subiram:
+
+```bash
+npm run versoes
+```
+
+### Commits verificados
+
+O GitHub mostra o selo **Verified** em commits assinados. Para configurar:
+
+```bash
+npm run assinar
+```
+
+O script cria a chave SSH de assinatura **na sua máquina**, configura o Git e
+mostra a chave pública para você cadastrar em
+[github.com/settings/ssh/new](https://github.com/settings/ssh/new) — escolhendo
+o tipo **Signing Key**, não Authentication Key.
+
+Para assinar também os commits antigos:
+
+```bash
+npm run assinar -- --historico
+```
+
+> Isso reescreve o histórico: todos os hashes mudam e o envio precisa ser
+> forçado. O script cria um branch de backup antes.
