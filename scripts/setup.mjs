@@ -2,27 +2,24 @@
 /**
  * Instalação do CarroEmDia.
  *
- * Existe porque a sequência ingênua não funciona:
+ * Caminho normal: `npm ci`. Ele instala EXATAMENTE as versões gravadas no
+ * package-lock.json — o mesmo conjunto que o GitHub Actions instala, verifica
+ * e compila para iOS, Android e web a cada push. Não resolve nada, então não
+ * existe conflito de versão possível, e o resultado é igual em qualquer
+ * máquina. Ele também apaga um node_modules antigo antes de instalar, o que
+ * desfaz qualquer instalação pela metade.
  *
- *   npm install expo@latest && npm install && npx expo install --fix
+ * O que este script NÃO faz mais: pular para o SDK mais recente por conta
+ * própria. As versões de hoje (Expo SDK 58) são as que foram testadas; um SDK
+ * que saia amanhã não foi. Atualizar o SDK é uma decisão, e tem comando
+ * próprio: `npm run sdk:atualizar`.
  *
- * O `npm install` do meio falha com ERESOLVE sempre que o SDK novo exige uma
- * versão de biblioteca que o `package.json` ainda prende na versão antiga —
- * e o passo que consertaria exatamente isso (`expo install --fix`) só roda
- * depois, ou seja, nunca. Caso real: o SDK 58 traz `react-native@0.88`, que
- * pede `@types/react@^19.1.1`, enquanto o `package.json` prendia `~19.0.10`.
- *
- * A ordem aqui é outra. Primeiro instala tolerando o conflito, só para ter o
- * CLI do Expo em mãos; depois pergunta ao Expo quais versões são as certas
- * para o SDK instalado, o que reescreve o `package.json`; e só então faz a
- * instalação limpa, que agora resolve sem conflito nenhum.
- *
- * Roda em Node puro, sem dependência instalada — ele precisa funcionar
- * justamente quando não há `node_modules`.
+ * Node puro, sem dependência instalada — precisa rodar quando não há
+ * node_modules.
  *
  * Uso:
- *   node scripts/setup.mjs           instala no SDK mais recente (padrão)
- *   node scripts/setup.mjs --fixo    mantém as versões do package.json
+ *   node scripts/setup.mjs                 instalação padrão (npm ci)
+ *   node scripts/setup.mjs --atualizar-sdk sobe o Expo para o SDK mais recente
  */
 
 import { spawnSync } from 'node:child_process';
@@ -32,7 +29,7 @@ import { fileURLToPath } from 'node:url';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ARGS = new Set(process.argv.slice(2));
-const FIXO = ARGS.has('--fixo');
+const ATUALIZAR_SDK = ARGS.has('--atualizar-sdk');
 
 const cor = process.stdout.isTTY && !process.env.NO_COLOR;
 const C = {
@@ -45,66 +42,49 @@ const C = {
   azul: cor ? '\x1b[36m' : '',
 };
 
-let etapaAtual = 0;
-const TOTAL = FIXO ? 3 : 4;
-
+let etapa = 0;
 function titulo(texto) {
-  etapaAtual += 1;
+  etapa += 1;
   console.log('');
-  console.log(`${C.azul}${C.forte}[${etapaAtual}/${TOTAL}] ${texto}${C.reset}`);
+  console.log(`${C.azul}${C.forte}[${etapa}] ${texto}${C.reset}`);
 }
-
-function nota(texto) {
-  console.log(`${C.fraco}      ${texto}${C.reset}`);
-}
-
-function ok(texto) {
-  console.log(`${C.verde}      ✓ ${texto}${C.reset}`);
-}
-
-function aviso(texto) {
-  console.log(`${C.amarelo}      ! ${texto}${C.reset}`);
-}
+const nota = (t) => console.log(`${C.fraco}    ${t}${C.reset}`);
+const ok = (t) => console.log(`${C.verde}    ✓ ${t}${C.reset}`);
+const aviso = (t) => console.log(`${C.amarelo}    ! ${t}${C.reset}`);
 
 /**
- * Roda um comando mostrando a saída ao vivo. Devolve o código de saída e,
- * quando falha, também a saída capturada — precisamos dela para reconhecer o
- * ERESOLVE e decidir o que fazer, mas não queremos esconder o progresso de
- * quem está olhando o terminal durante um download de minutos.
+ * Roda um comando com a saída ao vivo. Com `capturar`, também guarda a
+ * saída para reconhecer o tipo de erro — e a reimprime se falhar, para nada
+ * ficar escondido.
  */
-function rodar(comando, argumentos, { capturar = false } = {}) {
-  console.log(`${C.fraco}      $ ${comando} ${argumentos.join(' ')}${C.reset}`);
-  const r = spawnSync(comando, argumentos, {
+function rodar(cmd, args, { capturar = false } = {}) {
+  console.log(`${C.fraco}    $ ${cmd} ${args.join(' ')}${C.reset}`);
+  const r = spawnSync(cmd, args, {
     cwd: RAIZ,
     stdio: capturar ? ['inherit', 'pipe', 'pipe'] : 'inherit',
     shell: process.platform === 'win32',
     encoding: 'utf8',
   });
-  if (capturar) {
-    const saida = `${r.stdout ?? ''}${r.stderr ?? ''}`;
-    if (r.status !== 0) process.stderr.write(saida);
-    return { codigo: r.status ?? 1, saida };
-  }
-  return { codigo: r.status ?? 1, saida: '' };
+  const saida = capturar ? `${r.stdout ?? ''}${r.stderr ?? ''}` : '';
+  if (capturar && r.status !== 0) process.stderr.write(saida);
+  return { codigo: r.status ?? 1, saida };
 }
 
-function ehConflitoDePeer(saida) {
-  return /ERESOLVE|could not resolve dependency|conflicting peer dependency/i.test(saida);
-}
+const conflito = (s) =>
+  /ERESOLVE|could not resolve dependency|conflicting peer dependency/i.test(s);
 
-function encerrar(mensagem, detalhe) {
+function parar(oque, fazer) {
   console.log('');
-  console.log(`${C.vermelho}${C.forte}A instalação parou aqui.${C.reset}`);
+  console.log(`${C.vermelho}${C.forte}A instalação parou.${C.reset}`);
   console.log('');
-  console.log(`  ${C.forte}O que aconteceu${C.reset}`);
-  console.log(`  ${mensagem}`);
-  if (detalhe) {
+  console.log(`  ${C.forte}O que aconteceu:${C.reset} ${oque}`);
+  if (fazer) {
     console.log('');
-    console.log(`  ${C.forte}O que fazer${C.reset}`);
-    console.log(`  ${detalhe}`);
+    console.log(`  ${C.forte}O que fazer:${C.reset}`);
+    for (const linha of fazer.split('\n')) console.log(`  ${linha}`);
   }
   console.log('');
-  console.log(`  Se não resolver, rode ${C.forte}npm run doctor${C.reset} e me mande a saída.`);
+  console.log(`  Se não resolver: ${C.forte}npm run doctor${C.reset} e mande a saída.`);
   console.log('');
   process.exit(1);
 }
@@ -113,120 +93,91 @@ function encerrar(mensagem, detalhe) {
 
 console.log('');
 console.log(`${C.forte}Instalação do CarroEmDia${C.reset}`);
-console.log(
-  `${C.fraco}${FIXO ? 'Modo fixo: mantém as versões do package.json.' : 'Instala no SDK mais recente do Expo.'}${C.reset}`,
-);
 
 if (!fs.existsSync(path.join(RAIZ, 'package.json'))) {
-  encerrar(
-    'Não há package.json nesta pasta, então este não é o diretório do projeto.',
-    'Entre na pasta do projeto antes de rodar. Se você extraiu o .zip, ela costuma\n  se chamar Carro_em_dia-main, e não Carro_em_dia.',
+  parar(
+    'não há package.json aqui — esta não é a pasta do projeto.',
+    'Entre na pasta certa. Se veio do .zip, ela se chama Carro_em_dia-main.',
   );
 }
 
+const versaoNode = Number(process.versions.node.split('.')[0]);
+if (versaoNode < 20) {
+  parar(
+    `o Node instalado é o ${process.versions.node}, e o projeto exige 20 ou mais novo.`,
+    'Linux e macOS:  nvm install 22 && nvm use 22\n' +
+      'Windows:        baixe o instalador LTS em https://nodejs.org',
+  );
+}
+
+const temLock = fs.existsSync(path.join(RAIZ, 'package-lock.json'));
+
 /* -------------------------------------------------------------------------- */
 
-if (!FIXO) {
-  titulo('Atualizando o Expo para a versão mais recente');
-  nota('A versão presa no package.json envelhece, e o Expo Go das lojas');
-  nota('recusa projetos de SDK antigo. Quem sabe qual é a atual é o npm.');
+if (ATUALIZAR_SDK) {
+  titulo('Atualizando o Expo para o SDK mais recente');
+  aviso('As versões novas NÃO foram testadas no CI. Rode npm run verify depois.');
 
-  const r = rodar('npm', ['install', 'expo@latest', '--save', '--legacy-peer-deps'], {
+  let r = rodar('npm', ['install', 'expo@latest', '--save', '--legacy-peer-deps'], {
     capturar: true,
   });
+  if (r.codigo !== 0) parar('não foi possível baixar o Expo mais recente.', 'Confira a internet.');
+
+  titulo('Alinhando as bibliotecas ao SDK novo');
+  r = rodar('npx', ['expo', 'install', '--fix']);
   if (r.codigo !== 0) {
-    encerrar(
-      'Não foi possível baixar a versão mais recente do Expo.',
-      'Verifique a conexão. Se estiver sem internet agora, use as versões já\n  fixadas no projeto:  npm run setup:fixo',
-    );
+    aviso('O alinhamento automático tropeçou. Tentando instalar tolerando conflitos.');
+    r = rodar('npm', ['install', '--legacy-peer-deps']);
+    if (r.codigo === 0) r = rodar('npx', ['expo', 'install', '--fix']);
+    if (r.codigo !== 0) parar('não foi possível alinhar as versões ao SDK novo.');
   }
-  ok('Expo atualizado no package.json');
-}
+  ok('SDK atualizado');
+} else if (temLock) {
+  titulo('Instalando as versões testadas (npm ci)');
+  nota('Exatamente o conjunto do package-lock.json — o mesmo que passa no CI.');
+  nota('Cerca de 700 MB. De 2 a 5 minutos.');
 
-/* -------------------------------------------------------------------------- */
+  const r = rodar('npm', ['ci', '--no-audit', '--no-fund'], { capturar: true });
 
-titulo('Instalando as dependências');
-nota('Esta é a etapa longa: são cerca de 700 MB. De 2 a 5 minutos.');
-
-let r = rodar('npm', ['install'], { capturar: true });
-
-if (r.codigo !== 0 && ehConflitoDePeer(r.saida)) {
-  console.log('');
-  aviso('Conflito de versões entre bibliotecas (ERESOLVE).');
-  nota('Normal depois de trocar de SDK: alguma versão do package.json ainda');
-  nota('é a do SDK anterior. Instalando assim mesmo para ter o CLI do Expo —');
-  nota('o próximo passo acerta as versões e a instalação final fica limpa.');
-  console.log('');
-  r = rodar('npm', ['install', '--legacy-peer-deps'], { capturar: true });
-
-  if (r.codigo !== 0) {
-    encerrar(
-      'A instalação falhou mesmo ignorando o conflito de versões.',
-      'Apague o que ficou pela metade e tente de novo:\n\n' +
-        '    rm -rf node_modules package-lock.json\n' +
-        '    npm run setup\n\n' +
-        '  No Windows (PowerShell):\n\n' +
-        '    Remove-Item -Recurse -Force node_modules, package-lock.json\n' +
-        '    npm run setup',
-    );
+  if (r.codigo === 0) {
+    ok('Dependências instaladas');
+  } else {
+    // npm ci só falha por três motivos práticos: lock fora de sincronia com o
+    // package.json (alguém editou um sem o outro), rede, ou disco.
+    console.log('');
+    aviso('O npm ci falhou. Tentando a instalação comum.');
+    let r2 = rodar('npm', ['install', '--no-audit', '--no-fund'], { capturar: true });
+    if (r2.codigo !== 0 && conflito(r2.saida)) {
+      aviso('Conflito de versões — instalando tolerando o conflito.');
+      r2 = rodar('npm', ['install', '--legacy-peer-deps', '--no-audit', '--no-fund']);
+    }
+    if (r2.codigo !== 0) {
+      parar(
+        'nenhuma das formas de instalação funcionou.',
+        'Apague o que ficou pela metade e tente de novo:\n\n' +
+          '  rm -rf node_modules\n' +
+          '  npm run setup\n\n' +
+          'No Windows (PowerShell):  Remove-Item -Recurse -Force node_modules',
+      );
+    }
+    aviso('Instalado pelo caminho alternativo. Rode npm run verify para conferir.');
   }
-  aviso('Instalado com versões ainda desalinhadas — corrigidas no passo seguinte.');
-} else if (r.codigo !== 0) {
-  encerrar(
-    'O npm install falhou por um motivo que não é conflito de versões.',
-    'A causa costuma estar nas últimas linhas acima. As mais comuns:\n\n' +
-      '  • Sem internet ou proxy bloqueando o registro do npm\n' +
-      '  • Permissão negada: não use sudo; veja a seção 10 do README-INSTALACAO.md\n' +
-      '  • Disco cheio',
-  );
 } else {
+  titulo('Instalando as dependências');
+  nota('Sem package-lock.json: o npm vai resolver as versões agora.');
+  let r = rodar('npm', ['install', '--no-audit', '--no-fund'], { capturar: true });
+  if (r.codigo !== 0 && conflito(r.saida)) {
+    aviso('Conflito de versões — instalando tolerando o conflito.');
+    r = rodar('npm', ['install', '--legacy-peer-deps', '--no-audit', '--no-fund']);
+  }
+  if (r.codigo !== 0) parar('o npm install falhou.', 'Veja as últimas linhas acima.');
   ok('Dependências instaladas');
 }
 
 /* -------------------------------------------------------------------------- */
 
-titulo('Alinhando as bibliotecas ao SDK instalado');
-nota('O Expo sabe qual versão de cada biblioteca combina com o SDK. Este');
-nota('passo reescreve o package.json com essas versões — é ele que desfaz');
-nota('o conflito, e por isso vem antes da instalação final.');
-
-r = rodar('npx', ['expo', 'install', '--fix']);
-if (r.codigo !== 0) {
-  encerrar(
-    'Não foi possível alinhar as versões das bibliotecas.',
-    'Tente rodar sozinho, para ver a mensagem inteira:\n\n' +
-      '    npx expo install --fix\n\n' +
-      '  Se ele reclamar de rede, é a consulta à API do Expo: tente de novo\n' +
-      '  com a internet estável.',
-  );
-}
-ok('Versões alinhadas');
-
-/* -------------------------------------------------------------------------- */
-
-if (!FIXO) {
-  titulo('Instalação final, já sem conflito');
-  nota('Agora que as versões combinam, uma instalação limpa, sem exceções.');
-
-  r = rodar('npm', ['install'], { capturar: true });
-  if (r.codigo !== 0 && ehConflitoDePeer(r.saida)) {
-    aviso('Ainda há um conflito que o Expo não resolveu sozinho.');
-    nota('O projeto funciona assim, mas vale olhar depois da apresentação.');
-    rodar('npm', ['install', '--legacy-peer-deps']);
-  } else if (r.codigo !== 0) {
-    encerrar(
-      'A instalação final falhou.',
-      'Apague e recomece:\n\n    rm -rf node_modules package-lock.json\n    npm run setup',
-    );
-  } else {
-    ok('Instalação limpa');
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-
 console.log('');
-console.log(`${C.verde}${C.forte}Instalação concluída. Diagnóstico a seguir.${C.reset}`);
+console.log(`${C.verde}${C.forte}Instalação concluída. Diagnóstico:${C.reset}`);
 
 const diag = spawnSync(process.execPath, [path.join(RAIZ, 'scripts', 'doctor.mjs')], {
   cwd: RAIZ,
@@ -235,7 +186,10 @@ const diag = spawnSync(process.execPath, [path.join(RAIZ, 'scripts', 'doctor.mjs
 
 if (diag.status === 0) {
   console.log('');
-  console.log(`${C.forte}Pronto. Para iniciar:${C.reset}  npm start`);
+  console.log(`${C.forte}Pronto.${C.reset}`);
+  console.log(`  Celular (Expo Go):  ${C.forte}npm start${C.reset}`);
+  console.log(`  Navegador:          ${C.forte}npm run web${C.reset}`);
+  console.log(`  Emulador Android:   ${C.forte}npm run android${C.reset}`);
   console.log('');
 }
 

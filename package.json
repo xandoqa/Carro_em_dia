@@ -1,6 +1,6 @@
 {
   "name": "carro-em-dia",
-  "version": "1.5.6",
+  "version": "1.6.0",
   "private": true,
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
@@ -25,8 +25,8 @@
     "tokens": "tsx scripts/export-tokens.ts",
     "versoes": "bash scripts/publicar-versoes.sh",
     "assinar": "bash scripts/assinar-commits.sh",
-    "setup:fixo": "node scripts/setup.mjs --fixo",
-    "sdk:atualizar": "node scripts/setup.mjs"
+    "setup:fixo": "node scripts/setup.mjs",
+    "sdk:atualizar": "node scripts/setup.mjs --atualizar-sdk"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -34,7 +34,7 @@
     "expo": "~58.0.26",
     "expo-asset": "~58.0.21",
     "expo-constants": "~58.0.16",
-    "expo-font": "~58.0.0",
+    "expo-font": "~58.0.12",
     "expo-haptics": "~58.0.8",
     "expo-image-picker": "~58.0.10",
     "expo-linking": "~58.0.17",
@@ -50,7 +50,8 @@
     "react-native-safe-area-context": "~5.11.1",
     "react-native-screens": "~4.30.1",
     "react-native-svg": "15.16.0",
-    "react-native-web": "^0.21.4"
+    "react-native-web": "^0.21.4",
+    "react-native-worklets": "0.13.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

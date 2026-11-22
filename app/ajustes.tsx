@@ -8,7 +8,7 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -35,16 +35,24 @@ export default function AjustesScreen() {
   const [antecedencia, setAntecedencia] = useState(7);
   const [carregandoExemplo, setCarregandoExemplo] = useState(false);
 
-  const carregarPreferencias = useCallback(async () => {
-    const prefs = await preferencesRepository.get();
-    setNotificacoes(prefs.notificacoes);
-    setAntecedencia(prefs.antecedenciaDias);
-    setAgendadas((await notificationService.listarAgendados()).length);
-  }, []);
-
+  // Lê as preferências salvas no aparelho. O estado só muda dentro do
+  // callback da resposta — nunca no corpo do efeito — e `ativo` impede que
+  // uma resposta atrasada escreva numa tela que já foi fechada.
   useEffect(() => {
-    void carregarPreferencias();
-  }, [carregarPreferencias]);
+    let ativo = true;
+    void Promise.all([
+      preferencesRepository.get(),
+      notificationService.listarAgendados(),
+    ]).then(([prefs, agendados]) => {
+      if (!ativo) return;
+      setNotificacoes(prefs.notificacoes);
+      setAntecedencia(prefs.antecedenciaDias);
+      setAgendadas(agendados.length);
+    });
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   async function alternarNotificacoes(valor: boolean) {
     setNotificacoes(valor);

@@ -1,15 +1,23 @@
 name: CI
 
+# Roda a cada push e pull request em main e develop. Instala exatamente as
+# versões do package-lock.json (npm ci) — as mesmas que `npm run setup`
+# instala na máquina de quem usa o projeto — e prova, numa máquina limpa,
+# que o projeto instala, passa na verificação e compila o JavaScript que o
+# Expo Go (iOS e Android) e o navegador carregam.
+
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
 jobs:
   verificar:
-    name: Tipos, lint e testes
+    name: Instalar, verificar e compilar
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -17,13 +25,22 @@ jobs:
       - name: Preparar Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Instalar dependencias
-        run: npm ci
+      - name: Instalar dependencias (versoes travadas)
+        run: npm ci --no-audit --no-fund
 
-      - name: Verificar tipos
+      - name: Conferir versoes com o SDK do Expo
+        run: npx expo install --check
+
+      - name: expo-doctor
+        run: npx expo-doctor
+
+      - name: Diagnostico do projeto
+        run: node scripts/doctor.mjs
+
+      - name: Tipos
         run: npm run typecheck
 
       - name: Lint
@@ -31,3 +48,12 @@ jobs:
 
       - name: Testes de dominio
         run: npm test
+
+      - name: Compilar para iOS
+        run: npx expo export --platform ios --output-dir dist-ios
+
+      - name: Compilar para Android
+        run: npx expo export --platform android --output-dir dist-android
+
+      - name: Compilar para web
+        run: npx expo export --platform web --output-dir dist-web

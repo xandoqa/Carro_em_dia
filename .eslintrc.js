@@ -19,4 +19,19 @@ module.exports = {
   rules: {
     'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
+  overrides: [
+    {
+      // Em TypeScript, quem confere se um nome existe dentro de um import é o
+      // próprio compilador (`npm run typecheck`), e ele segue reexportações
+      // que o eslint-plugin-import não segue — com o expo-notifications, a
+      // regra acusava AndroidImportance como inexistente, sendo que ele existe
+      // e compila. A documentação do typescript-eslint recomenda desligar.
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        'import/namespace': 'off',
+        'import/named': 'off',
+        'import/default': 'off',
+      },
+    },
+  ],
 };

@@ -28,7 +28,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0F4D45"
       },
-      "edgeToEdgeEnabled": true,
       "permissions": ["READ_MEDIA_IMAGES", "CAMERA", "POST_NOTIFICATIONS"]
     },
     "web": {

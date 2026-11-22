@@ -7,7 +7,7 @@
  * nao anda para tras e aceitar isso bagunçaria todos os lembretes.
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -44,14 +44,18 @@ export function UpdateKmSheet({
   const [correcaoPendente, setCorrecaoPendente] = useState<number | null>(null);
 
   // Comeca em branco a cada abertura, em vez de manter o que foi digitado
-  // numa tentativa anterior.
-  useEffect(() => {
+  // numa tentativa anterior. Feito na renderizacao, comparando com o valor
+  // anterior de `visible` — o padrao do React para ajustar estado quando uma
+  // prop muda. Num efeito, a folha abriria por um quadro com o texto velho.
+  const [visivelAntes, setVisivelAntes] = useState(visible);
+  if (visible !== visivelAntes) {
+    setVisivelAntes(visible);
     if (visible) {
       setValor('');
       setErro(undefined);
       setCorrecaoPendente(null);
     }
-  }, [visible]);
+  }
 
   const minimo = kmMinimoPermitido(veiculo.id);
 
