@@ -91,28 +91,51 @@ navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
 
 ## Rodando o projeto
 
-**Precisa de:** Node 20 ou mais novo, e o app **Expo Go** no celular (ou um
+**Precisa de:** Node 20 ou mais novo, Git, e o app **Expo Go** no celular (ou um
 emulador Android / simulador iOS).
 
 ```bash
 git clone https://github.com/xandoqa/Carro_em_dia.git
 cd Carro_em_dia
 
-npm install
-
-# Alinha as versões das bibliotecas ao SDK do Expo instalado.
-# Importante: rode isso na primeira vez.
-npx expo install --fix
-
-npm start
+npm run setup     # instala, alinha as versões e verifica o ambiente
+npm start         # inicia o app
 ```
 
 Leia o QR Code com o Expo Go (Android) ou com a câmera (iOS). Para abrir
 direto num emulador: `npm run android` ou `npm run ios`.
 
-> **📘 [Guia completo de execução](docs/como-rodar.md)** — passo a passo desde
-> a instalação do Node, roteiro para testar cada requisito da disciplina e
-> solução para os erros mais comuns. Se algo não subir, comece por aí.
+> **📘 [Tutorial completo de instalação](docs/como-rodar.md)** — passo a passo
+> para **Linux, Windows e macOS**, desde instalar o Node até resolver os erros
+> mais comuns. Se algo não subir, comece por aí.
+
+### Se algo der errado
+
+```bash
+npm run doctor
+```
+
+O diagnóstico verifica ambiente, dependências, versões, arquivos e porta. Para
+cada problema ele diz **o que aconteceu, por quê, qual arquivo está envolvido,
+como resolver e o comando exato** para executar. Roda sem nenhuma dependência
+instalada — justamente para funcionar quando o `npm install` falhou.
+
+### Configuração do ambiente
+
+**Não há nenhuma.** O projeto não usa variáveis de ambiente, arquivo `.env`,
+banco de dados nem servidor próprio. Tudo que é configurável está em arquivos
+versionados:
+
+| Arquivo | Para que serve |
+|---------|----------------|
+| `app.json` | Nome, ícone, splash, permissões e plugins do Expo |
+| `package.json` | Dependências e comandos |
+| `babel.config.js` | Transformações de código (detecta o plugin de worklets sozinho) |
+| `tsconfig.json` | Regras do TypeScript |
+| `.eslintrc.js` / `.prettierrc` | Padrão de código |
+
+A única chamada externa é a consulta à tabela FIPE pela BrasilAPI, que é pública
+e não exige cadastro nem chave.
 
 ### Primeiro uso
 
@@ -123,10 +146,7 @@ mais rápido para ver tudo funcionando, e o que usamos na apresentação.
 ### Verificando
 
 ```bash
-npm test         # 127 testes das regras de negócio, sem emulador
-npm run typecheck
-npm run lint
-npm run verify   # os três acima
+npm run verify   # typecheck + lint + os 127 testes
 ```
 
 ## Requisitos da disciplina
@@ -268,8 +288,30 @@ design/
   preview/        preview dos quatro temas no navegador
 docs/             arquitetura, planejamento, Git Flow, documentação original
 assets/images/    ícone, splash, favicon
+scripts/          diagnóstico e exportação de tokens
 .github/          CI e modelos de issue e PR
 ```
+
+### Principais módulos
+
+| Módulo | Responsabilidade | Depende de |
+|--------|------------------|------------|
+| `src/domain/models.ts` | Entidades e intervalos padrão por tipo de serviço | nada |
+| `src/domain/reminders.ts` | Projeta o próximo serviço e classifica o estado | `models`, `utils/date` |
+| `src/domain/expenses.ts` | Agrega gastos, consumo médio e custo por km | `models`, `utils/date` |
+| `src/domain/odometer.ts` | Valida leituras de odômetro e correções | `models` |
+| `src/domain/notificationSchedule.ts` | Decide **quando** avisar | `models`, `utils/date` |
+| `src/data/storage.ts` | Camada fina sobre o AsyncStorage | AsyncStorage |
+| `src/data/garageRepository.ts` | CRUD de veículos e manutenções | `storage`, `domain` |
+| `src/services/http.ts` | Cliente sobre `fetch`, com timeout e retentativa | nada |
+| `src/services/fipeService.ts` | Tabela FIPE com cache de 7 dias | `http`, `storage` |
+| `src/services/notificationService.ts` | Conversa com o sistema operacional | `expo-notifications`, `domain` |
+| `src/hooks/useGarage.tsx` | Estado compartilhado; deriva os lembretes | `data`, `domain`, `services` |
+| `src/theme/` | Tokens, paletas e provedor de tema | nada (exceto `fonts.ts`) |
+
+**A regra que organiza tudo:** `src/domain/` não importa nada do React Native.
+É isso que permite rodar as regras de negócio no Node, sem emulador — e é por
+isso que os 127 testes rodam em menos de dois segundos.
 
 ## Tecnologias
 
@@ -309,9 +351,76 @@ Em ordem de utilidade:
 Cada um está detalhado, com o porquê e o caminho,
 em [`docs/melhorias.md`](docs/melhorias.md).
 
+## Comandos
+
+| Comando | Finalidade |
+|---------|------------|
+| `npm run setup` | Instala, alinha versões e verifica. **Primeira vez.** |
+| `npm start` | Inicia o app, verificando o ambiente antes |
+| `npm run start:limpo` | Inicia limpando o cache do bundler |
+| `npm run start:tunnel` | Inicia por túnel, para redes que isolam dispositivos |
+| `npm run android` / `ios` / `web` | Abre no emulador, simulador ou navegador |
+| `npm run doctor` | Diagnostica ambiente, dependências, versões e porta |
+| `npm run doctor:expo` | Diagnóstico oficial do Expo |
+| `npm run fix:deps` | Alinha as bibliotecas ao SDK instalado |
+| `npm run verify` | typecheck + lint + testes |
+| `npm test` | Os 127 testes das regras de negócio |
+| `npm run typecheck` | Só a checagem de tipos |
+| `npm run lint` / `lint:fix` | Padrão de código |
+| `npm run format` | Formata com Prettier |
+| `npm run tokens` | Regera `design/tokens/tokens.json` a partir de `src/theme` |
+
+## Problemas conhecidos
+
+| Problema | Causa | Solução |
+|----------|-------|---------|
+| *"Project is incompatible with this version of Expo Go"* | O `package.json` fixa o SDK 53; o Expo Go da loja acompanha o SDK mais recente | `npm install expo@latest && npx expo install --fix` |
+| `ENOSPC: System limit for number of file watchers` (Linux) | Limite do inotify baixo demais para o Metro | `echo fs.inotify.max_user_watches=524288 \| sudo tee -a /etc/sysctl.conf && sudo sysctl -p` |
+| QR Code não conecta | Celular e computador em redes diferentes, ou firewall | `npm run start:tunnel` |
+| Erro de worklet ao abrir | `babel.config.js` editado à mão | `git checkout babel.config.js && npm run start:limpo` |
+| Notificações não chegam | Permissão negada, ou economia de bateria agressiva no Android | Ajustes do sistema → Expo Go → permitir notificações |
+| Lista da FIPE vazia | BrasilAPI fora do ar ou celular sem internet | O cadastro continua funcionando com digitação manual |
+| `npm run ios` falha | Simulador de iPhone só existe no macOS | Use Android ou um iPhone real com Expo Go |
+
+Todos são detectados pelo `npm run doctor`, que já entrega o comando.
+
+### Limitações conhecidas do app
+
+- **Sem login e sem sincronização.** Os dados ficam no aparelho; trocar de
+  celular não leva o histórico junto.
+- **As fotos apontam para o cache do sistema.** Se o sistema limpar o cache, a
+  imagem da nota fiscal se perde. Ver [`docs/melhorias.md`](docs/melhorias.md),
+  item B.
+- **Não há exportação do histórico** ainda.
+- **Os testes cobrem as regras de negócio, não a interface.** A UI é verificada
+  à mão e pelo protótipo em HTML.
+
+## Manutenção e futuras implementações
+
+| Quero mudar... | Mexa em |
+|----------------|---------|
+| Uma tela | `app/` — o arquivo define a rota |
+| Cores, fontes, espaçamento | `src/theme/` — depois rode `npm run tokens` |
+| Uma regra de negócio | `src/domain/` — **e escreva o teste junto** |
+| Como os dados são salvos | `src/data/` |
+| A consulta à FIPE ou as notificações | `src/services/` |
+| Um componente reaproveitável | `src/components/` |
+
+**Ao adicionar uma funcionalidade:** se ela tiver regra de negócio, ela vai para
+`src/domain/` com teste. Se precisar tocar a plataforma, vai para
+`src/services/`. Manter essa separação é o que permite testar sem emulador.
+
+**Ao trocar o armazenamento por um backend:** a interface de
+`src/data/garageRepository.ts` já é assíncrona de propósito. Reimplemente as
+funções chamando a API e nenhuma tela precisa mudar.
+
+O fluxo de trabalho da dupla e as regras de branch estão em
+[`docs/git-flow.md`](docs/git-flow.md).
+
 ## Documentação
 
-- [**Como rodar o projeto**](docs/como-rodar.md) — instalação, execução e solução de problemas
+- [**Como instalar e rodar**](docs/como-rodar.md) — tutorial para Linux, Windows e macOS
+- [**Validação**](docs/validacao.md) — o que foi testado, o que falta testar e o roteiro de verificação
 - [Melhorias: o que foi corrigido e o que fica mapeado](docs/melhorias.md)
 - [Arquitetura e decisões técnicas](docs/arquitetura.md)
 - [Planejamento de 7 dias](docs/planejamento-7-dias.md)
