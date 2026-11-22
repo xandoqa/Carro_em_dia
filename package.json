@@ -1,11 +1,11 @@
 {
   "name": "carro-em-dia",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "private": true,
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
   "scripts": {
-    "setup": "npm install && npx expo install --fix && node scripts/doctor.mjs",
+    "setup": "npm install expo@latest --save && npm install && npx expo install --fix && node scripts/doctor.mjs",
     "doctor": "node scripts/doctor.mjs",
     "doctor:expo": "npx expo-doctor",
     "start": "node scripts/doctor.mjs --preflight && expo start",
@@ -24,14 +24,16 @@
     "verify": "npm run typecheck && npm run lint && npm test",
     "tokens": "tsx scripts/export-tokens.ts",
     "versoes": "bash scripts/publicar-versoes.sh",
-    "assinar": "bash scripts/assinar-commits.sh"
+    "assinar": "bash scripts/assinar-commits.sh",
+    "setup:fixo": "npm install && npx expo install --fix && node scripts/doctor.mjs",
+    "sdk:atualizar": "npm install expo@latest --save && npx expo install --fix && node scripts/doctor.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "expo": "~53.0.9",
+    "expo-asset": "~11.1.5",
     "expo-constants": "~17.1.6",
-    "expo-font": "~13.3.1",
     "expo-haptics": "~14.1.4",
     "expo-image-picker": "~16.1.4",
     "expo-linking": "~7.1.5",
