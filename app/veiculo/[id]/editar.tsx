@@ -38,6 +38,7 @@ import {
   type Combustivel,
   type TipoVeiculo,
 } from '../../../src/domain/models';
+import { somenteImagens } from '../../../src/utils/imagePicker';
 import { useGarage } from '../../../src/hooks/useGarage';
 import { useTheme } from '../../../src/theme/ThemeProvider';
 import {
@@ -99,7 +100,7 @@ export default function EditarVeiculoScreen() {
     }
 
     const resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: somenteImagens(),
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,

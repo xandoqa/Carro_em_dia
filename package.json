@@ -5,7 +5,12 @@
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
+    "setup": "npm install && npx expo install --fix && node scripts/doctor.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "doctor:expo": "npx expo-doctor",
+    "start": "node scripts/doctor.mjs --preflight && expo start",
+    "start:tunnel": "node scripts/doctor.mjs --preflight && expo start --tunnel",
+    "start:limpo": "node scripts/doctor.mjs --preflight && expo start --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -15,9 +20,9 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
-    "doctor": "npx expo-doctor",
     "fix:deps": "npx expo install --fix",
-    "verify": "npm run typecheck && npm run lint && npm test"
+    "verify": "npm run typecheck && npm run lint && npm test",
+    "tokens": "tsx scripts/export-tokens.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",

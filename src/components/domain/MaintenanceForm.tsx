@@ -27,6 +27,7 @@ import { useTheme } from '../../theme/ThemeProvider';
 import { today } from '../../utils/date';
 import { formatDate } from '../../utils/date';
 import { formatKm, parseNumberInput } from '../../utils/format';
+import { somenteImagens } from '../../utils/imagePicker';
 import { Button } from '../base/Button';
 import { DateSheet } from '../base/DateSheet';
 import { useFeedback } from '../base/Feedback';
@@ -159,7 +160,7 @@ export function MaintenanceForm({
     }
 
     const resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: somenteImagens(),
       quality: 0.6,
     });
 
