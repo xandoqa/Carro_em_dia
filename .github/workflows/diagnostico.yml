@@ -25,20 +25,21 @@ jobs:
       - name: Versoes
         run: node -v && npm -v
 
-      - name: 1. Instalacao tolerante
-        run: npm install --legacy-peer-deps --no-audit --no-fund
-
-      - name: 2. Alinhar ao SDK
-        run: npx expo install --fix
-
-      - name: 3. Instalacao limpa
+      - name: 1. Instalacao limpa com as versoes fixadas do SDK 58
         id: limpa
         continue-on-error: true
         run: npm install --no-audit --no-fund
 
-      - name: 3b. Se a limpa falhou, tolerante
+      - name: 1b. So se a limpa falhou - tolerante
         if: steps.limpa.outcome == 'failure'
         run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: 2. Peers nativos exigidos pelo SDK (worklets do Reanimated 4, fonte dos icones)
+        run: npx expo install react-native-worklets expo-font
+
+      - name: 3. Conferir alinhamento com o SDK (so verifica)
+        continue-on-error: true
+        run: npx expo install --check
 
       - name: package.json resultante
         run: cat package.json
