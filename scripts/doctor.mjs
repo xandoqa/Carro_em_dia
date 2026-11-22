@@ -435,9 +435,16 @@ function checarArquivosEssenciais() {
     return;
   }
 
+  // A partir do SDK 55 a splash deixou de ser um campo do topo do app.json e
+  // passou a ser configurada no plugin expo-splash-screen. Lê os dois lugares,
+  // para o diagnóstico servir antes e depois da mudança.
+  const pluginSplash = (app.expo.plugins ?? []).find(
+    (p) => Array.isArray(p) && p[0] === 'expo-splash-screen',
+  );
   const imagens = [
     app.expo.icon,
     app.expo.splash?.image,
+    pluginSplash?.[1]?.image,
     app.expo.android?.adaptiveIcon?.foregroundImage,
     app.expo.web?.favicon,
   ].filter(Boolean);

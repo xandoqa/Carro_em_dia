@@ -15,7 +15,7 @@
  * nem tocar.
  */
 
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -101,15 +101,21 @@ export function DateSheet({
     mes: selecionada.getMonth(),
   }));
 
-  // Reposiciona no mês da data atual a cada abertura.
-  React.useEffect(() => {
-    if (visible) {
+  // Reposiciona no mês da data atual a cada abertura, e quando a data muda
+  // com a folha aberta. Ajustado na renderização, comparando com a chave
+  // anterior — o padrão do React para estado que depende de uma prop. Num
+  // efeito, o calendário apareceria por um quadro no mês errado.
+  const chave = visible ? selecionada.getTime() : null;
+  const [chaveAnterior, setChaveAnterior] = useState(chave);
+  if (chave !== chaveAnterior) {
+    setChaveAnterior(chave);
+    if (chave !== null) {
       setCursor({
         ano: selecionada.getFullYear(),
         mes: selecionada.getMonth(),
       });
     }
-  }, [visible, selecionada]);
+  }
 
   const limite = maxToday ? today() : undefined;
   const hoje = today();

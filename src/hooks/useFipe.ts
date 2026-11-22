@@ -35,7 +35,11 @@ function vazio<T>(): EstadoLista<T> {
 }
 
 export function useFipe(tipo: TipoVeiculo) {
-  const [marcas, setMarcas] = useState<EstadoLista<FipeMarca>>(vazio<FipeMarca>());
+  // Comeca "carregando": a busca da primeira lista dispara na montagem.
+  const [marcas, setMarcas] = useState<EstadoLista<FipeMarca>>(() => ({
+    dados: [],
+    carregando: true,
+  }));
   const [modelos, setModelos] = useState<EstadoLista<FipeModelo>>(vazio<FipeModelo>());
   const [referencia, setReferencia] = useState<ReferenciaFipe | null>(null);
   const [consultandoPreco, setConsultandoPreco] = useState(false);
@@ -44,35 +48,62 @@ export function useFipe(tipo: TipoVeiculo) {
   const abortMarcas = useRef<AbortController | null>(null);
   const abortModelos = useRef<AbortController | null>(null);
 
-  const carregarMarcas = useCallback(async () => {
+  /**
+   * Busca a lista de marcas e entrega o resultado por callback.
+   *
+   * Separado de quem a chama porque ha dois chamadores com regras diferentes:
+   * o efeito (que so pode mudar estado na resposta, nunca de forma sincrona no
+   * corpo) e o botao "tentar de novo" (que, sendo um evento, pode).
+   */
+  const buscarMarcas = useCallback(
+    (controller: AbortController) => {
+      fipeService.listarMarcas(tipo, { signal: controller.signal }).then(
+        (dados) => {
+          if (!controller.signal.aborted) setMarcas({ dados, carregando: false });
+        },
+        (erro) => {
+          if (controller.signal.aborted) return;
+          setMarcas({
+            dados: [],
+            carregando: false,
+            erro: fipeService.mensagemDeErro(erro),
+          });
+        },
+      );
+    },
+    [tipo],
+  );
+
+  /** Para o botao "tentar de novo". */
+  const carregarMarcas = useCallback(() => {
     abortMarcas.current?.abort();
     const controller = new AbortController();
     abortMarcas.current = controller;
-
     setMarcas({ dados: [], carregando: true });
-    try {
-      const dados = await fipeService.listarMarcas(tipo, {
-        signal: controller.signal,
-      });
-      if (controller.signal.aborted) return;
-      setMarcas({ dados, carregando: false });
-    } catch (erro) {
-      if (controller.signal.aborted) return;
-      setMarcas({
-        dados: [],
-        carregando: false,
-        erro: fipeService.mensagemDeErro(erro),
-      });
-    }
-  }, [tipo]);
+    buscarMarcas(controller);
+  }, [buscarMarcas]);
 
-  // Recarrega ao trocar entre carro e moto; as listas sao diferentes.
-  useEffect(() => {
-    void carregarMarcas();
+  // Trocar entre carro e moto zera o que dependia da lista anterior. Isso e
+  // feito durante a renderizacao, comparando com o tipo anterior, e nao num
+  // efeito: e o padrao que o React recomenda para "ajustar estado quando uma
+  // prop muda" — num efeito, a tela renderizaria uma vez com dados velhos.
+  const [tipoAnterior, setTipoAnterior] = useState(tipo);
+  if (tipo !== tipoAnterior) {
+    setTipoAnterior(tipo);
+    setMarcas({ dados: [], carregando: true });
     setModelos(vazio<FipeModelo>());
     setReferencia(null);
-    return () => abortMarcas.current?.abort();
-  }, [carregarMarcas]);
+  }
+
+  // A busca em si e sincronizacao com um servico externo — uso legitimo de
+  // efeito. O estado so muda quando a resposta chega.
+  useEffect(() => {
+    abortMarcas.current?.abort();
+    const controller = new AbortController();
+    abortMarcas.current = controller;
+    buscarMarcas(controller);
+    return () => controller.abort();
+  }, [buscarMarcas]);
 
   const carregarModelos = useCallback(
     async (codigoMarca: string) => {
