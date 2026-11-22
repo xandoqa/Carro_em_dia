@@ -60,6 +60,7 @@ Conferido lendo o código, sem executar.
 | **Plugins do `app.json`** | Cruzamento com `package.json` | Os 3 plugins têm dependência |
 | **Imagens do `app.json`** | Verificação de existência | Ícone, splash e favicon no lugar |
 | **Imports órfãos** | `tsc --noUnusedLocals` | 33 encontrados e corrigidos na 1.5.3 |
+| **Testes e scripts** | `tsc` incluindo `src/__tests__/` e `scripts/` | 0 erros — **só a partir da 1.5.6** |
 
 > **Sobre os stubs de tipo:** como as bibliotecas não puderam ser instaladas,
 > os tipos de `react`, `react-native` e afins foram substituídos por
@@ -67,6 +68,13 @@ Conferido lendo o código, sem executar.
 > componente passando a prop errada para outro, por exemplo), mas **não**
 > valida o uso correto das APIs das bibliotecas. O `npm run typecheck` na sua
 > máquina é que fecha essa lacuna.
+
+> **Segunda correção, 1.5.6.** A configuração de verificação **excluía
+> `src/__tests__/`** e não incluía `scripts/`. O `npm run typecheck` do projeto
+> sempre cobriu esses arquivos; quem não cobria era a verificação feita aqui. O
+> resultado: 41 erros de tipo chegaram na máquina do Alexandre sem nenhum ter
+> aparecido antes — 17 deles dentro dos testes excluídos. A configuração passou
+> a incluir testes e scripts, com os tipos reais do Node.
 
 > **Correção de um resultado que estava errado aqui.** Até a versão 1.5.2 esta
 > tabela afirmava "imports órfãos: nenhum". Era falso: havia 33, e
