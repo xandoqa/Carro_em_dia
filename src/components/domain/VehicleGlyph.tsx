@@ -5,7 +5,6 @@
  * so, em vez de misturar com um pacote de icones generico.
  */
 
-import React from 'react';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 import type { TipoVeiculo } from '../../domain/models';

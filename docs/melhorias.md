@@ -123,6 +123,33 @@ vencimento que o usuário nunca definiu.
 **Correção:** uma previsão informada passa a valer sozinha. Encontrado
 escrevendo os testes.
 
+### 11. `npm run typecheck` falhava em 33 arquivos
+
+Trinta e três arquivos `.tsx` tinham `import React from 'react'` sem usar
+`React` em nenhum lugar. O `tsconfig.json` do projeto combina duas opções que
+tornam isso erro, não aviso:
+
+```jsonc
+"jsx": "react-jsx",       // JSX não precisa mais do React em escopo
+"noUnusedLocals": true    // import sem uso é erro
+```
+
+Com o JSX automático, o import virou mesmo desnecessário — e o compilador passou
+a cobrar. Resultado: `npm run typecheck` e, por consequência, `npm run verify`
+terminavam com 33 erros `TS6133`. O aplicativo **rodava**, porque o Babel ignora
+import não usado; quebrava só a verificação.
+
+**Correção:** import removido nos 33, e **mantido** nos 3 que usam `React` como
+namespace de tipo (`React.ReactNode` em `Button.tsx`, `Fab.tsx` e
+`Surfaces.tsx`) — ali o import é obrigatório, e removê-lo trocaria um erro por
+outro.
+
+O defeito ficou escondido porque a verificação local rodava com um stub de
+tipos que declarava `namespace React` globalmente. Com ele, os 3 arquivos
+corretos apareciam como errados e a diferença entre os dois casos desaparecia. O
+stub foi acertado para espelhar o `@types/react` de verdade, e a correção só foi
+aceita depois de provar que ele acusa os dois erros e aprova o caso correto.
+
 ---
 
 ## Mapeado, não implementado

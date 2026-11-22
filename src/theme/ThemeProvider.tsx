@@ -8,7 +8,7 @@
  * nenhum componente precisa importar paletas diretamente.
  */
 
-import React, {
+import {
   createContext,
   useCallback,
   useContext,

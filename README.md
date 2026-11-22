@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.2](https://img.shields.io/badge/vers%C3%A3o-1.5.2-0F4D45)
+![versão 1.5.3](https://img.shields.io/badge/vers%C3%A3o-1.5.3-0F4D45)
 
 <br>
 
@@ -112,35 +112,226 @@ navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
 
 ## Rodando o projeto
 
-**Precisa de:** Node 20 ou mais novo e o app **Expo Go** no celular (ou um
-emulador Android / simulador iOS). Git é opcional.
+> **📘 [Tutorial completo de instalação](README-INSTALACAO.md)** — o passo a
+> passo desta seção, expandido para **Linux, Windows e macOS**, desde instalar o
+> Node até resolver os erros mais comuns. Se algo não subir, comece por aí.
 
-**Sem Git**, baixando o
-[.zip do projeto](https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip):
+### Tudo que precisa estar instalado
+
+São **duas coisas obrigatórias**. O resto é opcional ou o próprio `npm` baixa.
+
+#### 1. O que você instala na máquina
+
+| Ferramenta | Versão | Obrigatório? | Para que serve |
+|------------|--------|--------------|----------------|
+| **Node.js** | **20 ou mais novo** | **Sim** | Executa o bundler, os scripts e os testes. O `npm` vem junto. |
+| **npm** | 10+ | **Sim** (vem com o Node) | Instala as dependências do projeto |
+| **Expo Go** (celular) | atual, da loja | **Sim**, se for rodar no celular | É o aplicativo que abre o projeto no aparelho. [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iPhone](https://apps.apple.com/app/expo-go/id982107779) |
+| Git | qualquer | Não | Só se quiser clonar em vez de baixar o `.zip` |
+| VS Code | qualquer | Não | Editor. Veja [puxar direto pelo VS Code](#puxando-o-projeto-direto-pelo-vs-code) |
+| Android Studio + `adb` | atual | Não | Só para o **emulador** Android. Guia em [README-INSTALACAO.md §3.4](README-INSTALACAO.md) |
+| Xcode | atual | Não | Só para o simulador de iPhone, e só existe no macOS |
+
+**Não precisa de:** conta no Expo, chave de API, banco de dados, servidor,
+Docker, Python, Java, Android Studio (se usar o celular), Watchman, `.env` nem
+qualquer cadastro. A única chamada externa é a tabela FIPE pela BrasilAPI, que é
+pública e aberta.
+
+No Linux há **um ajuste de sistema** necessário, senão o bundler falha com
+`ENOSPC: System limit for number of file watchers reached`:
 
 ```bash
-unzip Carro_em_dia-main.zip
-cd Carro_em_dia-main
-
-npm run setup     # instala, alinha as versões e verifica o ambiente
-npm start         # inicia o app
+echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
 ```
 
-**Com Git:**
+#### 2. O que o `npm install` baixa sozinho
+
+Você **não digita nenhum destes nomes** — estão declarados no `package.json` e
+vêm no `npm run setup`. A lista está aqui porque a disciplina pede as
+dependências documentadas.
+
+**Dependências de execução (21):**
+
+| Pacote | Versão | O que faz no projeto |
+|--------|--------|----------------------|
+| `expo` | `~53.0.9` | Plataforma: build, bundler e APIs nativas |
+| `expo-router` | `~5.0.7` | Navegação por arquivo — cada arquivo em `app/` é uma tela |
+| `react` | `19.0.0` | Biblioteca de componentes |
+| `react-native` | `0.79.2` | Renderiza os componentes como telas nativas |
+| `react-dom` | `19.0.0` | Necessário para o alvo web |
+| `react-native-web` | `~0.20.0` | Faz o app rodar no navegador |
+| `@react-native-async-storage/async-storage` | `2.1.2` | **Persistência**: salva veículos, manutenções e tema no aparelho |
+| `expo-notifications` | `~0.31.2` | **Notificações** locais agendadas |
+| `expo-image-picker` | `~16.1.4` | Foto da nota fiscal, pela câmera ou galeria |
+| `react-native-reanimated` | `~3.17.4` | Animação da faixa de medida, fora da thread de JS |
+| `react-native-gesture-handler` | `~2.24.0` | Gestos (exigido pelo router e pelo Reanimated) |
+| `react-native-svg` | `15.11.2` | Os ícones próprios, desenhados no projeto |
+| `react-native-safe-area-context` | `5.4.0` | Respeita notch e barra de gestos |
+| `react-native-screens` | `~4.10.0` | Telas nativas na navegação |
+| `@expo/vector-icons` | `^14.1.0` | Ícones de interface |
+| `expo-haptics` | `~14.1.4` | Retorno tátil ao trocar de aba |
+| `expo-linking` | `~7.1.5` | Tocar na notificação abre o veículo certo |
+| `expo-constants` | `~17.1.6` | Lê a configuração do `app.json` em tempo de execução |
+| `expo-splash-screen` | `~0.30.8` | Tela de abertura |
+| `expo-status-bar` | `~2.2.3` | Cor da barra de status conforme o tema |
+| `expo-asset` | `~11.1.5` | Carrega ícone e splash — **exigido pelo build web** |
+
+**Dependências de desenvolvimento (6)** — não vão para o aplicativo:
+
+| Pacote | Versão | Para que |
+|--------|--------|----------|
+| `typescript` | `~5.8.3` | Checagem de tipos (`npm run typecheck`) |
+| `@types/react` | `~19.0.10` | Tipos do React |
+| `tsx` | `^4.19.2` | Roda os testes em TypeScript sem compilar |
+| `eslint` | `^8.57.0` | Análise estática |
+| `eslint-config-expo` | `~9.2.0` | Regras de ESLint do Expo |
+| `prettier` | `^3.3.3` | Formatação |
+
+> **Nenhuma dependência pesada.** Não há biblioteca de gráficos, de estado
+> (Redux, Zustand), de HTTP (Axios) nem de 3D. O motivo de cada ausência está
+> em [Tecnologias](#tecnologias).
+
+### Passo a passo, do zero até o app na mão
+
+**1. Instale o Node 20+**
 
 ```bash
+# Linux e macOS — pelo nvm, que não exige sudo
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+# feche e reabra o terminal
+nvm install 20
+```
+
+No Windows, baixe o instalador LTS em [nodejs.org](https://nodejs.org/) e marque
+*"Add to PATH"*.
+
+**Confirme antes de seguir** — se este comando não responder, nada depois
+funciona:
+
+```bash
+node --version    # precisa ser v20.x ou mais alto
+npm --version     # precisa ser 10.x ou mais alto
+```
+
+**2. Instale o Expo Go no celular**
+
+Pela loja: [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)
+ou [iPhone](https://apps.apple.com/app/expo-go/id982107779). O celular precisa
+estar **na mesma rede Wi-Fi** do computador.
+
+**3. No Linux, aumente o limite de observadores de arquivo**
+
+```bash
+echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+**4. Traga o projeto para a máquina** — três caminhos, escolha um:
+
+```bash
+# a) Pelo VS Code, sem baixar .zip  →  veja a seção abaixo
+
+# b) Com Git
 git clone https://github.com/xandoqa/Carro_em_dia.git
 cd Carro_em_dia
+
+# c) Sem Git, pelo .zip
+# baixe https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip
+unzip Carro_em_dia-main.zip
+cd Carro_em_dia-main
+```
+
+**5. Instale as dependências**
+
+```bash
 npm run setup
+```
+
+Um comando que faz quatro coisas: atualiza o Expo para a versão corrente, baixa
+as 27 dependências, alinha as versões ao SDK instalado e roda o diagnóstico.
+**Demora de 2 a 5 minutos** e baixa cerca de 700 MB — é a única etapa pesada.
+
+Ao final, se aparecer aviso de vulnerabilidades:
+
+> **Não rode `npm audit fix --force`.** O terminal sugere isso, mas em projeto
+> Expo o comando ignora as versões que o SDK exige e quebra a instalação. Os
+> alertas vêm de dependências internas das ferramentas de build e não entram no
+> aplicativo.
+
+**6. Confira que o ambiente está sadio**
+
+```bash
+npm run doctor
+```
+
+Precisa terminar em **`Tudo certo`** ou só com avisos. Se listar bloqueios, cada
+um vem com o arquivo envolvido e o comando exato da correção.
+
+**7. Inicie**
+
+```bash
 npm start
 ```
 
-Leia o QR Code com o Expo Go (Android) ou com a câmera (iOS). Para abrir
-direto num emulador: `npm run android` ou `npm run ios`.
+Um QR Code aparece no terminal.
 
-> **📘 [Tutorial completo de instalação](README-INSTALACAO.md)** — passo a passo
-> para **Linux, Windows e macOS**, desde instalar o Node até resolver os erros
-> mais comuns. Se algo não subir, comece por aí.
+- **Android:** abra o Expo Go e toque em *Scan QR code*
+- **iPhone:** aponte a câmera do sistema e toque na notificação
+
+Se o QR não conectar — rede da faculdade costuma isolar os aparelhos:
+
+```bash
+npm run start:tunnel
+```
+
+**8. Carregue os dados de exemplo**
+
+No app: **Ajustes → Dados → Carregar dados de exemplo**. Cria dois veículos com
+histórico, já com serviços vencidos, chegando no prazo e em dia. Sem isso as
+telas de alerta e de gastos aparecem vazias.
+
+**Outros destinos:** `npm run android` (emulador), `npm run ios` (simulador,
+só macOS) ou `npm run web` (navegador).
+
+### Puxando o projeto direto pelo VS Code
+
+Sem baixar `.zip` e sem digitar `git clone`.
+
+**1. Abra a paleta de comandos:** `Ctrl+Shift+P` (no Mac, `Cmd+Shift+P`)
+
+**2. Digite `Git: Clone` e dê Enter**
+
+**3. Cole a URL:**
+
+```
+https://github.com/xandoqa/Carro_em_dia.git
+```
+
+**4. Escolha a pasta** onde ele vai ficar (por exemplo `~/Documentos`)
+
+**5. Clique em *Abrir*** quando o VS Code perguntar
+
+O projeto abre já na pasta certa. Depois, **Terminal → Novo Terminal**
+(`Ctrl+Shift+'`) e siga do passo 5 acima: `npm run setup`.
+
+> Precisa ter o Git instalado — é o VS Code que o chama. Se ele reclamar que não
+> encontrou o Git, instale com `sudo apt install git` e reabra o VS Code.
+
+#### E sem baixar absolutamente nada?
+
+Dá, mas com limite. Para **rodar** o app, as dependências têm de existir em
+algum disco — não há como fugir dos 700 MB. O que muda é **de quem é o disco**:
+
+| Caminho | Como | Dá para rodar? |
+|---------|------|----------------|
+| **VS Code na web** | Abra o repositório no GitHub e aperte a tecla **`.`** (ponto). Vira `github.dev` — VS Code no navegador, nada instalado. | **Não.** Lê, edita e faz commit, mas não tem terminal: nem `npm`, nem Expo. |
+| **GitHub Codespaces** | Na página do repositório: **Code → Codespaces → Create codespace**. Máquina Linux na nuvem, VS Code no navegador. | **Só no navegador** (`npm run web`). O download acontece na máquina da nuvem, não na sua. Para celular ou emulador, não serve. |
+| **Clone pelo VS Code** | Os 5 passos acima | **Sim**, tudo: celular, emulador e navegador |
+
+Para a apresentação de terça, use o clone normal. `github.dev` é ótimo para
+mostrar o código num computador que não é o seu — abre em dois segundos e mostra
+a estrutura de pastas inteira.
 
 ### Se algo der errado
 
@@ -536,6 +727,7 @@ O fluxo de trabalho da dupla e as regras de branch estão em
 ## Documentação
 
 - [**Como instalar e rodar**](README-INSTALACAO.md) — tutorial para Linux, Windows e macOS
+- [**Guia da apresentação**](docs/apresentacao.md) — emulador Android, planos B e C, roteiro e perguntas prováveis
 - [**Histórico de versões**](CHANGELOG.md) — o que mudou em cada versão
 - [**Validação**](docs/validacao.md) — o que foi testado, o que falta testar e o roteiro de verificação
 - [Melhorias: o que foi corrigido e o que fica mapeado](docs/melhorias.md)

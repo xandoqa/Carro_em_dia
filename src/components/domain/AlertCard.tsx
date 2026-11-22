@@ -5,7 +5,6 @@
  * direta de registrar o servico como feito.
  */
 
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { Lembrete, Veiculo } from '../../domain/models';
