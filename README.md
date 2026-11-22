@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.1](https://img.shields.io/badge/vers%C3%A3o-1.5.1-0F4D45)
+![versão 1.5.2](https://img.shields.io/badge/vers%C3%A3o-1.5.2-0F4D45)
 
 <br>
 

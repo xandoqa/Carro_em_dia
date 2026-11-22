@@ -13,6 +13,17 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.2] — 2026-11-22
+
+### Adicionado
+- **Ordem sugerida de correção** no diagnóstico, quando há mais de um aviso.
+  Listar três avisos sem dizer por onde começar deixa a decisão com quem menos
+  conhece o assunto. Cada verificação passa a declarar sua prioridade: resolver
+  antes de tentar rodar, resolver para rodar no celular, ou só se for usar o
+  recurso.
+
+---
+
 ## [1.5.1] — 2026-11-22
 
 ### Adicionado
@@ -254,6 +265,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.2
 [1.5.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.1
 [1.5.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.0
 [1.4.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.2
