@@ -1,10 +1,7 @@
 name: Diagnostico completo
 
-# Reproduz, numa maquina Linux limpa, exatamente o que acontece na maquina
-# de quem baixa o projeto: instala no SDK mais recente, alinha as versoes e
-# gera os pacotes JavaScript que o Expo Go (iOS e Android) e o navegador
-# carregam. Nenhum passo interrompe os seguintes: o objetivo e ver TODAS as
-# falhas numa execucao so.
+# Executa o fluxo final (npm ci com o lockfile) com cada passo independente,
+# para ver todas as falhas numa execucao so, mais uma medicao do Babel.
 
 on:
   workflow_dispatch:
@@ -17,43 +14,27 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      - name: Versoes
-        run: node -v && npm -v
+      - name: npm ci
+        run: npm ci --no-audit --no-fund
 
-      - name: 1. Instalacao limpa com as versoes fixadas do SDK 58
-        id: limpa
+      - name: O babel-preset-expo menciona worklets?
         continue-on-error: true
-        run: npm install --no-audit --no-fund
+        run: grep -rn "worklets" node_modules/babel-preset-expo/build/*.js | head -20
 
-      - name: 1b. So se a limpa falhou - tolerante
-        if: steps.limpa.outcome == 'failure'
-        run: npm install --legacy-peer-deps --no-audit --no-fund
+      - name: Plugin de worklets roda uma ou duas vezes?
+        continue-on-error: true
+        run: node scripts/ci/testar-babel.cjs
 
-      - name: 2. Peers nativos exigidos pelo SDK (worklets do Reanimated 4, fonte dos icones)
-        run: npx expo install react-native-worklets expo-font
-
-      - name: 3. Conferir alinhamento com o SDK (so verifica)
+      - name: expo install --check
         continue-on-error: true
         run: npx expo install --check
 
-      - name: package.json resultante
-        run: cat package.json
-
-      - name: Dependencias instaladas
-        run: npm ls --depth=0 || true
-
-      - name: Peers do reanimated e versoes-chave
-        run: |
-          node -e "for (const n of ['expo','expo-router','react','react-dom','react-native','react-native-web','react-native-reanimated','react-native-worklets','expo-font','eslint','eslint-config-expo','eslint-config-prettier','typescript','@types/react','@types/node']) { try { console.log(n.padEnd(28), require(n + '/package.json').version) } catch (e) { console.log(n.padEnd(28), 'NAO INSTALADO') } }"
-          node -e "console.log('peers do reanimated:', JSON.stringify(require('react-native-reanimated/package.json').peerDependencies))"
-
-
-      - name: expo-doctor (oficial)
+      - name: expo-doctor
         continue-on-error: true
         run: npx expo-doctor
 
@@ -73,7 +54,7 @@ jobs:
         continue-on-error: true
         run: npm test
 
-      - name: Bundle iOS (o que o Expo Go do iPhone carrega)
+      - name: Bundle iOS
         continue-on-error: true
         run: npx expo export --platform ios --output-dir dist-ios
 
@@ -84,9 +65,3 @@ jobs:
       - name: Bundle web
         continue-on-error: true
         run: npx expo export --platform web --output-dir dist-web
-
-      - name: Lockfile (gzip + base64, entre marcadores)
-        run: |
-          echo "===LOCK-INICIO==="
-          gzip -9 -c package-lock.json | base64 -w 120
-          echo "===LOCK-FIM==="
