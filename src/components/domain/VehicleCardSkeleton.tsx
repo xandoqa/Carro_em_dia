@@ -6,7 +6,6 @@
  * carregamento que parece rápido e um que parece quebrado.
  */
 
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useTheme } from '../../theme/ThemeProvider';

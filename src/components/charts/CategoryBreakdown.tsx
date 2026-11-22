@@ -12,7 +12,6 @@
  * vermelho continuam reservados para estado de manutencao.
  */
 
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { GastoPorCategoria } from '../../domain/models';

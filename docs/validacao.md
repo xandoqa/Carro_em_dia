@@ -59,7 +59,7 @@ Conferido lendo o código, sem executar.
 | **Rotas vs `_layout`** | Comparação arquivo a arquivo | 9 rotas declaradas, todas existem |
 | **Plugins do `app.json`** | Cruzamento com `package.json` | Os 3 plugins têm dependência |
 | **Imagens do `app.json`** | Verificação de existência | Ícone, splash e favicon no lugar |
-| **Imports órfãos** | `tsc --noUnusedLocals` | Nenhum |
+| **Imports órfãos** | `tsc --noUnusedLocals` | 33 encontrados e corrigidos na 1.5.3 |
 
 > **Sobre os stubs de tipo:** como as bibliotecas não puderam ser instaladas,
 > os tipos de `react`, `react-native` e afins foram substituídos por
@@ -67,6 +67,17 @@ Conferido lendo o código, sem executar.
 > componente passando a prop errada para outro, por exemplo), mas **não**
 > valida o uso correto das APIs das bibliotecas. O `npm run typecheck` na sua
 > máquina é que fecha essa lacuna.
+
+> **Correção de um resultado que estava errado aqui.** Até a versão 1.5.2 esta
+> tabela afirmava "imports órfãos: nenhum". Era falso: havia 33, e
+> `npm run typecheck` falharia na sua máquina com 33 erros `TS6133`. A causa do
+> engano foi o próprio stub — ele declarava `namespace React` globalmente, o que
+> apagava a diferença entre o import que sobra e o import obrigatório.
+> O stub foi acertado para espelhar o `@types/react` de verdade e passou a ser
+> testado contra três arquivos de prova (um com import sobrando, um usando
+> `React.ReactNode` sem importar, e um correto) antes de qualquer resultado
+> daqui ser considerado válido. Detalhe em
+> [melhorias.md § 11](melhorias.md).
 
 ---
 

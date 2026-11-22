@@ -11,7 +11,7 @@
  */
 
 import * as Haptics from 'expo-haptics';
-import React, {
+import {
   createContext,
   useCallback,
   useContext,

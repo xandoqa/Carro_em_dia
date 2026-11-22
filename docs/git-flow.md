@@ -87,26 +87,63 @@ avisar em km e deixou os meses em branco nao recebe mais um vencimento
 por data herdado do padrao do tipo.
 ```
 
-## Histórico até aqui
+## Branches no repositório
 
-```
-main
- └── develop
-      ├── feature/design-system          tokens e os quatro temas
-      ├── feature/dominio                regras de lembrete e gastos
-      ├── feature/persistencia           AsyncStorage e repositórios
-      ├── feature/web-service            integração FIPE
-      ├── feature/scaffold               configuração do Expo
-      ├── feature/identidade-visual      marca, ícones, faixa de medida
-      ├── feature/telas-principais       garagem, alertas, gastos
-      ├── feature/cadastro-e-registro    formulários, histórico, ajustes
-      └── feature/documentacao           README, docs, CI, dados de exemplo
-```
+**29 branches publicadas**: `main`, `develop` e 27 `feature/*`. Todas visíveis
+em [github.com/xandoqa/Carro_em_dia/branches](https://github.com/xandoqa/Carro_em_dia/branches).
 
-Ver o grafo:
+### Já integradas em `develop`
+
+Na ordem em que foram trabalhadas.
+
+| Branch | O que entrou |
+|--------|--------------|
+| `feature/scaffold` | Configuração do Expo, TypeScript e Expo Router |
+| `feature/design-system` | Tokens, os quatro temas e os componentes base |
+| `feature/dominio` | Regras de lembrete, gastos e formatação, com testes |
+| `feature/persistencia` | AsyncStorage e a camada de repositórios |
+| `feature/web-service` | Integração com a tabela FIPE pela BrasilAPI |
+| `feature/identidade-visual` | Marca, ícones próprios e a faixa de medida |
+| `feature/telas-principais` | Garagem, alertas e gastos |
+| `feature/cadastro-e-registro` | Formulários, histórico e ajustes |
+| `feature/documentacao` | README, docs, CI e dados de exemplo |
+| `feature/notificacoes-vencidas` | Correção: serviço vencido nunca notificava |
+| `feature/editar-manutencao` | Edição de manutenção, prevista no protótipo |
+| `feature/melhorias-funcionais` | Correção do odômetro inflado, teclado no iOS |
+| `feature/prototipo-navegavel` | As 11 telas em HTML, para revisar sem build |
+| `feature/polimento-app` | Esqueleto de carregamento, confirmações, calendário |
+| `feature/esclarece-prototipo` | Deixa explícito que a maquete não é o app |
+| `feature/guia-execucao` | Primeiro tutorial de instalação |
+| `feature/autoria` | Registro da autoria da dupla |
+| `feature/diagnostico-e-compat` | `npm run doctor` e as correções de compatibilidade |
+| `feature/readme-instalacao` | Tutorial para Linux, Windows e macOS |
+| `feature/readme-implementacoes` | Seção "O que foi implementado e corrigido" |
+| `feature/versionamento` | CHANGELOG, tags e os scripts de versão e assinatura |
+| `feature/corrige-build-web` | Correção do bundler web e atualização do SDK |
+
+### Abertas, para o que vem depois
+
+Uma por item mapeado em [melhorias.md](melhorias.md). Existem para que o próximo
+trabalho comece do lugar certo, sem reabrir a discussão do que fazer.
+
+| Branch | O que vai receber |
+|--------|-------------------|
+| `feature/exportar-historico` | Exportar o histórico do veículo em PDF ou CSV |
+| `feature/fotos-no-app` | Copiar as fotos para o diretório do app, fora do cache |
+| `feature/adiar-lembrete` | Adiar um alerta por km ou por dias |
+| `feature/login` | Autenticação e sincronização, quando houver backend |
+| `feature/testes-de-componente` | Testes de renderização das telas |
+
+### Ver o grafo
 
 ```bash
 git log --oneline --graph --all
+```
+
+Só as branches, sem os commits:
+
+```bash
+git branch -a
 ```
 
 ## Quem desenvolveu

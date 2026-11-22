@@ -100,6 +100,30 @@ há configuração de ambiente além disso.
 O celular e o computador precisam estar **na mesma rede Wi-Fi**. Se não puderem,
 veja a opção `--tunnel` na [seção 10](#10-erros-comuns-e-soluções).
 
+### As dependências do projeto você não instala
+
+As 27 bibliotecas que o aplicativo usa estão declaradas no `package.json` e vêm
+todas no `npm run setup` da [seção 6.2](#62-instalar). **Você não digita nenhum
+nome de pacote.**
+
+A lista completa, com a versão e o papel de cada uma, está no
+[README principal → Rodando o projeto](README.md#rodando-o-projeto). Em resumo:
+
+| Grupo | Quantas | Exemplos |
+|-------|---------|----------|
+| Plataforma e navegação | 6 | `expo`, `expo-router`, `react-native` |
+| Requisitos da disciplina | 3 | `async-storage` (persistência), `expo-notifications` (notificações), e a FIPE por `fetch` (web service) |
+| Interface e animação | 8 | `reanimated`, `react-native-svg`, `safe-area-context` |
+| Recursos do aparelho | 4 | `expo-image-picker`, `expo-haptics`, `expo-linking` |
+| Ferramentas de desenvolvimento | 6 | `typescript`, `eslint`, `prettier`, `tsx` |
+
+### Não é necessário nada disso
+
+Para evitar instalação por engano: o projeto **não** usa nem precisa de conta no
+Expo, chave de API, arquivo `.env`, banco de dados, servidor próprio, Docker,
+Python, Java, Watchman, Yarn, pnpm nem CocoaPods. Um `npm run setup` e o Expo Go
+bastam.
+
 ---
 
 ## 3. Instalando no Linux
@@ -372,7 +396,13 @@ Mesmo processo do Linux: [Android Studio](https://developer.android.com/studio)
 
 A partir daqui os comandos são **iguais nos três sistemas**.
 
-Há duas formas de obter o projeto. **Escolha uma.**
+Há três formas de obter o projeto. **Escolha uma.**
+
+| | Precisa de Git? | Baixa `.zip` à mão? | Atualizar depois |
+|---|---|---|---|
+| **6.1a** `.zip` | Não | Sim | Baixar o zip de novo |
+| **6.1b** `git clone` | Sim | Não | `git pull` |
+| **6.1c** VS Code | Sim (o VS Code o chama) | Não | Botão de sincronizar |
 
 ### 6.1a Pelo arquivo .zip (sem Git)
 
@@ -419,6 +449,71 @@ que sugere. Fora isso, **tudo funciona igual**.
 git clone https://github.com/xandoqa/Carro_em_dia.git
 cd Carro_em_dia
 ```
+
+### 6.1c Direto pelo VS Code, sem baixar .zip
+
+O VS Code clona o repositório por você — nenhum arquivo passa pela pasta de
+downloads.
+
+**1.** Abra a paleta de comandos:
+
+| Sistema | Atalho |
+|---------|--------|
+| Linux e Windows | `Ctrl` + `Shift` + `P` |
+| macOS | `Cmd` + `Shift` + `P` |
+
+**2.** Digite `Git: Clone` e dê `Enter`.
+
+**3.** Cole a URL e dê `Enter`:
+
+```
+https://github.com/xandoqa/Carro_em_dia.git
+```
+
+**4.** Escolha a pasta onde o projeto vai ficar — por exemplo `~/Documentos`.
+O VS Code cria a subpasta `Carro_em_dia` ali dentro.
+
+**5.** Quando ele perguntar, clique em **Abrir** (ou *Open*).
+
+Pronto: o projeto está aberto e o terminal integrado já começa dentro da pasta
+certa. Siga para o [6.2](#62-instalar).
+
+**Se o VS Code disser que não encontrou o Git:**
+
+```bash
+# Linux
+sudo apt install git     # Debian, Ubuntu, Mint, Pop!_OS
+sudo dnf install git     # Fedora
+```
+
+No Windows, instale pelo [git-scm.com](https://git-scm.com/download/win). Em
+qualquer um dos dois, **feche e reabra o VS Code** depois — ele só procura o Git
+ao iniciar.
+
+#### Entrando com a conta do GitHub (opcional)
+
+Só é necessário se você for **enviar** commits. Para apenas baixar e rodar, o
+repositório é público e não pede login.
+
+Na barra lateral: ícone de conta (canto inferior esquerdo) → **Sign in with
+GitHub** → o navegador abre e volta autorizado. A partir daí o botão de
+sincronizar, no canto inferior, envia e recebe commits sem terminal.
+
+#### Sem instalar nada: `github.dev` e Codespaces
+
+Para **rodar** o app, as dependências precisam existir em algum disco — os
+~700 MB do `node_modules` não têm como ser evitados. O que muda é **de quem é o
+disco**.
+
+| Caminho | Como abrir | Dá para rodar o app? |
+|---------|-----------|----------------------|
+| **github.dev** | Na página do repositório no GitHub, aperte a tecla **`.`** (ponto). Também funciona trocando `github.com` por `github.dev` na URL. | **Não.** É o VS Code no navegador: lê, edita, faz commit — mas não tem terminal, então não existe `npm` nem Expo. |
+| **GitHub Codespaces** | Na página do repositório: **Code** → aba **Codespaces** → **Create codespace on main**. | **Só no navegador.** Roda `npm run setup` e `npm run web` numa máquina Linux da nuvem. Não serve para celular nem emulador, e o plano gratuito tem limite de horas. |
+| **Clone pelo VS Code** (6.1c) | Os passos acima | **Sim** — celular, emulador e navegador |
+
+> Para a apresentação, use o clone (6.1c). O `github.dev` é útil para mostrar o
+> código num computador que não é o seu: abre em dois segundos, sem instalar
+> nada, e exibe a estrutura de pastas inteira.
 
 ### 6.2 Instalar
 

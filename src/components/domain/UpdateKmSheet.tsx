@@ -7,7 +7,7 @@
  * nao anda para tras e aceitar isso bagunçaria todos os lembretes.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

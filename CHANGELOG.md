@@ -13,6 +13,47 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.3] — 2026-11-22
+
+### Corrigido
+- **`npm run typecheck` falhava em 33 arquivos.** Eles tinham
+  `import React from 'react'` sem usar `React` — e o `tsconfig.json` combina
+  `jsx: "react-jsx"` (o JSX não precisa mais do React em escopo) com
+  `noUnusedLocals: true` (import sem uso é erro). Resultado: 33 erros `TS6133`
+  em `npm run typecheck` e em `npm run verify`. O app rodava, porque o Babel
+  ignora import não usado; quebrava só a verificação — justamente o comando
+  que se roda antes de apresentar.
+  O import foi removido nos 33 e **mantido** nos 3 que usam `React` como
+  namespace de tipo (`Button.tsx`, `Fab.tsx`, `Surfaces.tsx`), onde ele é
+  obrigatório.
+
+### Adicionado
+- **Lista completa das dependências no README**, com a versão e o papel de cada
+  uma das 27 — separando o que você instala na máquina (Node, npm, Expo Go) do
+  que o `npm install` baixa sozinho. Inclui a lista do que o projeto **não**
+  precisa (conta no Expo, `.env`, banco, Docker, Java, Python), para evitar
+  instalação por engano.
+- **Passo a passo numerado do zero até o app na mão**, com o comando de
+  conferência depois de cada etapa — a versão anterior já dava os comandos, mas
+  não dizia como saber se cada um deu certo antes de seguir.
+- **Como puxar o projeto direto pelo VS Code** (`Git: Clone` na paleta de
+  comandos), sem baixar `.zip`. Virou a seção 6.1c do tutorial, ao lado do zip e
+  do `git clone`.
+- Seção sobre **`github.dev` e Codespaces**, com o que cada um permite de fato:
+  `github.dev` lê e edita no navegador mas não tem terminal, então não roda o
+  app; Codespaces roda, mas só no navegador e numa máquina da nuvem.
+- **[`docs/apresentacao.md`](docs/apresentacao.md)**: preparação do emulador
+  Android e do `adb` no Linux, planos B e C, roteiro de 10 passos ligando cada
+  tela ao requisito da disciplina, e as respostas para as perguntas previsíveis.
+- **27 branches de feature publicadas no GitHub.** Elas existiam só localmente —
+  o repositório remoto mostrava apenas `main` e `develop`, então o Git Flow não
+  aparecia para quem olhasse de fora. Cinco são novas, uma para cada melhoria
+  mapeada em `docs/melhorias.md`.
+- `docs/git-flow.md` ganhou a tabela das 29 branches, separando as integradas das
+  abertas.
+
+---
+
 ## [1.5.2] — 2026-11-22
 
 ### Adicionado
@@ -265,6 +306,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.3]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.3
 [1.5.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.2
 [1.5.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.1
 [1.5.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.0
