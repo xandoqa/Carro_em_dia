@@ -46,6 +46,12 @@ jobs:
       - name: Dependencias instaladas
         run: npm ls --depth=0 || true
 
+      - name: Peers do reanimated e versoes-chave
+        run: |
+          node -e "for (const n of ['expo','expo-router','react','react-dom','react-native','react-native-web','react-native-reanimated','react-native-worklets','expo-font','eslint','eslint-config-expo','eslint-config-prettier','typescript','@types/react','@types/node']) { try { console.log(n.padEnd(28), require(n + '/package.json').version) } catch (e) { console.log(n.padEnd(28), 'NAO INSTALADO') } }"
+          node -e "console.log('peers do reanimated:', JSON.stringify(require('react-native-reanimated/package.json').peerDependencies))"
+
+
       - name: expo-doctor (oficial)
         continue-on-error: true
         run: npx expo-doctor
