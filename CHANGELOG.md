@@ -13,6 +13,38 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.0] — 2026-11-22
+
+### Corrigido
+- **O bundler web quebrava com `Unable to resolve module expo-asset`.**
+  `expo-font` estava nas dependências sem ser usado por nenhuma tela — o app
+  usa as fontes do sistema. O build web dele importa `expo-asset`, que não
+  estava instalado, então o projeto falhava num pacote que não precisava
+  existir. `expo-font` foi removido e `expo-asset` entrou.
+- O comentário em `src/theme/fonts.ts` citava `expo-font` como se estivesse
+  instalado.
+
+### Alterado
+- **`npm run setup` passa a instalar o Expo SDK atual**, em vez das versões
+  fixadas no `package.json`. A versão fixada ficava velha e o Expo Go das lojas
+  recusava o projeto; agora o npm da máquina resolve qual é a versão corrente.
+- `npm run setup:fixo` mantém o comportamento antigo, para quem precisa das
+  versões exatas.
+
+### Adicionado
+- `npm run sdk:atualizar`: atualiza o Expo e realinha todas as bibliotecas.
+- **Verificação de dependências de terceiros** no diagnóstico. Lê o
+  `package.json` de cada dependência direta e confere se o que ela declara está
+  instalado. É a checagem que teria apontado o `expo-asset` ausente antes de o
+  bundler falhar.
+- Guia do **emulador Android no Linux**: instalação do Android Studio, criação
+  do aparelho virtual, `ANDROID_HOME` no `.bashrc`, aceleração por KVM e
+  alternativa por cabo USB.
+- Seção explicando que **iPhone no Linux funciona pelo Expo Go** — só o comando
+  `npm run ios`, que abre o simulador do Xcode, é que não.
+
+---
+
 ## [1.4.2] — 2026-11-21
 
 ### Adicionado
@@ -211,6 +243,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.0
 [1.4.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.2
 [1.4.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.1
 [1.4.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.0
