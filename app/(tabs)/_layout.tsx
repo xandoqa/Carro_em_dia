@@ -59,7 +59,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Veiculos',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="car-sport-outline" size={size} color={color} />
           ),
         }}
@@ -68,7 +68,7 @@ export default function TabsLayout() {
         name="alertas"
         options={{
           title: 'Alertas',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <View>
               <Ionicons name="notifications-outline" size={size} color={color} />
               {pendentes > 0 ? (
@@ -105,7 +105,7 @@ export default function TabsLayout() {
         name="gastos"
         options={{
           title: 'Gastos',
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="stats-chart-outline" size={size} color={color} />
           ),
         }}

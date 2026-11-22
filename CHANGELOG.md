@@ -13,6 +13,42 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.5] — 2026-11-22
+
+### Corrigido
+- **O diagnóstico barrava o `npm start` por um problema que não existia.**
+  Ele acusava 8 dependências instaladas como ausentes — `@expo/cli`,
+  `expo-modules-core`, `@radix-ui/react-slot` e outras — e, como `npm start`
+  roda a verificação antes de iniciar, o app não abria. Dois enganos meus na
+  mesma função: eu procurava os pacotes **a partir da raiz do projeto**, sem
+  enxergar o que o npm aninhou em `node_modules/<pai>/node_modules/`; e
+  tratava `ERR_PACKAGE_PATH_NOT_EXPORTED` como ausência, quando ele significa
+  o contrário — o pacote existe e só não expõe o próprio `package.json`, coisa
+  comum em pacote com `exports`.
+  Agora a pergunta é feita a partir de quem precisa do pacote, por três
+  caminhos, e essa checagem **nunca mais bloqueia o `npm start`**: leitura
+  errada minha sobre o conteúdo de `node_modules` não pode ser o motivo de o
+  app não abrir.
+- **`npm run typecheck` acusava 41 erros com o SDK 58.** Quatro causas:
+  - `@types/node` não estava nas dependências, então todo `import` de
+    `node:test` e `node:assert` nos testes e em `scripts/export-tokens.ts`
+    ficava sem tipo — sozinho, respondia por cerca de 29 dos 41 erros. Nunca
+    funcionou; só não aparecia porque a verificação daqui usava stubs próprios.
+  - `StyleSheet.absoluteFillObject` saiu da API do React Native na 0.88. O
+    objeto passou a ser escrito à mão em `MeasureStrip.tsx`, sem depender de
+    versão.
+  - `tabBarIcon` deixou de inferir os parâmetros em `app/(tabs)/_layout.tsx`.
+    Anotados explicitamente.
+  - `useNotificationNavigation.ts` descrevia à mão a forma do
+    `NotificationResponse`, e a biblioteca passou a declarar `data` como
+    opcional. A descrição saiu: o parâmetro agora é `unknown` e os campos são
+    lidos com encadeamento opcional, que não amarra o código à versão.
+
+### Alterado
+- `@types/node` entrou nas dependências de desenvolvimento.
+
+---
+
 ## [1.5.4] — 2026-11-22
 
 ### Corrigido
@@ -335,6 +371,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.5]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.5
 [1.5.4]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.4
 [1.5.3]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.3
 [1.5.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.2

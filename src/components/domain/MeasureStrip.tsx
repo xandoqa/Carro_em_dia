@@ -215,7 +215,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   escala: {
-    ...StyleSheet.absoluteFillObject,
+    // Escrito à mão, e não com StyleSheet.absoluteFillObject: esse atalho
+    // saiu da API do React Native na 0.88. O objeto é o mesmo e não depende
+    // de qual versão está instalada.
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     justifyContent: 'center',
   },
   tick: {
