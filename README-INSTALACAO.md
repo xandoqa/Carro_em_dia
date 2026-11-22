@@ -724,6 +724,28 @@ Para tornar permanente, adicione a linha do `export` ao seu `~/.bashrc` ou
 
 Veja a [seção 4.4](#44-permissão-de-execução-de-scripts).
 
+### `npm audit` aponta vulnerabilidades
+
+**Não rode `npm audit fix --force`.** O próprio terminal sugere esse comando,
+mas em projeto Expo ele quebra a instalação: ignora as versões que o SDK exige
+e troca pacotes por outros que o Expo não suporta. O app para de iniciar.
+
+As vulnerabilidades reportadas quase sempre vêm de dependências internas das
+ferramentas de build — não entram no aplicativo que roda no celular. É ruído
+normal em projeto Expo.
+
+Quem cuida das versões é:
+
+```bash
+npx expo install --fix
+```
+
+Se precisar mesmo investigar:
+
+```bash
+npm audit --omit=dev     # ignora as ferramentas de desenvolvimento
+```
+
 ### Nada do acima resolveu
 
 ```bash

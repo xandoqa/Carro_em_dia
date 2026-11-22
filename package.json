@@ -1,6 +1,6 @@
 {
   "name": "carro-em-dia",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
