@@ -13,6 +13,35 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.4] — 2026-11-22
+
+### Corrigido
+- **`npm run setup` falhava com `ERESOLVE` e não instalava nada.** A sequência
+  era `npm install expo@latest && npm install && npx expo install --fix`, e o
+  `npm install` do meio quebrava sempre que o SDK novo exigia uma versão que o
+  `package.json` ainda prendia na antiga — enquanto o passo que conserta
+  exatamente isso (`expo install --fix`) só rodava depois, ou seja, nunca.
+  Caso real: o SDK 58 traz `react-native@0.88`, que pede
+  `@types/react@^19.1.1`, e o projeto prendia `~19.0.10`.
+
+  A instalação virou [`scripts/setup.mjs`](scripts/setup.mjs), com a ordem
+  certa: instala tolerando o conflito só para ter o CLI do Expo em mãos,
+  pergunta ao Expo quais versões combinam com o SDK — o que reescreve o
+  `package.json` —, e só então faz a instalação limpa, que já resolve sem
+  exceção nenhuma. Quando encontra `ERESOLVE`, explica o que é e segue sozinho,
+  em vez de parar e mandar o usuário decidir entre `--force` e
+  `--legacy-peer-deps`.
+
+### Alterado
+- Versões de desenvolvimento alinhadas ao **SDK 58.0.0**, conforme o próprio
+  `expo install --fix` reporta: `@types/react` `~19.3.0`,
+  `eslint-config-expo` `~58.0.4`, `typescript` `~6.0.3`.
+- `react` e `react-dom` deixaram de ser presos em `19.0.0` exato. Pino exato em
+  biblioteca com peer dependency é o que cria o conflito que trava a instalação.
+- `npm run sdk:atualizar` passa a usar o mesmo script de instalação.
+
+---
+
 ## [1.5.3] — 2026-11-22
 
 ### Corrigido
@@ -271,7 +300,7 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 Primeira versão completa — entrega N2.
 
 ### Adicionado
-- Aplicativo em React Native com Expo SDK 53 e Expo Router.
+- Aplicativo em React Native com Expo e Expo Router.
 - Cadastro de veículos com consulta à tabela FIPE (BrasilAPI).
 - Registro de manutenções com foto da nota fiscal.
 - Cálculo de lembretes por quilometragem, por data ou pelos dois.
@@ -306,6 +335,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.4]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.4
 [1.5.3]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.3
 [1.5.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.2
 [1.5.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.1

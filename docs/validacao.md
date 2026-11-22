@@ -103,14 +103,18 @@ npx expo install --fix
 npm run doctor
 ```
 
-### 2. Abrir no Expo Go — RISCO ALTO
+### 2. Abrir no Expo Go — RESOLVIDO em 22/11
 
-**Por quê:** o projeto está no SDK 53, de 2025. O Expo Go das lojas acompanha o
-SDK mais recente e recusa projetos antigos com a mensagem *"Project is
-incompatible with this version of Expo Go"*.
+**O que era:** o projeto estava preso no SDK 53, de 2025. O Expo Go das lojas
+acompanha o SDK mais recente e recusa projetos antigos com a mensagem
+*"Project is incompatible with this version of Expo Go"*.
 
-**Como resolver:** o comando acima. O `doctor` já avisa sobre isso antes de você
-esbarrar no problema.
+**Como ficou:** o `npm run setup` instala o SDK corrente. Confirmado na máquina
+do Alexandre em 22/11: **SDK 58.0.0, 815 pacotes, instalação sem erro.**
+
+O caminho até aí expôs um defeito no próprio `setup`, corrigido na 1.5.4: a
+ordem dos comandos fazia o `npm install` falhar com `ERESOLVE` antes de o
+`expo install --fix` ter chance de alinhar as versões. Ver o CHANGELOG.
 
 ### 3. Funcionalidades que dependem do aparelho — RISCO MÉDIO
 

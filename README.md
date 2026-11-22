@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.3](https://img.shields.io/badge/vers%C3%A3o-1.5.3-0F4D45)
+![versão 1.5.4](https://img.shields.io/badge/vers%C3%A3o-1.5.4-0F4D45)
 
 <br>
 
@@ -151,42 +151,48 @@ Você **não digita nenhum destes nomes** — estão declarados no `package.json
 vêm no `npm run setup`. A lista está aqui porque a disciplina pede as
 dependências documentadas.
 
+> **Sobre as versões abaixo.** Quem manda nelas é o SDK do Expo, não esta
+> tabela: o `npm run setup` pergunta ao Expo qual versão de cada biblioteca
+> combina com o SDK instalado e reescreve o `package.json`. Então a coluna aqui
+> é referência do que o projeto usa hoje — a verdade está sempre no
+> `package.json`, e `npm ls --depth=0` mostra o que está instalado de fato.
+
 **Dependências de execução (21):**
 
-| Pacote | Versão | O que faz no projeto |
-|--------|--------|----------------------|
-| `expo` | `~53.0.9` | Plataforma: build, bundler e APIs nativas |
-| `expo-router` | `~5.0.7` | Navegação por arquivo — cada arquivo em `app/` é uma tela |
-| `react` | `19.0.0` | Biblioteca de componentes |
-| `react-native` | `0.79.2` | Renderiza os componentes como telas nativas |
-| `react-dom` | `19.0.0` | Necessário para o alvo web |
-| `react-native-web` | `~0.20.0` | Faz o app rodar no navegador |
-| `@react-native-async-storage/async-storage` | `2.1.2` | **Persistência**: salva veículos, manutenções e tema no aparelho |
-| `expo-notifications` | `~0.31.2` | **Notificações** locais agendadas |
-| `expo-image-picker` | `~16.1.4` | Foto da nota fiscal, pela câmera ou galeria |
-| `react-native-reanimated` | `~3.17.4` | Animação da faixa de medida, fora da thread de JS |
-| `react-native-gesture-handler` | `~2.24.0` | Gestos (exigido pelo router e pelo Reanimated) |
-| `react-native-svg` | `15.11.2` | Os ícones próprios, desenhados no projeto |
-| `react-native-safe-area-context` | `5.4.0` | Respeita notch e barra de gestos |
-| `react-native-screens` | `~4.10.0` | Telas nativas na navegação |
-| `@expo/vector-icons` | `^14.1.0` | Ícones de interface |
-| `expo-haptics` | `~14.1.4` | Retorno tátil ao trocar de aba |
-| `expo-linking` | `~7.1.5` | Tocar na notificação abre o veículo certo |
-| `expo-constants` | `~17.1.6` | Lê a configuração do `app.json` em tempo de execução |
-| `expo-splash-screen` | `~0.30.8` | Tela de abertura |
-| `expo-status-bar` | `~2.2.3` | Cor da barra de status conforme o tema |
-| `expo-asset` | `~11.1.5` | Carrega ícone e splash — **exigido pelo build web** |
+| Pacote | O que faz no projeto |
+|--------|----------------------|
+| `expo` | Plataforma: build, bundler e APIs nativas |
+| `expo-router` | Navegação por arquivo — cada arquivo em `app/` é uma tela |
+| `react` | Biblioteca de componentes |
+| `react-native` | Renderiza os componentes como telas nativas |
+| `react-dom` | Necessário para o alvo web |
+| `react-native-web` | Faz o app rodar no navegador |
+| `@react-native-async-storage/async-storage` | **Persistência**: salva veículos, manutenções e tema no aparelho |
+| `expo-notifications` | **Notificações** locais agendadas |
+| `expo-image-picker` | Foto da nota fiscal, pela câmera ou galeria |
+| `react-native-reanimated` | Animação da faixa de medida, fora da thread de JS |
+| `react-native-gesture-handler` | Gestos (exigido pelo router e pelo Reanimated) |
+| `react-native-svg` | Os ícones próprios, desenhados no projeto |
+| `react-native-safe-area-context` | Respeita notch e barra de gestos |
+| `react-native-screens` | Telas nativas na navegação |
+| `@expo/vector-icons` | Ícones de interface |
+| `expo-haptics` | Retorno tátil ao trocar de aba |
+| `expo-linking` | Tocar na notificação abre o veículo certo |
+| `expo-constants` | Lê a configuração do `app.json` em tempo de execução |
+| `expo-splash-screen` | Tela de abertura |
+| `expo-status-bar` | Cor da barra de status conforme o tema |
+| `expo-asset` | Carrega ícone e splash — **exigido pelo build web** |
 
 **Dependências de desenvolvimento (6)** — não vão para o aplicativo:
 
-| Pacote | Versão | Para que |
-|--------|--------|----------|
-| `typescript` | `~5.8.3` | Checagem de tipos (`npm run typecheck`) |
-| `@types/react` | `~19.0.10` | Tipos do React |
-| `tsx` | `^4.19.2` | Roda os testes em TypeScript sem compilar |
-| `eslint` | `^8.57.0` | Análise estática |
-| `eslint-config-expo` | `~9.2.0` | Regras de ESLint do Expo |
-| `prettier` | `^3.3.3` | Formatação |
+| Pacote | Para que |
+|--------|----------|
+| `typescript` | Checagem de tipos (`npm run typecheck`) |
+| `@types/react` | Tipos do React |
+| `tsx` | Roda os testes em TypeScript sem compilar |
+| `eslint` | Análise estática |
+| `eslint-config-expo` | Regras de ESLint do Expo |
+| `prettier` | Formatação |
 
 > **Nenhuma dependência pesada.** Não há biblioteca de gráficos, de estado
 > (Redux, Zustand), de HTTP (Axios) nem de 3D. O motivo de cada ausência está
@@ -377,7 +383,7 @@ npm run verify   # typecheck + lint + os 127 testes
 
 | Requisito | Onde está |
 |-----------|-----------|
-| App em React Native | Expo SDK 53 com Expo Router |
+| App em React Native | Expo SDK 58 com Expo Router |
 | Notificação | [`src/services/notificationService.ts`](src/services/notificationService.ts) |
 | Requisição de Web Service | [`src/services/fipeService.ts`](src/services/fipeService.ts) — tabela FIPE pela BrasilAPI |
 | Persistência de dados | [`src/data/`](src/data/) — AsyncStorage |
@@ -622,7 +628,7 @@ isso que os 127 testes rodam em menos de dois segundos.
 
 | O quê | Por quê |
 |-------|---------|
-| Expo SDK 53 + Expo Router | Rotas por arquivo e build sem configuração nativa |
+| Expo SDK 58 + Expo Router | Rotas por arquivo e build sem configuração nativa |
 | TypeScript estrito | Erro que o compilador pega é erro que não chega na apresentação |
 | AsyncStorage | Persistência local, sem servidor |
 | expo-notifications | Avisos agendados no aparelho |

@@ -1,11 +1,11 @@
 {
   "name": "carro-em-dia",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "private": true,
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
   "scripts": {
-    "setup": "npm install expo@latest --save && npm install && npx expo install --fix && node scripts/doctor.mjs",
+    "setup": "node scripts/setup.mjs",
     "doctor": "node scripts/doctor.mjs",
     "doctor:expo": "npx expo-doctor",
     "start": "node scripts/doctor.mjs --preflight && expo start",
@@ -25,8 +25,8 @@
     "tokens": "tsx scripts/export-tokens.ts",
     "versoes": "bash scripts/publicar-versoes.sh",
     "assinar": "bash scripts/assinar-commits.sh",
-    "setup:fixo": "npm install && npx expo install --fix && node scripts/doctor.mjs",
-    "sdk:atualizar": "npm install expo@latest --save && npx expo install --fix && node scripts/doctor.mjs"
+    "setup:fixo": "node scripts/setup.mjs --fixo",
+    "sdk:atualizar": "node scripts/setup.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -41,8 +41,8 @@
     "expo-router": "~5.0.7",
     "expo-splash-screen": "~0.30.8",
     "expo-status-bar": "~2.2.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-native": "0.79.2",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
@@ -52,12 +52,12 @@
     "react-native-web": "~0.20.0"
   },
   "devDependencies": {
-    "@types/react": "~19.0.10",
+    "@types/react": "~19.3.0",
     "eslint": "^8.57.0",
-    "eslint-config-expo": "~9.2.0",
+    "eslint-config-expo": "~58.0.4",
     "prettier": "^3.3.3",
     "tsx": "^4.19.2",
-    "typescript": "~5.8.3"
+    "typescript": "~6.0.3"
   },
   "engines": {
     "node": ">=20"
