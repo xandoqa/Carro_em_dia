@@ -11,11 +11,13 @@ Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
 
 ## Resumo (Linux)
 
-Se você já tem Node 20+ e Git:
+Se você já tem Node 20 ou maior:
 
 ```bash
-git clone https://github.com/xandoqa/Carro_em_dia.git
-cd Carro_em_dia
+# Baixe e extraia o .zip do projeto, ou clone com git:
+# https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip
+
+cd Carro_em_dia-main     # ou Carro_em_dia, se clonou com git
 npm run setup
 npm start
 ```
@@ -67,7 +69,7 @@ há configuração de ambiente além disso.
 |------------|--------|----------|--------------|
 | **Node.js** | 20 ou maior | Roda o projeto e o bundler | Sim |
 | **npm** | vem com o Node | Instala as dependências | Sim |
-| **Git** | qualquer | Baixa o repositório | Sim |
+| **Git** | qualquer | Baixa o repositório (opcional: dá para usar o .zip) | Não |
 | **Expo Go** (celular) | da loja | Abre o app no seu telefone | Sim, se for usar celular |
 | **Android Studio** | qualquer | Emulador Android | Só para emulador |
 | **Xcode** | qualquer | Simulador iPhone | Só no macOS |
@@ -279,7 +281,48 @@ Mesmo processo do Linux: [Android Studio](https://developer.android.com/studio)
 
 A partir daqui os comandos são **iguais nos três sistemas**.
 
-### 6.1 Clonar
+Há duas formas de obter o projeto. **Escolha uma.**
+
+### 6.1a Pelo arquivo .zip (sem Git)
+
+Se você não tem Git ou prefere não usá-lo.
+
+**Baixar:**
+
+- Pelo navegador: abra
+  [github.com/xandoqa/Carro_em_dia](https://github.com/xandoqa/Carro_em_dia) →
+  botão verde **Code** → **Download ZIP**.
+- Ou pelo link direto:
+  [Carro_em_dia-main.zip](https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip)
+
+**Extrair e entrar na pasta:**
+
+```bash
+# Linux e macOS
+unzip Carro_em_dia-main.zip
+cd Carro_em_dia-main
+```
+
+```powershell
+# Windows (PowerShell)
+Expand-Archive Carro_em_dia-main.zip -DestinationPath .
+cd Carro_em_dia-main
+```
+
+> No Windows você também pode clicar com o botão direito no `.zip` →
+> *Extrair tudo*.
+
+**Duas diferenças de quem usa o .zip:**
+
+| | Com Git | Com .zip |
+|---|---|---|
+| Atualizar o projeto | `git pull` | Baixar o zip de novo |
+| Recuperar arquivo alterado | `git checkout <arquivo>` | Baixar o zip e copiar o arquivo |
+
+O `npm run doctor` detecta qual dos dois você está usando e ajusta os comandos
+que sugere. Fora isso, **tudo funciona igual**.
+
+### 6.1b Pelo Git (recomendado se você já tem)
 
 ```bash
 git clone https://github.com/xandoqa/Carro_em_dia.git
