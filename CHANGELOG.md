@@ -67,6 +67,18 @@ GitHub alcançam o npm, e cada problema abaixo foi encontrado lá, com log.
   das versões com o SDK, `expo-doctor`, teste do plugin de Babel, diagnóstico,
   tipos, lint, testes, e **compilação para iPhone, Android e web**.
 
+### Adicionado
+- **Fluxo por Pull Request.** Tudo passa a entrar em `develop` e `main` por PR,
+  com o CI rodando antes do merge. Os commits de merge são criados e assinados
+  pelo próprio GitHub, então aparecem como **Verified** com o Alexandre como
+  autor — sem depender de chave de assinatura em máquina nenhuma. A chave do
+  ambiente onde o código é mantido não serve para isso: o GitHub recusou
+  cadastrá-la na conta do Alexandre porque ela já pertence a outra conta.
+- **Tags publicadas pelo GitHub Actions** (`versoes.yml`). A cada push em
+  `main`, a versão do `package.json` vira tag. Na primeira execução, publica
+  também as 19 versões de 1.0.0 a 1.5.6, que existiam só localmente — o envio
+  de tags era bloqueado no ambiente de desenvolvimento.
+
 ### Verificado
 - Medido no CI que o plugin de worklets roda **uma vez só**: a saída do Babel
   com o `babel.config.js` do projeto é idêntica à do preset puro. Rodar duas

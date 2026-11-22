@@ -559,7 +559,9 @@ usuário. O detalhamento está em [`docs/melhorias.md`](docs/melhorias.md).
 | **`package-lock.json`** | Trava as 902 versões exatas. Sem ele, cada instalação resolvia as versões de novo, e a de uma máquina podia não ser a de outra. |
 | **Versionamento semântico** | 11 tags de `v1.0.0` a `v1.4.1`, com CHANGELOG. Antes eram 46 commits sem nenhuma versão: não dava para dizer o que mudou entre dois momentos nem voltar a um estado conhecido. |
 | **Script de publicação de versões** | Envia as tags pendentes de uma vez. |
-| **Script de assinatura** | Configura commits verificados, gerando a chave na máquina de quem roda. |
+| **Fluxo por Pull Request** | Tudo entra em `develop` e `main` por PR, com o CI rodando antes. O GitHub cria e assina os commits de merge, que aparecem como **Verified** com o Alexandre como autor. |
+| **Tags automáticas** | O workflow `versoes.yml` transforma cada versão do `package.json` em tag `vX.Y.Z` ao chegar em `main`. |
+| **Script de assinatura** | Para assinar o histórico anterior à 1.6.0 com uma chave própria (`npm run assinar -- --historico`). Reescreve o histórico; ver `docs/git-flow.md`. |
 | **127 testes** | Cobrem as regras de negócio, rodando no Node sem emulador em menos de dois segundos. Foram eles que revelaram o prazo invisível. |
 | **CI no GitHub Actions** | Typecheck, lint e testes a cada push. |
 | **Execução a partir do `.zip`** | Dá para rodar sem Git. |
