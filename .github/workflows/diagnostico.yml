@@ -1,0 +1,85 @@
+name: Diagnostico completo
+
+# Reproduz, numa maquina Linux limpa, exatamente o que acontece na maquina
+# de quem baixa o projeto: instala no SDK mais recente, alinha as versoes e
+# gera os pacotes JavaScript que o Expo Go (iOS e Android) e o navegador
+# carregam. Nenhum passo interrompe os seguintes: o objetivo e ver TODAS as
+# falhas numa execucao so.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['ci/**']
+
+jobs:
+  diagnostico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Versoes
+        run: node -v && npm -v
+
+      - name: 1. Instalacao tolerante
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: 2. Alinhar ao SDK
+        run: npx expo install --fix
+
+      - name: 3. Instalacao limpa
+        id: limpa
+        continue-on-error: true
+        run: npm install --no-audit --no-fund
+
+      - name: 3b. Se a limpa falhou, tolerante
+        if: steps.limpa.outcome == 'failure'
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: package.json resultante
+        run: cat package.json
+
+      - name: Dependencias instaladas
+        run: npm ls --depth=0 || true
+
+      - name: expo-doctor (oficial)
+        continue-on-error: true
+        run: npx expo-doctor
+
+      - name: doctor do projeto
+        continue-on-error: true
+        run: node scripts/doctor.mjs
+
+      - name: Tipos
+        continue-on-error: true
+        run: npm run typecheck
+
+      - name: Lint
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Testes
+        continue-on-error: true
+        run: npm test
+
+      - name: Bundle iOS (o que o Expo Go do iPhone carrega)
+        continue-on-error: true
+        run: npx expo export --platform ios --output-dir /tmp/out-ios
+
+      - name: Bundle Android
+        continue-on-error: true
+        run: npx expo export --platform android --output-dir /tmp/out-android
+
+      - name: Bundle web
+        continue-on-error: true
+        run: npx expo export --platform web --output-dir /tmp/out-web
+
+      - name: Lockfile (gzip + base64, entre marcadores)
+        run: |
+          echo "===LOCK-INICIO==="
+          gzip -9 -c package-lock.json | base64 -w 120
+          echo "===LOCK-FIM==="
