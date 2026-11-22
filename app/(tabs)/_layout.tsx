@@ -59,8 +59,8 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Veiculos',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="car-sport-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="car-sport-outline" size={size} color={color ?? undefined} />
           ),
         }}
       />
@@ -68,9 +68,9 @@ export default function TabsLayout() {
         name="alertas"
         options={{
           title: 'Alertas',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+          tabBarIcon: ({ color, size }) => (
             <View>
-              <Ionicons name="notifications-outline" size={size} color={color} />
+              <Ionicons name="notifications-outline" size={size} color={color ?? undefined} />
               {pendentes > 0 ? (
                 <View
                   style={[
@@ -105,8 +105,8 @@ export default function TabsLayout() {
         name="gastos"
         options={{
           title: 'Gastos',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="stats-chart-outline" size={size} color={color ?? undefined} />
           ),
         }}
       />
