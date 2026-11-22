@@ -147,7 +147,7 @@ npm start
 
 **5.** Ler o QR Code com o Expo Go.
 **6.** Ajustes → Dados → Carregar dados de exemplo.
-**7.** Percorrer o roteiro da [seção 9.3 do tutorial](como-rodar.md#9-como-saber-se-está-funcionando).
+**7.** Percorrer o roteiro da [seção 9.3 do tutorial](../README-INSTALACAO.md#9-como-saber-se-está-funcionando).
 
 Se os passos 2 e 3 passarem, **o projeto está instalado e o código está
 íntegro**. Se o 5 falhar com incompatibilidade de Expo Go, rode
@@ -169,5 +169,5 @@ não funcionar:
 npm run doctor:expo
 ```
 
-E se nada resolver, a [seção 10 do tutorial](como-rodar.md#10-erros-comuns-e-soluções)
+E se nada resolver, a [seção 10 do tutorial](../README-INSTALACAO.md#10-erros-comuns-e-soluções)
 tem os casos conhecidos, com os comandos para Linux, Windows e macOS.

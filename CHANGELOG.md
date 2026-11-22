@@ -13,6 +13,17 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.4.1] — 2026-11-21
+
+### Alterado
+- O tutorial de instalação saiu de `docs/como-rodar.md` e virou
+  **`README-INSTALACAO.md`**, na raiz do projeto. Era o documento mais
+  procurado e estava no lugar mais difícil de achar — a ponto de ser preciso
+  perguntar se existia.
+- O README principal passa a apontar para ele logo no topo.
+
+---
+
 ## [1.4.0] — 2026-11-21
 
 ### Adicionado
@@ -127,7 +138,7 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 ### Adicionado
 - **Edição de manutenção.** O protótipo previa "editar ou excluir", mas só
   excluir existia.
-- Primeiro tutorial de instalação (`docs/como-rodar.md`).
+- Primeiro tutorial de instalação (`README-INSTALACAO.md`).
 
 ### Corrigido
 - **Erro de digitação no odômetro ficava preso para sempre.** Registrar uma
@@ -189,6 +200,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.4.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.1
 [1.4.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.0
 [1.3.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.3.1
 [1.3.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.3.0
