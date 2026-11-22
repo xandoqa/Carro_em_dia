@@ -13,6 +13,31 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.6] — 2026-11-22
+
+### Corrigido
+- **Os 41 erros de tipo do SDK 58, agora verificados de fato.** A 1.5.5 acertou
+  três dos quatro pontos e errou um: eu anotei os parâmetros de `tabBarIcon`
+  como `{ color: string }`, supondo que o erro fosse inferência faltando. Não
+  era. O log completo mostra `TS2322`: o `color` que o React Native entrega
+  pode ser `null`, e `@expo/vector-icons` não aceita `null`. A anotação não
+  resolvia e ainda brigava com a variância do tipo esperado. Revertida; no
+  lugar, `color ?? undefined` no ponto de uso, que é o que o erro pedia.
+- **`@types/node` resolvia mais do que eu tinha calculado.** Além dos 29 erros
+  de `import` sem tipo, ele desfaz os 17 `possibly null` e `possibly undefined`
+  nos testes: sem os tipos do Node, `assert.ok(x)` não é reconhecido como
+  função de asserção, então o TypeScript não estreita `x` nas linhas seguintes.
+  São 36 dos 41 erros num pacote só.
+
+### Alterado
+- A verificação de tipos feita durante o desenvolvimento passou a incluir
+  `src/__tests__/` e `scripts/`, com os tipos reais do Node. **A configuração
+  anterior excluía os testes** — foi por isso que 17 erros chegaram na máquina
+  do Alexandre sem eu ter visto nenhum. `npm run typecheck` sempre cobriu esses
+  arquivos; quem não cobria era a minha verificação.
+
+---
+
 ## [1.5.5] — 2026-11-22
 
 ### Corrigido
@@ -37,8 +62,8 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
   - `StyleSheet.absoluteFillObject` saiu da API do React Native na 0.88. O
     objeto passou a ser escrito à mão em `MeasureStrip.tsx`, sem depender de
     versão.
-  - `tabBarIcon` deixou de inferir os parâmetros em `app/(tabs)/_layout.tsx`.
-    Anotados explicitamente.
+  - `tabBarIcon` em `app/(tabs)/_layout.tsx` — diagnóstico errado nesta
+    versão, corrigido na 1.5.6.
   - `useNotificationNavigation.ts` descrevia à mão a forma do
     `NotificationResponse`, e a biblioteca passou a declarar `data` como
     opcional. A descrição saiu: o parâmetro agora é `unknown` e os campos são
@@ -371,6 +396,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.6]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.6
 [1.5.5]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.5
 [1.5.4]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.4
 [1.5.3]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.3
