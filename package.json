@@ -1,6 +1,6 @@
 {
   "name": "carro-em-dia",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "private": true,
   "description": "Controle de manutencao de veiculos: historico, lembretes e gastos.",
   "main": "expo-router/entry",
@@ -52,6 +52,7 @@
     "react-native-web": "~0.20.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "@types/react": "~19.3.0",
     "eslint": "^8.57.0",
     "eslint-config-expo": "~58.0.4",
