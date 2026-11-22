@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.4.1](https://img.shields.io/badge/vers%C3%A3o-1.4.1-0F4D45)
+![versão 1.4.2](https://img.shields.io/badge/vers%C3%A3o-1.4.2-0F4D45)
 
 <br>
 
@@ -299,6 +299,87 @@ Detalhes completos em [`design/identidade/README.md`](design/identidade/README.m
 | Lista suspensa de tipo de serviço | Grade com as 8 opções visíveis | O tipo é a primeira decisão do formulário. |
 | Marca e modelo digitados | Lista da tabela FIPE | Evita "VW" e "Volkswagen" no mesmo app, e traz o valor de referência. |
 | Tela de login | Ainda não implementada | Os dados ficam no aparelho e não há contas, então hoje o login seria uma tela sem função. Ver *Próximos passos*. |
+
+## O que foi implementado e corrigido
+
+Tudo que entrou no projeto desde a primeira versão, com o motivo de cada coisa.
+A ordem cronológica, por versão, está no [CHANGELOG.md](CHANGELOG.md).
+
+### Funcionalidades do aplicativo
+
+| O que | Por que existe |
+|-------|----------------|
+| **Cadastro de veículos com consulta FIPE** | Marca e modelo vêm de uma lista oficial em vez de campo livre. Evita "VW" e "Volkswagen" no mesmo app, preenche ano e combustível sozinho e guarda o valor de referência. Com a API fora do ar o cadastro continua por digitação — travar o cadastro porque um serviço externo caiu seria inaceitável. |
+| **Registro de manutenções** | Tipo, data, quilometragem, valor, oficina, observações e foto da nota. É o dado que alimenta todo o resto. |
+| **Edição de manutenção** | O protótipo previa "editar ou excluir", mas só excluir existia. Sem edição, corrigir um valor exigia apagar e refazer. |
+| **Edição de veículo** | Faltava completamente. Quem errasse uma letra no apelido só tinha a saída de excluir o veículo — o que apaga junto **todo o histórico**. Uma letra errada custava o registro inteiro. |
+| **Cálculo de lembretes** | Projeta o próximo serviço por quilometragem, por data ou pelos dois, e classifica em em dia, chegando ou vencido. É a regra central do app. |
+| **Notificações locais** | Avisam dias antes do prazo mesmo com o app fechado. Sem isso o app seria um caderno: só serve se você lembrar de abrir. |
+| **Relatório de gastos** | Total do período, evolução mensal, categorias, consumo médio em km/L e custo por quilômetro. |
+| **Histórico com filtros** | Por tipo e por período, mostrando o total do que está filtrado. "Quanto já gastei só com freio" é uma das perguntas que levam o usuário ali. |
+| **Quatro temas persistentes** | Claro, escuro, âmbar noturno e alto contraste. A escolha sobrevive a fechar o app. |
+| **Correção do odômetro** | Permite baixar a quilometragem para desfazer erro de digitação, com piso no maior km registrado. Ver as correções abaixo. |
+| **Dados de exemplo** | Um toque cria 2 veículos com histórico já produzindo os três estados de lembrete. Um app vazio não mostra gráfico nem alerta vencido — e digitar dez registros ao vivo na apresentação seria perda de tempo. |
+
+### Correções de defeitos
+
+Cada um destes foi encontrado na revisão ou escrevendo testes, não reportado por
+usuário. O detalhamento está em [`docs/melhorias.md`](docs/melhorias.md).
+
+| Defeito | Como se manifestava | Gravidade |
+|---------|---------------------|-----------|
+| **Odômetro inflado ficava preso** | Registrar manutenção com km maior sobe o odômetro; `atualizarKm` só aceitava valores maiores; excluir o registro não abaixava nada. Quem digitasse 1.145.000 em vez de 114.500 **não tinha caminho de volta**, e todos os lembretes do veículo passavam a mentir. | Alta |
+| **Vencidos nunca notificavam** | O disparo era "X dias antes do prazo" — conta que, para algo já vencido, cai no passado. O serviço mais urgente era o único que nunca avisava. | Alta |
+| **Plugin de Babel do Reanimated** | O arquivo fixava o nome antigo. Atualizar o SDK — necessário para o Expo Go atual — quebrava o app na abertura com um erro de worklet que não aponta a causa. Agora detecta sozinho. | Alta |
+| **API depreciada do seletor de imagens** | `MediaTypeOptions` some em versões novas. Viraria erro de propriedade indefinida **na hora de anexar a foto** — falha que só aparece em uso, não na inicialização. | Média |
+| **Previsão em km criava prazo invisível** | Quem escolhia "avisar em 10.000 km" e deixava os meses em branco recebia, sem pedir, o prazo em meses padrão do tipo. O app mostrava um vencimento que o usuário nunca definiu. | Média |
+| **Permissão pedida na abertura** | O app pedia notificação antes de existir qualquer veículo — o jeito mais rápido de ouvir "não". | Média |
+| **Salvar não confirmava nada** | Voltava em silêncio. Numa tela cheia de campos, "salvou" e "falhou" eram indistinguíveis. | Média |
+| **Teclado cobria os campos (iOS)** | Nos formulários longos o campo de baixo ficava inacessível e o usuário digitava às cegas. | Média |
+| **Comandos de recuperação inúteis sem Git** | O diagnóstico mandava `git checkout <arquivo>`, que falha para quem baixou o `.zip`. Mandar rodar algo que não funciona é a pior coisa que um diagnóstico pode fazer. | Média |
+| **Contraste ilegível no tema Pista** | O botão primário era quase preto sobre quase preto. Achado renderizando os temas lado a lado. | Média |
+| **Faixa de medida apagada** | O elemento assinatura era o menos legível do cartão, e as marcas de escala sumiam justamente quando o prazo vencia. | Baixa |
+| **Gráfico de barras invisível** | No protótipo, `align-items: flex-end` zerava a altura das colunas e as barras não apareciam. | Baixa |
+
+### Infraestrutura
+
+| O que | Por que existe |
+|-------|----------------|
+| **Diagnóstico no terminal** (`npm run doctor`) | Verifica Node, dependências, versão do SDK, plugin de Babel, arquivos, porta e o limite de inotify no Linux. Para cada problema diz o que aconteceu, por quê, qual arquivo, como resolver e o comando. Roda sem dependência instalada — precisa funcionar justamente quando o `npm install` falhou. |
+| **Verificação antes de iniciar** | `npm start` roda o diagnóstico antes do Expo e explica, em vez de deixar o bundler falhar com mensagem crua. |
+| **`npm run setup`** | Instala, alinha as versões ao SDK e verifica, em um comando. A segunda etapa é tão importante quanto a primeira e era fácil de esquecer. |
+| **Versionamento semântico** | 11 tags de `v1.0.0` a `v1.4.1`, com CHANGELOG. Antes eram 46 commits sem nenhuma versão: não dava para dizer o que mudou entre dois momentos nem voltar a um estado conhecido. |
+| **Script de publicação de versões** | Envia as tags pendentes de uma vez. |
+| **Script de assinatura** | Configura commits verificados, gerando a chave na máquina de quem roda. |
+| **127 testes** | Cobrem as regras de negócio, rodando no Node sem emulador em menos de dois segundos. Foram eles que revelaram o prazo invisível. |
+| **CI no GitHub Actions** | Typecheck, lint e testes a cada push. |
+| **Execução a partir do `.zip`** | Dá para rodar sem Git. |
+
+### Interface e design
+
+| O que | Por que existe |
+|-------|----------------|
+| **Identidade visual própria** | O protótipo era wireframe em preto e branco: definiu a estrutura, não a aparência. A direção veio do mundo do usuário — oficina, odômetro, etiqueta de revisão. |
+| **Faixa de medida** | O elemento assinatura. Uma régua graduada com as duas pontas rotuladas, em vez de "72% concluído": o usuário quer saber que está em 114.500 e que o limite é 115.000. |
+| **Raio de borda como hierarquia** | 20 objeto, 10 controle, 4 leitura, pílula estado. O raio carrega informação em vez de decorar. |
+| **Ícones desenhados** | As bibliotecas genéricas não têm marca para "troca de óleo" e oferecem uma chave inglesa para tudo, que não distingue um serviço do outro. |
+| **Calendário** | A data era digitada como `2026-11-08` no teclado numérico, que nem tem hífen. Era o pior momento do app, no formulário mais usado. |
+| **Botão flutuante** | O botão no fim da lista sumia de vista com três ou quatro veículos. |
+| **Esqueleto de carregamento** | Tem a forma do cartão real, então a tela não salta quando os dados chegam. |
+| **Puxar para atualizar** | Era o único gesto que todo mundo tenta e não fazia nada. |
+| **Protótipo navegável** | As 11 telas em HTML, sem instalar nada. Serve para ver o app antes de conseguir rodar o Expo e como plano B na apresentação. |
+
+### Documentação
+
+| Documento | Para quê |
+|-----------|----------|
+| [`README-INSTALACAO.md`](README-INSTALACAO.md) | Tutorial para Linux, Windows e macOS |
+| [`CHANGELOG.md`](CHANGELOG.md) | O que mudou em cada versão |
+| [`docs/arquitetura.md`](docs/arquitetura.md) | Decisões técnicas e o porquê de cada uma |
+| [`docs/melhorias.md`](docs/melhorias.md) | Defeitos corrigidos e os que ficam mapeados |
+| [`docs/validacao.md`](docs/validacao.md) | O que foi testado e o que falta testar |
+| [`docs/git-flow.md`](docs/git-flow.md) | Branches, versões e commits verificados |
+| [`design/identidade/`](design/identidade/README.md) | O sistema visual |
 
 ## Estrutura do repositório
 
