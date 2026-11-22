@@ -15,7 +15,7 @@ para onde o dinheiro está indo.
 ![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.6.0](https://img.shields.io/badge/vers%C3%A3o-1.6.0-0F4D45)
+![versão 1.6.1](https://img.shields.io/badge/vers%C3%A3o-1.6.1-0F4D45)
 
 <br>
 
@@ -283,9 +283,13 @@ npm run doctor
 Precisa terminar em **`Tudo certo`** ou só com avisos. Se listar bloqueios, cada
 um vem com o arquivo envolvido e o comando exato da correção.
 
-**7. Inicie**
+**7. Entre na sua conta Expo (uma vez só) e inicie**
+
+O Expo Go do celular só abre o projeto se o terminal estiver entrado na
+**mesma** conta Expo que ele:
 
 ```bash
+npx expo login       # mesmo usuário e senha do Expo Go
 npm start
 ```
 
