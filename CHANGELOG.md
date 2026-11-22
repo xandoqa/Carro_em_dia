@@ -13,6 +13,24 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.6.1] — 2026-11-22
+
+### Adicionado
+- **Login no Expo CLI no passo a passo.** Primeiro teste no iPhone: o QR Code
+  conectou, o Expo Go chegou ao projeto e parou em *"You're signed in to Expo
+  Go as xandoqa, but not signed in to Expo CLI"*. Quando o Expo Go está
+  entrado numa conta, o terminal precisa estar na mesma — `npx expo login`,
+  uma vez só. O passo entrou no README, no tutorial (seção 7.1) e no roteiro
+  da apresentação.
+- **`npm run doctor` avisa antes do erro.** Consulta `expo whoami` e, se o
+  terminal não estiver entrado, explica e dá o comando. Fica fora do modo
+  rápido que roda a cada `npm start`, porque consulta a rede; sem internet, não
+  acusa nada.
+- Dois erros novos na lista de problemas comuns do tutorial: o do login e o
+  `spawn adb ENOENT`, que aparece ao apertar `a` sem o emulador instalado.
+
+---
+
 ## [1.6.0] — 2026-11-22
 
 O projeto passa a instalar e compilar numa máquina limpa — verificado, não
@@ -473,6 +491,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.6.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.1
 [1.6.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.0
 [1.5.6]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.6
 [1.5.5]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.5

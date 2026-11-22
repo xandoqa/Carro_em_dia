@@ -608,6 +608,64 @@ function checarDependenciasDeTerceiros() {
   });
 }
 
+/**
+ * Login no Expo CLI.
+ *
+ * Quando o Expo Go do celular está entrado numa conta, ele só abre o projeto
+ * se o terminal do computador estiver entrado na mesma conta. Sem isso, o QR
+ * Code conecta e o app fica repetindo "You need to be signed in to Expo Go and
+ * Expo CLI" — com tudo instalado corretamente.
+ *
+ * Consulta a rede, então fica fora do modo preflight (que roda a cada
+ * `npm start`), e qualquer falha da consulta — sem internet, demora — é
+ * ignorada: um diagnóstico que não conseguiu perguntar não pode acusar nada.
+ */
+function checarLoginExpo() {
+  if (PREFLIGHT) return;
+  secao('Conta Expo');
+
+  let saida = '';
+  let sucesso = false;
+  try {
+    saida = execSync('npx expo whoami', {
+      cwd: RAIZ,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: 20000,
+      env: { ...process.env, CI: '1' },
+    });
+    sucesso = true;
+  } catch (erro) {
+    saida = `${erro.stdout ?? ''}${erro.stderr ?? ''}`;
+  }
+
+  const usuario = saida.trim().split('\n').pop()?.trim() ?? '';
+  if (sucesso && usuario && !/not logged in/i.test(saida)) {
+    ok(`Expo CLI entrado como ${usuario}`);
+    return;
+  }
+
+  if (/not logged in/i.test(saida)) {
+    problema({
+      nivel: 'aviso',
+      titulo: 'O terminal não está entrado na conta Expo',
+      porque:
+        'Se o Expo Go do celular estiver entrado numa conta, ele só abre o projeto ' +
+        'quando o computador estiver entrado na mesma. O QR Code conecta e o app ' +
+        'repete "You need to be signed in to Expo Go and Expo CLI".',
+      onde: 'Expo CLI, no computador.',
+      solucao:
+        'Entre com o mesmo usuário e senha do Expo Go. É feito uma vez só. ' +
+        'Sem senha? Redefina em expo.dev, na tela de login.',
+      comando: 'npx expo login',
+      ordem: 2,
+    });
+    return;
+  }
+
+  console.log(fraco('  (não foi possível consultar a conta Expo agora — sem internet?)'));
+}
+
 function checarFerramentasDeTeste() {
   if (PREFLIGHT) return;
   secao('Ferramentas de verificação');
@@ -716,6 +774,7 @@ async function main() {
   checarLinux();
   if (temDeps) checarDependenciasDeTerceiros();
   if (temDeps) checarFerramentasDeTeste();
+  if (temDeps) checarLoginExpo();
 
   process.exit(relatar());
 }
