@@ -51,9 +51,19 @@ const fraco = (s) => c('2', s);
 
 const achados = [];
 
-/** Registra um problema. `nivel` é 'erro' (impede rodar) ou 'aviso'. */
-function problema({ nivel, titulo, porque, onde, solucao, comando }) {
-  achados.push({ nivel, titulo, porque, onde, solucao, comando });
+/**
+ * Registra um problema.
+ *
+ * `nivel` e 'erro' (impede rodar) ou 'aviso'. `ordem` diz o que resolver
+ * primeiro quando aparece mais de um: listar tres avisos sem dizer por onde
+ * comecar deixa a decisao com quem menos sabe do assunto.
+ *
+ *   1  resolver antes de tentar rodar
+ *   2  resolver para rodar no celular
+ *   3  so se for usar o recurso
+ */
+function problema({ nivel, titulo, porque, onde, solucao, comando, ordem = 2 }) {
+  achados.push({ nivel, titulo, porque, onde, solucao, comando, ordem });
 }
 
 function ok(texto) {
@@ -269,6 +279,7 @@ function checarExpo() {
       solucao:
         'Atualize o projeto para o SDK atual. O `--fix` ajusta todas as outras ' +
         'bibliotecas junto, inclusive o Reanimated e o Expo Router.',
+      ordem: 2,
       comando: 'npm install expo@latest && npx expo install --fix',
     });
   }
@@ -441,6 +452,7 @@ function checarLinux() {
           'watchers reached" — um erro que parece falta de disco, mas não é.',
         onde: '/proc/sys/fs/inotify/max_user_watches',
         solucao: 'Aumente o limite de forma permanente.',
+        ordem: 1,
         comando:
           "echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p",
       });
@@ -462,6 +474,7 @@ function checarLinux() {
         'Para usar o Expo Go por Wi-Fi, não precisa.',
       onde: 'PATH do sistema.',
       solucao: 'Instale as ferramentas de plataforma do Android, se for usar emulador.',
+      ordem: 3,
       comando: 'sudo apt install android-tools-adb',
     });
   }
@@ -545,6 +558,7 @@ function checarFerramentasDeTeste() {
         onde: 'devDependencies do package.json.',
         solucao: 'Instale as dependências de desenvolvimento.',
         comando,
+        ordem: 3,
       });
     }
   }
@@ -596,8 +610,24 @@ function relatar() {
 
   console.log(
     amarelo(`${avisos.length} aviso(s).`) +
-      ' Nada impede de rodar, mas vale resolver se algo der errado.\n',
+      ' Nada impede de rodar, mas vale resolver se algo der errado.',
   );
+
+  if (avisos.length > 1) {
+    console.log(`\n${forte('Sugestão de ordem:')}`);
+    const rotulos = {
+      1: 'antes de tentar rodar',
+      2: 'para rodar no celular',
+      3: 'só se for usar o recurso',
+    };
+    [...avisos]
+      .sort((a, b) => a.ordem - b.ordem)
+      .forEach((a, i) => {
+        console.log(`  ${i + 1}. ${a.titulo}  ${fraco(`(${rotulos[a.ordem]})`)}`);
+        console.log(`     ${azul(a.comando)}`);
+      });
+  }
+  console.log('');
   return 0;
 }
 
