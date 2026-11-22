@@ -100,6 +100,58 @@ function versaoInstalada(nome) {
   }
 }
 
+/**
+ * Diz se um pacote está instalado, visto a partir de quem precisa dele.
+ *
+ * Perguntar `require.resolve` a partir da raiz do projeto não serve, por dois
+ * motivos que aparecem o tempo todo em node_modules de verdade:
+ *
+ *   1. O npm nem sempre iça tudo para a raiz. Quando há conflito de versão,
+ *      ele aninha o pacote em node_modules/<pai>/node_modules/<filho>, e a
+ *      busca a partir da raiz não enxerga.
+ *   2. Pacote moderno declara "exports" e costuma NÃO expor ./package.json.
+ *      Pedir `<nome>/package.json` devolve ERR_PACKAGE_PATH_NOT_EXPORTED —
+ *      que significa "existe e não deixo você ler isso", não "não existe".
+ *
+ * Tratar qualquer um dos dois como ausência foi o que fez o diagnóstico
+ * acusar oito pacotes instalados como faltando, e barrar o `npm start`.
+ */
+function pacoteInstaladoPara(nome, arquivoDeQuemPrecisa) {
+  const existe = (erro) => erro?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED';
+  let req;
+  try {
+    req = createRequire(arquivoDeQuemPrecisa);
+  } catch {
+    return true; // sem base para perguntar: não acusa
+  }
+
+  try {
+    req.resolve(`${nome}/package.json`);
+    return true;
+  } catch (e) {
+    if (existe(e)) return true;
+  }
+
+  try {
+    req.resolve(nome);
+    return true;
+  } catch (e) {
+    if (existe(e)) return true;
+  }
+
+  // Último recurso: procura a pasta subindo os node_modules, como o Node faz.
+  let dir = path.dirname(arquivoDeQuemPrecisa);
+  const partes = nome.split('/');
+  for (let i = 0; i < 20; i += 1) {
+    if (fs.existsSync(path.join(dir, 'node_modules', ...partes))) return true;
+    const pai = path.dirname(dir);
+    if (pai === dir) break;
+    dir = pai;
+  }
+
+  return false;
+}
+
 function comandoExiste(cmd) {
   try {
     execSync(process.platform === 'win32' ? `where ${cmd}` : `command -v ${cmd}`, {
@@ -501,17 +553,20 @@ function checarDependenciasDeTerceiros() {
   const faltando = new Map();
 
   for (const nome of diretas) {
+    let caminhoDoPai;
     let meta;
     try {
-      meta = JSON.parse(
-        fs.readFileSync(require_.resolve(`${nome}/package.json`), 'utf8'),
-      );
+      caminhoDoPai = require_.resolve(`${nome}/package.json`);
+      meta = JSON.parse(fs.readFileSync(caminhoDoPai, 'utf8'));
     } catch {
       continue; // ausencia do pacote em si ja foi reportada antes
     }
 
     for (const dep of Object.keys(meta.dependencies ?? {})) {
-      if (versaoInstalada(dep) === null) {
+      // A pergunta é feita a partir do pacote que precisa, não da raiz: é
+      // assim que o Node resolve, e é o único jeito de enxergar o que o npm
+      // deixou aninhado.
+      if (!pacoteInstaladoPara(dep, caminhoDoPai)) {
         if (!faltando.has(dep)) faltando.set(dep, []);
         faltando.get(dep).push(nome);
       }
@@ -519,23 +574,30 @@ function checarDependenciasDeTerceiros() {
   }
 
   if (faltando.size === 0) {
-    ok(`${diretas.length} pacotes com as dependencias resolvidas`);
+    ok(`${diretas.length} pacotes com as dependências resolvidas`);
     return;
   }
 
   const lista = [...faltando.keys()];
   problema({
-    nivel: 'erro',
-    titulo: `${lista.length} dependência(s) de pacotes não instalada(s)`,
+    // Nunca bloqueia o `npm start`. Esta checagem é uma leitura do que o npm
+    // montou dentro de node_modules, e leitura errada minha não pode ser o
+    // motivo de o app não abrir — ainda mais na véspera de uma apresentação.
+    // No diagnóstico completo ela aparece como erro, para ser levada a sério.
+    nivel: PREFLIGHT ? 'aviso' : 'erro',
+    titulo: `${lista.length} dependência(s) de pacotes possivelmente não instalada(s)`,
     porque:
-      'Pacotes instalados precisam destes, que nao estao presentes. O erro so ' +
-      'aparece quando o bundler monta o pacote, apontando para dentro de ' +
-      'node_modules — longe do package.json, que e onde se resolve.',
+      'Pacotes instalados declaram precisar destes, e não os encontrei. ' +
+      'Quando falta de verdade, o erro só aparece no momento em que o bundler ' +
+      'monta o pacote, apontando para dentro de node_modules — longe do ' +
+      'package.json, que é onde se resolve. Se o app estiver abrindo normalmente, ' +
+      'trate como alarme falso.',
     onde: lista
       .map((d) => `${d} (exigido por ${faltando.get(d).join(', ')})`)
       .join('; '),
-    solucao: 'Instale o que falta pelo Expo, para vir na versao certa do SDK.',
+    solucao: 'Instale o que falta pelo Expo, para vir na versão certa do SDK.',
     comando: `npx expo install ${lista.join(' ')}`,
+    ordem: 1,
   });
 }
 

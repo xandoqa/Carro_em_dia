@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.4](https://img.shields.io/badge/vers%C3%A3o-1.5.4-0F4D45)
+![versão 1.5.5](https://img.shields.io/badge/vers%C3%A3o-1.5.5-0F4D45)
 
 <br>
 
@@ -193,6 +193,7 @@ dependências documentadas.
 | `eslint` | Análise estática |
 | `eslint-config-expo` | Regras de ESLint do Expo |
 | `prettier` | Formatação |
+| `@types/node` | Tipos do Node, usados pelos testes e scripts |
 
 > **Nenhuma dependência pesada.** Não há biblioteca de gráficos, de estado
 > (Redux, Zustand), de HTTP (Axios) nem de 3D. O motivo de cada ausência está

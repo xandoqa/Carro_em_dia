@@ -22,21 +22,34 @@ export function useNotificationNavigation() {
   useEffect(() => {
     // Caso 1: o app estava aberto ou em segundo plano.
     const inscricao = Notifications.addNotificationResponseReceivedListener(
-      (resposta: { notification: { request: { content: { data: unknown } } } }) => {
-        navegar(resposta.notification.request.content.data);
+      (resposta: unknown) => {
+        navegar(dadosDaResposta(resposta));
       },
     );
 
     // Caso 2: o app estava fechado e foi aberto pela notificação. O evento
     // acima já passou, então a última resposta é consultada na montagem.
     let ativo = true;
-    void Notifications.getLastNotificationResponseAsync?.().then(
-      (ultima: { notification: { request: { content: { data: unknown } } } } | null) => {
-        if (ativo && ultima) {
-          navegar(ultima.notification.request.content.data);
-        }
-      },
-    );
+    void Notifications.getLastNotificationResponseAsync?.().then((ultima: unknown) => {
+      if (ativo && ultima) navegar(dadosDaResposta(ultima));
+    });
+
+    /**
+     * Tira o `data` de dentro da resposta da notificação.
+     *
+     * O parâmetro é `unknown` de propósito. Descrever a forma exata do
+     * `NotificationResponse` aqui amarra o código à versão do
+     * expo-notificações instalada, e foi o que quebrou a checagem de tipos na
+     * atualização para o SDK 58: a biblioteca passou a declarar `data` como
+     * opcional, e a descrição escrita à mão exigia obrigatório.
+     */
+    function dadosDaResposta(resposta: unknown): unknown {
+      if (!resposta || typeof resposta !== 'object') return undefined;
+      const r = resposta as {
+        notification?: { request?: { content?: { data?: unknown } } };
+      };
+      return r.notification?.request?.content?.data;
+    }
 
     function navegar(dados: unknown) {
       const { veiculoId } = (dados ?? {}) as DadosNotificacao;
