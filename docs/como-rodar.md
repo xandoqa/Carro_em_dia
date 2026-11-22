@@ -1,469 +1,635 @@
-# Como rodar o CarroEmDia
+# Como instalar e rodar o CarroEmDia
 
-Guia completo, do zero até o app rodando no celular. Se você nunca mexeu com
-React Native, siga na ordem — nada aqui pressupõe conhecimento prévio de Expo.
+Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
+**macOS**.
 
-**Tempo estimado na primeira vez:** 15 a 20 minutos, quase todo em download.
+> **Antes de qualquer coisa:** se algo der errado em qualquer etapa, rode
+> `npm run doctor`. Ele verifica o ambiente e diz o que fazer, com o comando
+> pronto para copiar. É a primeira coisa a tentar, não a última.
+
+---
+
+## Resumo (Linux)
+
+Se você já tem Node 20+ e Git:
+
+```bash
+git clone https://github.com/xandoqa/Carro_em_dia.git
+cd Carro_em_dia
+npm run setup
+npm start
+```
+
+Leia o QR Code com o app **Expo Go** no celular. Pronto.
+
+O resto deste documento explica cada etapa em detalhe e o que fazer quando não
+funciona.
 
 ---
 
 ## Sumário
 
-1. [O que você precisa instalar](#1-o-que-você-precisa-instalar)
-2. [Baixando o projeto](#2-baixando-o-projeto)
-3. [Instalando as dependências](#3-instalando-as-dependências)
-4. [Rodando no celular](#4-rodando-no-celular)
-5. [Rodando no emulador](#5-rodando-no-emulador)
-6. [Primeiro uso: dados de exemplo](#6-primeiro-uso-dados-de-exemplo)
-7. [Testando os requisitos da disciplina](#7-testando-os-requisitos-da-disciplina)
-8. [Rodando os testes](#8-rodando-os-testes)
-9. [Quando dá errado](#9-quando-dá-errado)
-10. [Comandos do dia a dia](#10-comandos-do-dia-a-dia)
-11. [Trabalhando em equipe](#11-trabalhando-em-equipe)
+1. [O que o projeto é (e o que ele não precisa)](#1-o-que-o-projeto-é-e-o-que-ele-não-precisa)
+2. [Ferramentas necessárias](#2-ferramentas-necessárias)
+3. [Instalando no Linux](#3-instalando-no-linux)
+4. [Instalando no Windows](#4-instalando-no-windows)
+5. [Instalando no macOS](#5-instalando-no-macos)
+6. [Baixando o projeto e instalando as dependências](#6-baixando-o-projeto-e-instalando-as-dependências)
+7. [Rodando o aplicativo](#7-rodando-o-aplicativo)
+8. [Rodando pelo terminal do VS Code](#8-rodando-pelo-terminal-do-vs-code)
+9. [Como saber se está funcionando](#9-como-saber-se-está-funcionando)
+10. [Erros comuns e soluções](#10-erros-comuns-e-soluções)
+11. [Comandos disponíveis](#11-comandos-disponíveis)
 
 ---
 
-## 1. O que você precisa instalar
+## 1. O que o projeto é (e o que ele não precisa)
 
-### No computador
+O CarroEmDia é um **aplicativo de celular** feito em React Native com Expo.
+Entender isso evita procurar coisas que não existem:
 
-| O quê | Versão | Como conferir | Onde baixar |
-|-------|--------|---------------|-------------|
-| **Node.js** | 20 ou mais novo | `node --version` | [nodejs.org](https://nodejs.org) (escolha a versão **LTS**) |
-| **Git** | qualquer | `git --version` | [git-scm.com](https://git-scm.com) |
+| Pergunta | Resposta |
+|----------|----------|
+| Tem backend para subir? | **Não.** O app roda inteiro no celular. |
+| Tem banco de dados para configurar? | **Não.** Os dados ficam no próprio aparelho (AsyncStorage). |
+| Tem arquivo `.env` ou variáveis de ambiente? | **Não.** Nenhuma chave, senha ou URL precisa ser configurada. |
+| Precisa de servidor rodando? | Só o do Expo, que `npm start` sobe sozinho. |
+| Usa internet? | Só para consultar a tabela FIPE (API pública, sem cadastro). O resto funciona offline. |
 
-> **Node 18 ou mais antigo não serve.** O Expo SDK 53 exige Node 20+. Se o
-> `node --version` mostrar `v18.x` ou menos, instale a versão LTS do site.
+Ou seja: **instalar e rodar é instalar as dependências e dar `npm start`.** Não
+há configuração de ambiente além disso.
+
+---
+
+## 2. Ferramentas necessárias
+
+| Ferramenta | Versão | Para quê | Obrigatório? |
+|------------|--------|----------|--------------|
+| **Node.js** | 20 ou maior | Roda o projeto e o bundler | Sim |
+| **npm** | vem com o Node | Instala as dependências | Sim |
+| **Git** | qualquer | Baixa o repositório | Sim |
+| **Expo Go** (celular) | da loja | Abre o app no seu telefone | Sim, se for usar celular |
+| **Android Studio** | qualquer | Emulador Android | Só para emulador |
+| **Xcode** | qualquer | Simulador iPhone | Só no macOS |
+| **VS Code** | qualquer | Editar o código | Recomendado |
+
+> **Node 18 ou mais antigo não serve.** O Expo exige Node 20+. Com versão antiga
+> o erro aparece no meio do bundle e não diz que a causa é a versão.
 
 ### No celular
 
-Instale o **Expo Go**, que é o app que roda projetos Expo sem precisar gerar
-um APK:
+| Sistema | Onde baixar |
+|---------|-------------|
+| Android | [Expo Go na Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent) |
+| iPhone | [Expo Go na App Store](https://apps.apple.com/app/expo-go/id982107779) |
 
-- **Android:** [Expo Go na Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
-- **iPhone:** [Expo Go na App Store](https://apps.apple.com/app/expo-go/id982107779)
-
-> **Importante:** o celular e o computador precisam estar na **mesma rede
-> Wi-Fi**. Rede de celular ou Wi-Fi de visitante com isolamento de clientes
-> não funciona — veja a [seção 9](#9-quando-dá-errado).
-
-Você **não** precisa instalar Android Studio nem Xcode para rodar no celular
-com o Expo Go. Eles só são necessários para o emulador (seção 5).
+O celular e o computador precisam estar **na mesma rede Wi-Fi**. Se não puderem,
+veja a opção `--tunnel` na [seção 10](#10-erros-comuns-e-soluções).
 
 ---
 
-## 2. Baixando o projeto
+## 3. Instalando no Linux
+
+> Esta é a plataforma usada no desenvolvimento do projeto.
+
+### 3.1 Node.js pelo nvm (recomendado)
+
+Não use `sudo apt install nodejs`: a maioria das distribuições entrega uma
+versão antiga demais. O **nvm** instala a versão certa e permite trocar depois.
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+```
+
+Feche e reabra o terminal (ou rode `source ~/.bashrc`), depois:
+
+```bash
+nvm install --lts
+nvm use --lts
+```
+
+**Conferindo:**
+
+```bash
+node --version    # precisa mostrar v20 ou maior
+npm --version
+```
+
+### 3.2 Git
+
+```bash
+# Debian, Ubuntu, Mint, Pop!_OS
+sudo apt update && sudo apt install git
+
+# Fedora
+sudo dnf install git
+
+# Arch, Manjaro
+sudo pacman -S git
+```
+
+**Conferindo:** `git --version`
+
+### 3.3 Aumentar o limite de observadores de arquivo
+
+**Esta etapa é específica do Linux e resolve um erro muito comum.**
+
+O Metro (bundler do React Native) observa milhares de arquivos ao mesmo tempo. O
+limite padrão de várias distribuições é baixo demais, e aí aparece:
+
+```
+Error: ENOSPC: System limit for number of file watchers reached
+```
+
+A mensagem parece falta de espaço em disco, mas não é. Para resolver de vez:
+
+```bash
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+**Conferindo:**
+
+```bash
+cat /proc/sys/fs/inotify/max_user_watches    # precisa mostrar 524288
+```
+
+> O `npm run doctor` verifica isso automaticamente e avisa se estiver baixo.
+
+### 3.4 Emulador Android (opcional)
+
+Só se você não for usar o celular físico.
+
+1. Baixe o [Android Studio](https://developer.android.com/studio).
+2. Abra → *More Actions* → *Virtual Device Manager* → *Create Device*.
+3. Escolha um modelo (Pixel serve) e baixe uma imagem do sistema.
+
+Para usar celular por cabo USB, instale também o `adb`:
+
+```bash
+sudo apt install android-tools-adb     # Debian/Ubuntu
+sudo dnf install android-tools         # Fedora
+```
+
+> **No Linux não existe simulador de iPhone.** O comando `npm run ios` não
+> funciona aqui — isso é limitação da Apple, não do projeto. Use o Expo Go num
+> iPhone real, ou teste no Android.
+
+---
+
+## 4. Instalando no Windows
+
+### 4.1 Node.js
+
+Baixe o instalador **LTS** em [nodejs.org](https://nodejs.org) e execute. Aceite
+as opções padrão.
+
+**Conferindo** (abra o PowerShell):
+
+```powershell
+node --version
+npm --version
+```
+
+### 4.2 Git
+
+Baixe em [git-scm.com](https://git-scm.com/download/win) e instale. Nas opções,
+deixe o padrão.
+
+**Conferindo:** `git --version`
+
+### 4.3 Se os comandos não forem reconhecidos
+
+Se o PowerShell disser *"O termo 'node' não é reconhecido"*, o PATH não foi
+atualizado. **Feche e reabra o PowerShell.** Se continuar, reinicie o
+computador.
+
+### 4.4 Permissão de execução de scripts
+
+O Windows pode bloquear o `npm` com *"execução de scripts foi desabilitada"*.
+Abra o PowerShell **como administrador** e rode:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+Responda `S` (ou `Y`).
+
+### 4.5 Emulador Android (opcional)
+
+Instale o [Android Studio](https://developer.android.com/studio) e crie um
+dispositivo virtual em *Virtual Device Manager*.
+
+> **No Windows não existe simulador de iPhone.** `npm run ios` só funciona no
+> macOS.
+
+### 4.6 Observação sobre o WSL
+
+Se você usa WSL (Linux dentro do Windows), siga as instruções da
+[seção 3](#3-instalando-no-linux), mas saiba que o celular pode não enxergar o
+servidor por causa da rede virtual. Nesse caso use `npm run start:tunnel`.
+
+---
+
+## 5. Instalando no macOS
+
+### 5.1 Homebrew (se ainda não tiver)
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 5.2 Node.js e Git
+
+```bash
+brew install node git
+```
+
+Ou instale o Node pelo [nodejs.org](https://nodejs.org) (versão LTS).
+
+**Conferindo:**
+
+```bash
+node --version    # v20 ou maior
+npm --version
+git --version
+```
+
+### 5.3 Simulador de iPhone (opcional)
+
+1. Instale o [Xcode](https://apps.apple.com/app/xcode/id497799835) pela App Store
+   (é grande, reserve tempo).
+2. Abra o Xcode uma vez e aceite os termos.
+3. Instale as ferramentas de linha de comando:
+
+```bash
+xcode-select --install
+```
+
+Depois disso `npm run ios` funciona.
+
+### 5.4 Emulador Android (opcional)
+
+Mesmo processo do Linux: [Android Studio](https://developer.android.com/studio)
+→ *Virtual Device Manager*.
+
+---
+
+## 6. Baixando o projeto e instalando as dependências
+
+A partir daqui os comandos são **iguais nos três sistemas**.
+
+### 6.1 Clonar
 
 ```bash
 git clone https://github.com/xandoqa/Carro_em_dia.git
 cd Carro_em_dia
 ```
 
-Se você vai desenvolver, mude para a branch de trabalho:
+### 6.2 Instalar
 
 ```bash
-git checkout develop
+npm run setup
 ```
 
-> `main` tem o que está entregue; `develop` tem o que está em andamento. Veja
-> [git-flow.md](git-flow.md).
+Esse comando faz três coisas, nesta ordem:
+
+| Etapa | O que faz |
+|-------|-----------|
+| `npm install` | Baixa as bibliotecas listadas no `package.json` |
+| `npx expo install --fix` | Ajusta as versões para combinarem com o SDK do Expo |
+| `node scripts/doctor.mjs` | Verifica se ficou tudo certo e avisa o que falta |
+
+**A segunda etapa é tão importante quanto a primeira.** Ela corrige versões
+incompatíveis que causam a maior parte dos erros estranhos de inicialização.
+
+> Demora alguns minutos na primeira vez, quase tudo em download. Se ele alterar
+> o `package.json`, está correto — é o esperado.
+
+### 6.3 Confirmar que deu certo
+
+Ao final, o `setup` imprime o diagnóstico. Você quer ver:
+
+```
+Tudo certo. O projeto está pronto para rodar.
+```
+
+Se aparecer algum problema, ele vem com a explicação e o comando para resolver.
+Rode o comando indicado e depois:
+
+```bash
+npm run doctor
+```
 
 ---
 
-## 3. Instalando as dependências
+## 7. Rodando o aplicativo
 
-São **dois** comandos, e o segundo é tão importante quanto o primeiro:
-
-```bash
-npm install
-npx expo install --fix
-```
-
-### Por que o segundo comando
-
-O `package.json` fixa as versões do Expo SDK 53. O `expo install --fix`
-confere se cada biblioteca é compatível com o SDK que acabou de ser instalado e
-corrige o que estiver fora. Rodar isso na primeira vez evita a maior parte dos
-erros estranhos de inicialização.
-
-Se ele alterar o `package.json`, está tudo certo — é o esperado. Vale commitar
-a mudança.
-
-### Conferindo que deu certo
-
-```bash
-npx expo-doctor
-```
-
-Deve terminar com todos os itens marcados. Se apontar algo, a mensagem já diz
-o comando que resolve.
-
----
-
-## 4. Rodando no celular
+### 7.1 No celular (recomendado)
 
 ```bash
 npm start
 ```
 
-Vai aparecer um QR Code no terminal.
+Um QR Code aparece no terminal.
 
-| Sistema | O que fazer |
-|---------|-------------|
+| Sistema do celular | O que fazer |
+|--------------------|-------------|
 | **Android** | Abra o **Expo Go** → *Scan QR code* → aponte para o terminal |
-| **iPhone** | Abra a **câmera** do iOS → aponte para o QR Code → toque na notificação que aparece |
+| **iPhone** | Abra a **câmera** → aponte para o QR Code → toque na notificação |
 
-O app compila (demora de 30 s a 2 min na primeira vez) e abre no celular.
+O app compila (de 30 segundos a 2 minutos na primeira vez) e abre no celular.
 
-### Enquanto roda
+### 7.2 No emulador Android
 
-Com o terminal aberto, você pode digitar:
+Com o emulador já aberto:
+
+```bash
+npm run android
+```
+
+### 7.3 No simulador de iPhone (só macOS)
+
+```bash
+npm run ios
+```
+
+### 7.4 No navegador
+
+```bash
+npm run web
+```
+
+> **Atenção:** no navegador as **notificações não funcionam** (dependem do
+> sistema do celular) e a câmera/galeria se comportam de forma diferente. Serve
+> para conferir layout rapidamente, não para testar o app de verdade.
+
+### 7.5 Teclas úteis enquanto roda
 
 | Tecla | O que faz |
 |-------|-----------|
 | `r` | Recarrega o app |
 | `m` | Abre o menu de desenvolvedor no celular |
 | `j` | Abre o depurador |
-| `Ctrl+C` | Para o servidor |
+| `Ctrl + C` | Para o servidor |
 
-Salvar um arquivo recarrega o app automaticamente (*fast refresh*).
-
----
-
-## 5. Rodando no emulador
-
-Só se você preferir o emulador ao celular físico.
-
-### Android
-
-Precisa do [Android Studio](https://developer.android.com/studio) com um
-dispositivo virtual criado (*Device Manager* → *Create Device*).
-
-```bash
-npm run android
-```
-
-### iPhone
-
-Só funciona em **Mac**, com [Xcode](https://apps.apple.com/app/xcode/id497799835)
-instalado.
-
-```bash
-npm run ios
-```
-
-### Navegador
-
-```bash
-npm run web
-```
-
-> **Atenção:** no navegador, as **notificações não funcionam** (dependem do
-> sistema operacional do celular) e a câmera / galeria se comportam diferente.
-> Serve para conferir layout rapidamente, não para testar os requisitos da
-> disciplina.
+Salvar um arquivo recarrega o app sozinho.
 
 ---
 
-## 6. Primeiro uso: dados de exemplo
+## 8. Rodando pelo terminal do VS Code
 
-O app começa vazio. Para ver tudo funcionando sem digitar nada:
+### 8.1 Abrir o projeto
 
-> **Ajustes** (engrenagem no topo da Garagem) → seção **Dados** → **Carregar
-> dados de exemplo**
+```bash
+code .
+```
 
-Isso cria 2 veículos com histórico completo, já produzindo:
+Ou: VS Code → *File* → *Open Folder* → escolha a pasta `Carro_em_dia`.
 
-- **2 serviços vencidos** (um por km, um por data)
-- **3 chegando no prazo**
-- **2 em dia**
-- Abastecimentos suficientes para o app calcular consumo médio em km/L
+### 8.2 Abrir o terminal integrado
 
-É o que usamos na apresentação. As datas são calculadas a partir de *hoje*,
-então o cenário continua coerente em qualquer dia.
+| Sistema | Atalho |
+|---------|--------|
+| Linux e Windows | `Ctrl` + `'` (crase) |
+| macOS | `Cmd` + `'` (crase) |
 
-Para limpar: **Ajustes → Dados → Apagar todos os dados**.
+Ou pelo menu: *Terminal* → *New Terminal*.
+
+O terminal já abre dentro da pasta do projeto, então é só rodar:
+
+```bash
+npm run setup     # primeira vez
+npm start         # todas as outras
+```
+
+### 8.3 Se o terminal do VS Code não achar o Node
+
+Acontece principalmente no Linux com nvm: o VS Code abre um terminal que não
+carrega o `~/.bashrc`.
+
+**Solução:** feche o VS Code completamente e abra pelo terminal com `code .` —
+assim ele herda o ambiente correto.
+
+### 8.4 Extensões recomendadas (opcional)
+
+| Extensão | Para quê |
+|----------|----------|
+| ESLint | Mostra problemas enquanto você digita |
+| Prettier | Formata o código |
+| Expo Tools | Autocompletar do `app.json` |
 
 ---
 
-## 7. Testando os requisitos da disciplina
+## 9. Como saber se está funcionando
 
-Roteiro para conferir cada requisito funcionando. Útil antes da apresentação.
-
-### Persistência de dados
-
-1. Carregue os dados de exemplo.
-2. **Feche o app completamente** (não só minimize — tire da lista de apps
-   recentes).
-3. Abra de novo.
-
-✅ Os veículos, o histórico e o tema escolhido continuam lá.
-
-### Requisição de Web Service (tabela FIPE)
-
-1. Garagem → **Cadastrar veículo**.
-2. Toque em **Marca** — a lista vem da API da FIPE pela BrasilAPI.
-3. Escolha uma marca → toque em **Modelo** → escolha um.
-4. O app consulta o preço e mostra o **valor de referência FIPE**, além de
-   preencher ano e combustível sozinho.
-
-**Para mostrar o cache funcionando:**
-
-1. Faça a consulta acima uma vez (com internet).
-2. Ligue o **modo avião**.
-3. Abra o cadastro de novo e toque em Marca.
-
-✅ A lista aparece mesmo offline, vinda do cache de 7 dias.
-
-### Notificação
-
-1. **Ajustes → Notificações → Avisos de manutenção** → ligue o interruptor.
-2. Aceite a permissão que o sistema pedir.
-3. Toque em **Enviar aviso de teste**.
-
-✅ A notificação chega em alguns segundos.
-
-A tela mostra **quantos avisos estão realmente agendados**, então dá para
-provar que o agendamento aconteceu.
-
-**Para demonstrar um aviso de manutenção real:**
-
-1. Registre uma manutenção com **"Avisar em (meses)" = 1** e data de **hoje**.
-2. Em Ajustes, o contador de avisos agendados aumenta.
-
-> O aviso em si dispararia dias antes do vencimento. Serviços **já vencidos**
-> são avisados na próxima vez que der a hora configurada (9h por padrão).
-
-### Mínimo de 4 telas interativas
-
-O app tem **9**. Caminho para passar por todas:
-
-```
-Garagem → Cadastrar veículo → (volta) → toca no card →
-Painel do veículo → Registrar manutenção → (volta) →
-aba Histórico → Ver todos → Histórico completo → toca num registro →
-(fecha) → aba Alertas → aba Gastos → Ajustes → Aparência
-```
-
-### Git Flow
+### 9.1 Verificação automática
 
 ```bash
-git log --oneline --graph --all
+npm run doctor
 ```
 
-✅ Mostra `main`, `develop` e as branches `feature/*` com merges `--no-ff`.
+Verifica ambiente, dependências, versões, arquivos e porta. Se tudo estiver bem:
 
-### Finalidade além de ver informações
+```
+Tudo certo. O projeto está pronto para rodar.
+```
 
-O app **calcula** (projeta prazos a partir do histórico), **agenda** (avisos no
-sistema operacional), **sincroniza** (o odômetro sobe ao registrar serviço com
-km maior) e **agrega** (relatório de gastos, consumo médio, custo por km).
+### 9.2 Verificação do código
+
+```bash
+npm run verify
+```
+
+Roda três checagens em sequência:
+
+| Checagem | O que confirma |
+|----------|----------------|
+| `typecheck` | O TypeScript não tem erro de tipo |
+| `lint` | O código segue o padrão do projeto |
+| `test` | As 127 regras de negócio passam |
+
+O resultado dos testes deve terminar com `# pass 127` e `# fail 0`.
+
+### 9.3 Verificação no app
+
+Abra o app e faça este roteiro:
+
+1. **Ajustes** (engrenagem no topo) → **Dados** → **Carregar dados de exemplo**.
+   Devem aparecer 2 veículos com histórico.
+2. Volte para a garagem: deve mostrar serviços **vencidos** (vermelho) e
+   **chegando** (âmbar).
+3. Toque num veículo → o painel abre com odômetro e a faixa de medida.
+4. **Ajustes** → **Notificações** → ligue → **Enviar aviso de teste**. A
+   notificação deve chegar em alguns segundos.
+5. **Ajustes** → **Tema** → troque para *Asfalto*. O app inteiro muda de cor.
+6. Feche o app completamente e abra de novo: os dados e o tema continuam lá.
+
+Se esses seis passos funcionarem, o app está funcionando.
 
 ---
 
-## 8. Rodando os testes
+## 10. Erros comuns e soluções
 
-```bash
-npm test
-```
-
-✅ Deve terminar com `# pass 127` e `# fail 0`.
-
-Os testes rodam no Node puro, sem emulador, em menos de um segundo. Eles cobrem
-as regras de negócio: cálculo de lembretes, agregação de gastos, aritmética de
-datas, formatação brasileira e validação de placa.
-
-Verificação completa antes de abrir um Pull Request:
-
-```bash
-npm run verify     # typecheck + lint + testes
-```
-
----
-
-## 9. Quando dá errado
-
-### O QR Code não conecta / fica "Something went wrong"
-
-**Causa mais comum:** celular e computador em redes diferentes.
-
-1. Confirme que os dois estão no **mesmo Wi-Fi**.
-2. Se estiver numa rede da faculdade ou de visitante, ela provavelmente isola
-   os dispositivos. Use o **roteamento por túnel**:
-
-```bash
-npx expo start --tunnel
-```
-
-É mais lento, mas funciona em qualquer rede. Também resolve quando o firewall
-do Windows está bloqueando.
-
-3. Como alternativa, ligue o **ponto de acesso do celular** e conecte o
-   computador nele.
-
-### `Error: Cannot find module` ao iniciar
-
-Instalação incompleta. Apague e refaça:
-
-```bash
-rm -rf node_modules package-lock.json
-npm install
-npx expo install --fix
-```
-
-No Windows (PowerShell):
-
-```powershell
-Remove-Item -Recurse -Force node_modules, package-lock.json
-npm install
-npx expo install --fix
-```
+> **Primeiro passo sempre:** `npm run doctor`. Ele identifica a maioria destes
+> casos automaticamente e já dá o comando.
 
 ### "Project is incompatible with this version of Expo Go"
 
-O Expo Go da loja ficou mais novo que o SDK do projeto. Atualize o projeto:
+**O mais provável de acontecer.** O Expo Go da loja é mais novo que o SDK do
+projeto.
 
 ```bash
 npm install expo@latest
 npx expo install --fix
+npm run doctor
 ```
 
-Depois rode `npx expo-doctor` e corrija o que ele apontar.
+### `ENOSPC: System limit for number of file watchers reached` (Linux)
 
-### Tela branca ou erro estranho depois de trocar de branch
-
-Cache do bundler. Limpe:
+Limite de observadores de arquivo. Veja a [seção 3.3](#33-aumentar-o-limite-de-observadores-de-arquivo).
 
 ```bash
-npx expo start --clear
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+### O QR Code não conecta / "Something went wrong"
+
+Quase sempre celular e computador em redes diferentes, ou firewall bloqueando.
+
+```bash
+npm run start:tunnel
+```
+
+Mais lento, mas funciona em qualquer rede. Também resolve no WSL e em Wi-Fi de
+faculdade, que costuma isolar os dispositivos.
+
+### `Error: Cannot find module` ao iniciar
+
+Instalação incompleta.
+
+```bash
+# Linux e macOS
+rm -rf node_modules package-lock.json && npm run setup
+
+# Windows (PowerShell)
+Remove-Item -Recurse -Force node_modules, package-lock.json
+npm run setup
+```
+
+### Tela branca, ou erro estranho depois de trocar de branch
+
+Cache do bundler.
+
+```bash
+npm run start:limpo
 ```
 
 ### `EADDRINUSE: port 8081 already in use`
 
-Já existe um servidor rodando. Feche o outro terminal, ou:
+Outro servidor já está rodando.
 
 ```bash
+# Linux e macOS
+lsof -ti:8081 | xargs kill -9
+
+# Windows
+netstat -ano | findstr :8081
+taskkill /PID <numero_do_pid> /F
+
+# Ou simplesmente use outra porta:
 npx expo start --port 8082
+```
+
+### Erro de worklet ao abrir o app
+
+O `babel.config.js` descobre sozinho qual plugin usar, mas se alguém o editou:
+
+```bash
+git checkout babel.config.js
+npm run start:limpo
 ```
 
 ### As notificações não chegam
 
-1. **Ajustes do celular** → Apps → Expo Go → Notificações → **permitir**.
-2. Confira que o interruptor está ligado em **Ajustes → Notificações**.
-3. Use **Enviar aviso de teste** para isolar o problema.
-4. Em **web** as notificações não funcionam — teste no celular.
-5. No Android, o modo **Não perturbe** e a economia de bateria agressiva
-   (comum em Xiaomi, Samsung e Motorola) podem segurar avisos agendados.
+1. Ajustes do celular → Apps → Expo Go → Notificações → **permitir**.
+2. No app: **Ajustes** → **Notificações** → ligado.
+3. Use **Enviar aviso de teste** para isolar.
+4. No **navegador não funciona** — teste no celular.
+5. No Android, modo *Não perturbe* e economia de bateria agressiva (Xiaomi,
+   Samsung, Motorola) seguram avisos agendados.
 
-### A lista de marcas não carrega
+### A lista de marcas (FIPE) não carrega
 
-1. Confira a internet do **celular** (a requisição sai dele, não do computador).
-2. A BrasilAPI pode estar fora do ar. O app mostra a mensagem e continua
-   funcionando: **os campos aceitam digitação manual**, e o cadastro segue
-   normalmente.
+1. Confira a internet **do celular** — a requisição sai dele, não do computador.
+2. A BrasilAPI pode estar fora do ar. O app avisa e **continua funcionando**: os
+   campos aceitam digitação manual e o cadastro segue normalmente.
 
-### `npm install` falha com erro de permissão (Linux/Mac)
+### `npm install` falha com erro de permissão (Linux e macOS)
 
-Não use `sudo` com npm. Se aparecer `EACCES`:
+**Não use `sudo` com npm.** Se aparecer `EACCES`:
 
 ```bash
 npm config set prefix ~/.npm-global
 export PATH=~/.npm-global/bin:$PATH
 ```
 
-### "Metro has encountered an error" depois de editar um arquivo
+Para tornar permanente, adicione a linha do `export` ao seu `~/.bashrc` ou
+`~/.zshrc`.
 
-Quase sempre é erro de sintaxe no arquivo que você acabou de salvar. A
-mensagem no terminal aponta o arquivo e a linha. Corrija e salve de novo — o
-app recarrega sozinho.
+### "execução de scripts foi desabilitada" (Windows)
+
+Veja a [seção 4.4](#44-permissão-de-execução-de-scripts).
+
+### Nada do acima resolveu
+
+```bash
+npm run doctor:expo
+```
+
+Esse é o diagnóstico oficial do Expo e checa coisas que o nosso não cobre.
 
 ---
 
-## 10. Comandos do dia a dia
+## 11. Comandos disponíveis
+
+### Para rodar
 
 | Comando | O que faz |
 |---------|-----------|
-| `npm start` | Inicia o servidor de desenvolvimento |
-| `npm start -- --clear` | Inicia limpando o cache |
+| `npm run setup` | Instala tudo e verifica. **Use na primeira vez.** |
+| `npm start` | Inicia o app (verifica o ambiente antes) |
+| `npm run start:limpo` | Inicia limpando o cache do bundler |
+| `npm run start:tunnel` | Inicia por túnel, para redes que bloqueiam |
 | `npm run android` | Abre no emulador Android |
-| `npm run ios` | Abre no simulador iOS (só Mac) |
+| `npm run ios` | Abre no simulador iPhone (só macOS) |
 | `npm run web` | Abre no navegador |
-| `npm test` | Roda os 127 testes |
-| `npm run typecheck` | Confere os tipos do TypeScript |
-| `npm run lint` | Confere estilo e problemas comuns |
-| `npm run lint:fix` | Corrige o que dá para corrigir sozinho |
-| `npm run format` | Formata o código com Prettier |
+
+### Para diagnosticar
+
+| Comando | O que faz |
+|---------|-----------|
+| `npm run doctor` | Verifica ambiente, dependências, versões e porta |
+| `npm run doctor:expo` | Diagnóstico oficial do Expo |
+| `npm run fix:deps` | Alinha as bibliotecas ao SDK instalado |
+
+### Para verificar o código
+
+| Comando | O que faz |
+|---------|-----------|
 | `npm run verify` | typecheck + lint + testes |
-| `npm run tokens` | Regera `design/tokens/tokens.json` a partir de `src/theme` |
-| `npx expo-doctor` | Diagnostica incompatibilidade de versões |
-| `npx expo install --fix` | Alinha as bibliotecas ao SDK instalado |
-
----
-
-## 11. Trabalhando em equipe
-
-O desenvolvimento é feito por **Alexandre**, em dupla com **Felipe**:
-Alexandre escreve o código, Felipe revisa e corrige, e os dois analisam o
-resultado juntos antes de integrar na `develop`.
-
-### Antes de começar a mexer
-
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/nome-do-que-voce-vai-fazer
-```
-
-### Antes de subir
-
-```bash
-npm run verify
-```
-
-Se passar:
-
-```bash
-git add .
-git commit -m "feat(escopo): o que mudou"
-git push origin feature/nome-do-que-voce-vai-fazer
-```
-
-Depois abra o Pull Request no GitHub, com `develop` como destino.
-
-### Regras combinadas
-
-1. Ninguém faz commit direto em `main` nem em `develop`.
-2. Uma branch `feature/` por assunto.
-3. `npm run verify` tem que passar antes do PR.
-4. Merge sempre com `--no-ff`.
-5. Se o comportamento mudou, atualize o README ou os docs no mesmo commit.
-6. Nada entra na `develop` sem a análise conjunta da dupla.
-
-Detalhes completos em [git-flow.md](git-flow.md).
-
-### Onde mexer no quê
-
-| Quero mudar... | Vá em |
-|----------------|-------|
-| Uma tela | `app/` — o arquivo define a rota |
-| Cores, fontes, espaçamento | `src/theme/` |
-| Uma regra de negócio | `src/domain/` — e escreva o teste junto |
-| Como os dados são salvos | `src/data/` |
-| A consulta à FIPE ou as notificações | `src/services/` |
-| Um componente reaproveitável | `src/components/` |
-
-> A regra mais importante da arquitetura: **`src/domain/` não importa nada do
-> React Native.** É isso que permite rodar as regras de negócio no Node, sem
-> emulador. Se você precisar importar algo de `react-native` dentro de
-> `domain/`, provavelmente aquilo pertence a outra camada.
-
-Mais contexto em [arquitetura.md](arquitetura.md).
+| `npm test` | Só os 127 testes |
+| `npm run typecheck` | Só os tipos |
+| `npm run lint` | Só o padrão de código |
+| `npm run lint:fix` | Corrige o que dá para corrigir sozinho |
+| `npm run format` | Formata com Prettier |
 
 ---
 
 ## Ainda travado?
 
-1. `npx expo-doctor` — resolve a maioria dos problemas de ambiente.
+1. `npm run doctor` — resolve a maioria dos casos.
 2. Leia a mensagem de erro inteira; o Expo costuma dizer o comando que resolve.
 3. [Documentação do Expo](https://docs.expo.dev) (em inglês).
-4. Chame alguém do grupo — provavelmente já passou pelo mesmo.
+4. Veja a [arquitetura do projeto](arquitetura.md) para entender a estrutura.
