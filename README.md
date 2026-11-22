@@ -14,7 +14,7 @@ para onde o dinheiro está indo.
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.5.0](https://img.shields.io/badge/vers%C3%A3o-1.5.0-0F4D45)
+![versão 1.5.1](https://img.shields.io/badge/vers%C3%A3o-1.5.1-0F4D45)
 
 <br>
 
@@ -496,6 +496,7 @@ em [`docs/melhorias.md`](docs/melhorias.md).
 | Notificações não chegam | Permissão negada, ou economia de bateria agressiva no Android | Ajustes do sistema → Expo Go → permitir notificações |
 | Lista da FIPE vazia | BrasilAPI fora do ar ou celular sem internet | O cadastro continua funcionando com digitação manual |
 | `npm run ios` falha | Simulador de iPhone só existe no macOS | Use Android ou um iPhone real com Expo Go |
+| `npm audit` aponta vulnerabilidades | Dependências internas das ferramentas de build, que não entram no app | **Não use `npm audit fix --force`** — quebra o Expo. Use `npx expo install --fix` |
 
 Todos são detectados pelo `npm run doctor`, que já entrega o comando.
 

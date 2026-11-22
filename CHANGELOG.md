@@ -13,6 +13,17 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.5.1] — 2026-11-22
+
+### Adicionado
+- Aviso sobre **`npm audit fix --force`**, no README e no tutorial. O próprio
+  terminal sugere esse comando depois de qualquer instalação, mas em projeto
+  Expo ele quebra a instalação: ignora as versões que o SDK exige e troca
+  pacotes por outros incompatíveis. As vulnerabilidades reportadas vêm de
+  dependências internas das ferramentas de build e não entram no aplicativo.
+
+---
+
 ## [1.5.0] — 2026-11-22
 
 ### Corrigido
@@ -243,6 +254,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.5.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.1
 [1.5.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.0
 [1.4.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.2
 [1.4.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.1
