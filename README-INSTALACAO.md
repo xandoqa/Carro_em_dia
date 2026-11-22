@@ -10,6 +10,15 @@ Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
 > `npm run doctor`. Ele verifica o ambiente e diz o que fazer, com o comando
 > pronto para copiar. É a primeira coisa a tentar, não a última.
 
+> ### Já tem o projeto e nada funciona?
+>
+> ```bash
+> npm run sdk:atualizar
+> ```
+>
+> Busca o Expo SDK atual, alinha todas as bibliotecas a ele e verifica. É o que
+> resolve a maior parte dos erros de quem instalou e travou.
+
 ---
 
 ## Resumo (Linux)
@@ -161,26 +170,105 @@ cat /proc/sys/fs/inotify/max_user_watches    # precisa mostrar 524288
 
 > O `npm run doctor` verifica isso automaticamente e avisa se estiver baixo.
 
-### 3.4 Emulador Android (opcional)
+### 3.4 Emulador Android no Linux
 
-Só se você não for usar o celular físico.
+Funciona igual ao do Windows: é o mesmo Android Studio, mesma interface.
 
-1. Baixe o [Android Studio](https://developer.android.com/studio).
-2. Abra → *More Actions* → *Virtual Device Manager* → *Create Device*.
-3. Escolha um modelo (Pixel serve) e baixe uma imagem do sistema.
+**1. Baixar o Android Studio**
 
-Para usar celular por cabo USB, instale também o `adb`:
+[developer.android.com/studio](https://developer.android.com/studio) → baixe o
+`.tar.gz` para Linux.
 
 ```bash
-sudo apt install android-tools-adb     # Debian/Ubuntu
-sudo dnf install android-tools         # Fedora
+cd ~/Downloads
+tar -xzf android-studio-*-linux.tar.gz
+sudo mv android-studio /opt/
+/opt/android-studio/bin/studio.sh
 ```
 
-> **No Linux não existe simulador de iPhone.** O comando `npm run ios` não
-> funciona aqui — isso é limitação da Apple, não do projeto. Use o Expo Go num
-> iPhone real, ou teste no Android.
+Na primeira execução ele baixa o SDK do Android (alguns GB). Aceite o padrão.
 
----
+**2. Criar o aparelho virtual**
+
+Na tela inicial do Android Studio:
+
+1. **More Actions** → **Virtual Device Manager**
+2. **Create Device**
+3. Escolha **Pixel 6** (ou outro) → **Next**
+4. Baixe uma imagem do sistema — pegue uma com **Google Play** → **Next**
+5. **Finish**
+6. Clique no ▶ para ligar o emulador
+
+**3. Deixar os comandos disponíveis no terminal**
+
+Sem isso o `npm run android` não acha o emulador. Adicione ao fim do seu
+`~/.bashrc`:
+
+```bash
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools
+```
+
+Recarregue e confira:
+
+```bash
+source ~/.bashrc
+adb --version          # deve responder
+emulator -list-avds    # deve listar o aparelho que você criou
+```
+
+**4. Rodar o projeto nele**
+
+Com o emulador **já aberto**:
+
+```bash
+npm run android
+```
+
+**Se a aceleração por hardware falhar** (emulador lento ou que não abre):
+
+```bash
+sudo apt install qemu-kvm
+sudo usermod -aG kvm $USER
+```
+
+Saia da sessão e entre de novo. Conferir:
+
+```bash
+kvm-ok     # precisa dizer "KVM acceleration can be used"
+```
+
+> **Alternativa mais leve:** o [Genymotion](https://www.genymotion.com/) tem
+> versão gratuita para uso pessoal e costuma ser mais rápido que o emulador do
+> Android Studio em máquinas modestas.
+
+### 3.5 Celular Android por cabo USB (alternativa ao emulador)
+
+Mais leve que emulador e mais próximo do real.
+
+1. No celular: **Ajustes** → **Sobre o telefone** → toque 7 vezes em **Número da
+   compilação** para liberar as opções de desenvolvedor.
+2. **Ajustes** → **Opções do desenvolvedor** → ligue **Depuração USB**.
+3. Conecte o cabo e autorize no celular.
+
+```bash
+adb devices     # deve listar o aparelho
+npm run android
+```
+
+### 3.6 iPhone no Linux
+
+**Você não precisa de Mac para testar no iPhone.** O Expo Go funciona:
+
+```bash
+npm start
+```
+
+Leia o QR Code com a **câmera do iPhone** e toque na notificação.
+
+> O que **não** funciona no Linux é o comando `npm run ios`, que abre o
+> simulador do Xcode — software da Apple que só roda no macOS. Com iPhone
+> físico e Expo Go, nada disso é necessário.
 
 ## 4. Instalando no Windows
 
@@ -409,6 +497,14 @@ npm run web
 > **Atenção:** no navegador as **notificações não funcionam** (dependem do
 > sistema do celular) e a câmera/galeria se comportam de forma diferente. Serve
 > para conferir layout rapidamente, não para testar o app de verdade.
+
+> **Se o navegador der `Unable to resolve module ...`:** o bundler web carrega
+> arquivos `.web.js` que o celular nem usa, então ele esbarra em pacotes que o
+> app não precisa. Isso **não afeta o Expo Go**. Resolva com:
+>
+> ```bash
+> npm run sdk:atualizar
+> ```
 
 ### 7.5 Teclas úteis enquanto roda
 
@@ -644,7 +740,9 @@ Esse é o diagnóstico oficial do Expo e checa coisas que o nosso não cobre.
 
 | Comando | O que faz |
 |---------|-----------|
-| `npm run setup` | Instala tudo e verifica. **Use na primeira vez.** |
+| `npm run setup` | Instala com o SDK **atual** e verifica. **Use na primeira vez.** |
+| `npm run sdk:atualizar` | Atualiza o Expo para a versão atual e realinha tudo |
+| `npm run setup:fixo` | Instala com as versões fixadas no `package.json` |
 | `npm start` | Inicia o app (verifica o ambiente antes) |
 | `npm run start:limpo` | Inicia limpando o cache do bundler |
 | `npm run start:tunnel` | Inicia por túnel, para redes que bloqueiam |

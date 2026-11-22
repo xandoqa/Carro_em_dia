@@ -10,11 +10,11 @@ Registre o que foi feito, saiba quanto falta para o próximo serviço e veja
 para onde o dinheiro está indo.
 
 [![CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml/badge.svg)](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml)
-![Expo SDK 53](https://img.shields.io/badge/Expo-SDK%2053-0F4D45)
+![Expo SDK atual](https://img.shields.io/badge/Expo-SDK%20atual-0F4D45)
 ![React Native 0.79](https://img.shields.io/badge/React%20Native-0.79-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.4.2](https://img.shields.io/badge/vers%C3%A3o-1.4.2-0F4D45)
+![versão 1.5.0](https://img.shields.io/badge/vers%C3%A3o-1.5.0-0F4D45)
 
 <br>
 
@@ -488,7 +488,8 @@ em [`docs/melhorias.md`](docs/melhorias.md).
 
 | Problema | Causa | Solução |
 |----------|-------|---------|
-| *"Project is incompatible with this version of Expo Go"* | O `package.json` fixa o SDK 53; o Expo Go da loja acompanha o SDK mais recente | `npm install expo@latest && npx expo install --fix` |
+| *"Project is incompatible with this version of Expo Go"* | SDK instalado mais antigo que o Expo Go da loja | `npm run sdk:atualizar` |
+| `Unable to resolve module <nome>` no navegador | O bundler web carrega arquivos `.web.js` que o celular não usa, e esbarra em pacotes ausentes. **Não afeta o Expo Go.** | `npm run sdk:atualizar` |
 | `ENOSPC: System limit for number of file watchers` (Linux) | Limite do inotify baixo demais para o Metro | `echo fs.inotify.max_user_watches=524288 \| sudo tee -a /etc/sysctl.conf && sudo sysctl -p` |
 | QR Code não conecta | Celular e computador em redes diferentes, ou firewall | `npm run start:tunnel` |
 | Erro de worklet ao abrir | `babel.config.js` editado à mão | `git checkout babel.config.js && npm run start:limpo` |

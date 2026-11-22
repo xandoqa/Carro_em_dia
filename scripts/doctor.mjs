@@ -467,6 +467,65 @@ function checarLinux() {
   }
 }
 
+/**
+ * Procura dependencias que os pacotes instalados precisam mas nao existem.
+ *
+ * Este caso derrubou o projeto na pratica: expo-font estava declarado, o
+ * build web dele importa expo-asset, e expo-asset nao estava instalado. O
+ * bundler so reclamava na hora de montar o pacote, com uma mensagem apontando
+ * para dentro de node_modules — longe do package.json, que e onde se resolve.
+ *
+ * A checagem le o package.json de cada dependencia direta e confere se o que
+ * ela declara esta resolvivel.
+ */
+function checarDependenciasDeTerceiros() {
+  secao('Dependências dos pacotes');
+
+  const pkg = lerJson('package.json');
+  if (!pkg) return;
+
+  const diretas = Object.keys(pkg.dependencies ?? {});
+  const faltando = new Map();
+
+  for (const nome of diretas) {
+    let meta;
+    try {
+      meta = JSON.parse(
+        fs.readFileSync(require_.resolve(`${nome}/package.json`), 'utf8'),
+      );
+    } catch {
+      continue; // ausencia do pacote em si ja foi reportada antes
+    }
+
+    for (const dep of Object.keys(meta.dependencies ?? {})) {
+      if (versaoInstalada(dep) === null) {
+        if (!faltando.has(dep)) faltando.set(dep, []);
+        faltando.get(dep).push(nome);
+      }
+    }
+  }
+
+  if (faltando.size === 0) {
+    ok(`${diretas.length} pacotes com as dependencias resolvidas`);
+    return;
+  }
+
+  const lista = [...faltando.keys()];
+  problema({
+    nivel: 'erro',
+    titulo: `${lista.length} dependência(s) de pacotes não instalada(s)`,
+    porque:
+      'Pacotes instalados precisam destes, que nao estao presentes. O erro so ' +
+      'aparece quando o bundler monta o pacote, apontando para dentro de ' +
+      'node_modules — longe do package.json, que e onde se resolve.',
+    onde: lista
+      .map((d) => `${d} (exigido por ${faltando.get(d).join(', ')})`)
+      .join('; '),
+    solucao: 'Instale o que falta pelo Expo, para vir na versao certa do SDK.',
+    comando: `npx expo install ${lista.join(' ')}`,
+  });
+}
+
 function checarFerramentasDeTeste() {
   if (PREFLIGHT) return;
   secao('Ferramentas de verificação');
@@ -556,6 +615,7 @@ async function main() {
   checarArquivosEssenciais();
   await checarPorta();
   checarLinux();
+  if (temDeps) checarDependenciasDeTerceiros();
   if (temDeps) checarFerramentasDeTeste();
 
   process.exit(relatar());
