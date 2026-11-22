@@ -13,6 +13,17 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.4.2] — 2026-11-21
+
+### Adicionado
+- Seção **"O que foi implementado e corrigido"** no README, explicando cada
+  funcionalidade, defeito corrigido, peça de infraestrutura e decisão de
+  design — com o motivo de cada um. O CHANGELOG conta a história por versão;
+  esta seção organiza por assunto, para quem quer entender o projeto sem
+  percorrer o histórico.
+
+---
+
 ## [1.4.1] — 2026-11-21
 
 ### Alterado
@@ -200,6 +211,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.4.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.2
 [1.4.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.1
 [1.4.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.4.0
 [1.3.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.3.1
