@@ -565,6 +565,21 @@ npm run doctor
 
 ### 7.1 No celular (recomendado)
 
+**Antes, uma vez só: entre na sua conta Expo no terminal.** Se o Expo Go do
+celular estiver entrado numa conta, ele só abre o projeto quando o computador
+estiver entrado na **mesma**. Sem isso, o QR Code conecta e o terminal repete
+*"You need to be signed in to Expo Go and Expo CLI"*.
+
+```bash
+npx expo login       # mesmo usuário e senha do Expo Go
+npx expo whoami      # confere: precisa responder com o seu usuário
+```
+
+Fica salvo no computador. Esqueceu a senha? Redefina em
+[expo.dev](https://expo.dev), na tela de login.
+
+Depois:
+
 ```bash
 npm start
 ```
@@ -719,6 +734,23 @@ Se esses seis passos funcionarem, o app está funcionando.
 
 > **Primeiro passo sempre:** `npm run doctor`. Ele identifica a maioria destes
 > casos automaticamente e já dá o comando.
+
+### "You need to be signed in to Expo Go and Expo CLI" / "signed in to Expo Go as ..., but not signed in to Expo CLI"
+
+**Causa:** o Expo Go do celular está entrado numa conta Expo e o terminal do
+computador não está. O projeto em si está funcionando — o celular chegou até
+ele.
+
+```bash
+npx expo login      # mesmo usuário e senha do Expo Go
+npm start
+```
+
+### `Failed to resolve the Android SDK path` / `spawn adb ENOENT`
+
+**Causa:** foi pressionada a tecla `a` (abrir no Android) sem o emulador
+instalado. Para usar o celular, ignore e leia o QR Code. Para instalar o
+emulador, veja a [seção 3.4](#34-emulador-android-no-linux).
 
 ### "Project is incompatible with this version of Expo Go"
 

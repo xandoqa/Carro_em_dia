@@ -112,6 +112,7 @@ Apresentação em que o único caminho falha é apresentação perdida.
 ```bash
 cd ~/Documentos/Carro_em_dia
 git pull
+npx expo whoami       # precisa responder com o seu usuário; se não, npx expo login
 npm run doctor        # precisa dizer "Tudo certo" ou só avisos
 npm run verify        # precisa terminar com "# pass 127"
 npm start             # confirme que o QR aparece
