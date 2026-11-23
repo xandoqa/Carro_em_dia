@@ -13,7 +13,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../../src/components/base/Button';
@@ -44,6 +44,7 @@ import {
   normalizePlaca,
   parseNumberInput,
 } from '../../src/utils/format';
+import { avisar } from '../../src/utils/dialogo';
 
 type Folha = 'marca' | 'modelo' | 'combustivel' | null;
 
@@ -135,7 +136,7 @@ export default function NovoVeiculoScreen() {
   async function escolherFoto() {
     const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
-      Alert.alert(
+      avisar(
         'Acesso as fotos',
         'Libere o acesso as fotos nos ajustes do celular para escolher uma imagem do veiculo.',
       );
@@ -170,7 +171,11 @@ export default function NovoVeiculoScreen() {
 
     if (!ano.trim()) {
       novos.ano = 'Informe o ano.';
-    } else if (!Number.isInteger(anoNum) || anoNum < 1950 || anoNum > anoLimite) {
+    } else if (
+      !Number.isInteger(anoNum) ||
+      anoNum < 1950 ||
+      anoNum > anoLimite
+    ) {
       novos.ano = `Use um ano entre 1950 e ${anoLimite}.`;
     }
 
@@ -178,9 +183,7 @@ export default function NovoVeiculoScreen() {
       novos.placa = 'Informe a placa.';
     } else if (!isPlacaValida(placa)) {
       novos.placa = 'Use o formato ABC1234 ou ABC1D23.';
-    } else if (
-      veiculos.some((v) => v.placa === normalizePlaca(placa))
-    ) {
+    } else if (veiculos.some((v) => v.placa === normalizePlaca(placa))) {
       novos.placa = 'Ja existe um veiculo com essa placa.';
     }
 
@@ -214,7 +217,7 @@ export default function NovoVeiculoScreen() {
       mostrar(`${apelido.trim()} cadastrado`);
       router.back();
     } catch (erro) {
-      Alert.alert(
+      avisar(
         'Nao foi possivel salvar',
         erro instanceof Error ? erro.message : 'Tente de novo.',
       );
@@ -271,7 +274,11 @@ export default function NovoVeiculoScreen() {
             />
           ) : (
             <>
-              <VehicleGlyph tipo={tipo} size={40} color={theme.colors.textMuted} />
+              <VehicleGlyph
+                tipo={tipo}
+                size={40}
+                color={theme.colors.textMuted}
+              />
               <Txt variant="bodySM" tone="muted" style={{ marginTop: 6 }}>
                 Adicionar foto (opcional)
               </Txt>

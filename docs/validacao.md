@@ -44,7 +44,8 @@ com Node 22. Primeira execução totalmente verde: 22/11/2026.
 | **Testes** | `npm test` | 127/127 |
 | **Compilação para iPhone** | `npx expo export --platform ios` | Bundle Hermes de 4,7 MB |
 | **Compilação para Android** | `npx expo export --platform android` | Bundle Hermes de 4,7 MB |
-| **Compilação para web** | `npx expo export --platform web` | Site estático gerado, com renderização no servidor |
+| **Compilação para web** | `npx expo export --platform web` | Aplicação de página única gerada |
+| **Web aberta num navegador** | `node scripts/ci/testar-web.mjs` | As 11 rotas, com e sem dados, nos 4 temas, sem nenhum erro de JavaScript |
 
 A compilação é o que o Expo Go carrega: se ela passa, o JavaScript do app —
 todas as telas, componentes e regras — monta sem erro para cada plataforma.
