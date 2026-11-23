@@ -13,6 +13,43 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.7.0] — 2026-11-22
+
+O app visto rodando pela primeira vez e comparado, tela a tela, com a maquete
+do repositório (`design/preview`). O teste da web fotografa cada tela; as fotos
+foram postas lado a lado com as da maquete. A estrutura das 11 telas e os 4
+temas batem — cores, tipografia, componentes e o botão flutuante. Cinco
+diferenças não batiam:
+
+### Corrigido
+- **Acentos em todo o app.** "veiculos", "Historico", "Odometro", "ha 300 km"
+  viraram "veículos", "Histórico", "Odômetro", "há 300 km": 298 trechos em 42
+  arquivos, 11 plurais, e os pedidos de permissão do iPhone no `app.json`. A
+  troca foi feita pelo compilador do TypeScript, não por busca e substituição:
+  só texto exibido. Identificadores, rotas (`/aparencia`), chaves de
+  armazenamento e ids gravados (`oleo`, `eletrico`, status `atencao`) ficaram
+  intactos, e os que sobraram foram conferidos um a um. Palavras ambíguas
+  (esta/está, tem/têm, e/é, da/dá, a/à) foram decididas pelo contexto.
+- **Marcas da régua sumiam quando o prazo vencia.** Eram desenhadas por baixo do
+  preenchimento: no prazo, ele é translúcido e elas apareciam; vencido, é sólido
+  e as cobria, e o elemento-assinatura virava uma barra lisa justamente quando
+  mais importa. Agora ficam por cima, como no design.
+- **Valores cortados no navegador** ("114.500 …", "R$ 1.377,…").
+  `adjustsFontSizeToFit` reduz a fonte no iPhone e no Android, mas não existe
+  na web. Como os números usam fonte monoespaçada, a largura é calculável, e o
+  `Txt` passou a reduzir a fonte no navegador na proporção que falta.
+- **Gráfico de gastos.** Com doze meses, os rótulos viravam "d… j… f…": acima
+  de seis colunas fica a inicial. O valor da maior barra era cortado em "3…"
+  porque, no navegador, texto de uma linha herda a largura da coluna; o
+  posicionamento foi para um contêiner em volta.
+- **Linha do histórico** cortava os litros; usa duas linhas, como no design.
+
+### Alterado
+- O teste da web abre o painel de **cada** veículo de exemplo, não só do
+  primeiro — o odômetro que cortava era o do segundo.
+
+---
+
 ## [1.6.2] — 2026-11-22
 
 ### Corrigido
@@ -525,6 +562,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.7.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.0
 [1.6.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.2
 [1.6.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.1
 [1.6.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.0
