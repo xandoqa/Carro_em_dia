@@ -164,7 +164,7 @@ export function PickerSheet({
               <Txt variant="body" tone="muted" align="center">
                 {busca
                   ? `Nada encontrado para "${busca}".`
-                  : (emptyMessage ?? 'Nenhuma opcao disponivel.')}
+                  : (emptyMessage ?? 'Nenhuma opção disponível.')}
               </Txt>
             </View>
           ) : (

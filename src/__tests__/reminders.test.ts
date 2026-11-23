@@ -55,7 +55,7 @@ function manutencao(overrides: Partial<Manutencao> = {}): Manutencao {
 
 /* -------------------------------------------------------------------------- */
 
-describe('janelas de atencao', () => {
+describe('janelas de atenção', () => {
   it('usa 15% do intervalo dentro dos limites', () => {
     // 15% de 10.000 = 1.500, dentro do piso e do teto.
     assert.equal(janelaAtencaoKm(10_000), 1_500);
@@ -99,14 +99,14 @@ describe('definirStatus', () => {
     );
   });
 
-  it('marca atencao dentro da janela', () => {
+  it('marca atenção dentro da janela', () => {
     assert.equal(
       definirStatus({ kmRestantes: 1_000, janelaKm: 1_500 }),
       'atencao',
     );
   });
 
-  it('marca atencao exatamente no limite da janela', () => {
+  it('marca atenção exatamente no limite da janela', () => {
     assert.equal(
       definirStatus({ kmRestantes: 1_500, janelaKm: 1_500 }),
       'atencao',
@@ -120,7 +120,7 @@ describe('definirStatus', () => {
     );
   });
 
-  it('considera so a dimensao que existe', () => {
+  it('considera só a dimensão que existe', () => {
     assert.equal(
       definirStatus({ diasRestantes: 3, janelaDias: 7 }),
       'atencao',
@@ -129,7 +129,7 @@ describe('definirStatus', () => {
 });
 
 describe('ultimoServicoPorTipo', () => {
-  it('mantem o registro mais recente de cada tipo', () => {
+  it('mantém o registro mais recente de cada tipo', () => {
     const mapa = ultimoServicoPorTipo([
       manutencao({ id: 'a', tipo: 'oleo', data: '2025-06-01', km: 95_000 }),
       manutencao({ id: 'b', tipo: 'oleo', data: '2026-01-10', km: 105_000 }),
@@ -152,11 +152,11 @@ describe('ultimoServicoPorTipo', () => {
 });
 
 describe('calcularLembretes', () => {
-  it('nao gera lembrete sem historico', () => {
+  it('não gera lembrete sem histórico', () => {
     assert.deepEqual(calcularLembretes(veiculo(), [], HOJE), []);
   });
 
-  it('projeta o proximo servico a partir do ultimo registro', () => {
+  it('projeta o próximo serviço a partir do último registro', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 108_000 }),
       [manutencao({ km: 105_000, data: '2026-01-10', proximaEmKm: 10_000 })],
@@ -170,7 +170,7 @@ describe('calcularLembretes', () => {
     assert.equal(l.status, 'em-dia');
   });
 
-  it('usa o intervalo padrao do tipo quando o registro nao define um', () => {
+  it('usa o intervalo padrão do tipo quando o registro não define um', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 106_000 }),
       // Sem previsao no registro: cai nos padroes do tipo "oleo",
@@ -183,7 +183,7 @@ describe('calcularLembretes', () => {
     assert.equal(lembretes[0].dataPrevista, '2027-01-10');
   });
 
-  it('previsao so em km nao cria vencimento por data', () => {
+  it('previsão só em km não cria vencimento por data', () => {
     // O usuario pediu aviso em 10.000 km e deixou os meses em branco.
     // O padrao de 12 meses do tipo nao deve entrar no lugar dele.
     const lembretes = calcularLembretes(
@@ -197,7 +197,7 @@ describe('calcularLembretes', () => {
     assert.equal(lembretes[0].diasRestantes, undefined);
   });
 
-  it('previsao so em meses nao cria vencimento por km', () => {
+  it('previsão só em meses não cria vencimento por km', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 200_000 }),
       [manutencao({ km: 105_000, data: '2026-01-10', proximaEmMeses: 12 })],
@@ -209,7 +209,7 @@ describe('calcularLembretes', () => {
     assert.equal(lembretes[0].status, 'em-dia');
   });
 
-  it('marca vencido quando o odometro passou do previsto', () => {
+  it('marca vencido quando o odômetro passou do previsto', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 114_500 }),
       [manutencao({ km: 104_000, data: '2026-01-10', proximaEmKm: 10_000 })],
@@ -240,7 +240,7 @@ describe('calcularLembretes', () => {
     assert.equal(lembretes[0].status, 'vencido');
   });
 
-  it('ignora tipos que nao geram lembrete', () => {
+  it('ignora tipos que não geram lembrete', () => {
     const lembretes = calcularLembretes(
       veiculo(),
       [manutencao({ tipo: 'abastecimento', litros: 32 })],
@@ -250,7 +250,7 @@ describe('calcularLembretes', () => {
     assert.deepEqual(lembretes, []);
   });
 
-  it('nao mistura manutencoes de outro veiculo', () => {
+  it('não mistura manutenções de outro veículo', () => {
     const lembretes = calcularLembretes(
       veiculo({ id: 'v1' }),
       [manutencao({ veiculoId: 'v2', km: 10_000 })],
@@ -260,7 +260,7 @@ describe('calcularLembretes', () => {
     assert.deepEqual(lembretes, []);
   });
 
-  it('calcula progresso entre o ultimo servico e o previsto', () => {
+  it('calcula progresso entre o último serviço e o previsto', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 110_000 }),
       [manutencao({ km: 105_000, data: '2026-01-10', proximaEmKm: 10_000 })],
@@ -271,7 +271,7 @@ describe('calcularLembretes', () => {
     assert.equal(lembretes[0].progresso, 0.5);
   });
 
-  it('nao devolve progresso negativo se o odometro estiver atras', () => {
+  it('não devolve progresso negativo se o odômetro estiver atrás', () => {
     const lembretes = calcularLembretes(
       veiculo({ kmAtual: 100_000 }),
       [manutencao({ km: 105_000, data: '2026-01-10', proximaEmKm: 10_000 })],
@@ -282,7 +282,7 @@ describe('calcularLembretes', () => {
   });
 });
 
-describe('ordenacao e contagem', () => {
+describe('ordenação e contagem', () => {
   function lembrete(
     status: Lembrete['status'],
     progresso: number,
@@ -292,13 +292,13 @@ describe('ordenacao e contagem', () => {
       id,
       veiculoId: 'v1',
       tipo: 'oleo',
-      nome: 'Troca de oleo e filtro',
+      nome: 'Troca de óleo e filtro',
       status,
       progresso,
     };
   }
 
-  it('coloca vencidos antes de atencao e em dia', () => {
+  it('coloca vencidos antes de atenção e em dia', () => {
     const ordenados = ordenarLembretes([
       lembrete('em-dia', 0.2, 'c'),
       lembrete('vencido', 1.2, 'a'),
@@ -348,7 +348,7 @@ describe('ordenacao e contagem', () => {
 });
 
 describe('calcularTodosLembretes', () => {
-  it('junta varios veiculos ordenados por urgencia', () => {
+  it('junta vários veículos ordenados por urgência', () => {
     const carro = veiculo({ id: 'v1', kmAtual: 114_500 });
     const moto = veiculo({
       id: 'v2',

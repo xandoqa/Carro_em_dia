@@ -11,8 +11,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "br.ucb.carroemdia",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "O app usa suas fotos para anexar a imagem do veiculo e a nota fiscal do servico.",
-        "NSCameraUsageDescription": "O app usa a camera para fotografar a nota fiscal do servico."
+        "NSPhotoLibraryUsageDescription": "O app usa suas fotos para anexar a imagem do veículo e a nota fiscal do serviço.",
+        "NSCameraUsageDescription": "O app usa a câmera para fotografar a nota fiscal do serviço."
       }
     },
     "android": {
@@ -49,8 +49,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "O app usa suas fotos para anexar a imagem do veiculo e a nota fiscal do servico.",
-          "cameraPermission": "O app usa a camera para fotografar a nota fiscal do servico."
+          "photosPermission": "O app usa suas fotos para anexar a imagem do veículo e a nota fiscal do serviço.",
+          "cameraPermission": "O app usa a câmera para fotografar a nota fiscal do serviço."
         }
       ]
     ],

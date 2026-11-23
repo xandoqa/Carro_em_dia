@@ -48,7 +48,7 @@ async function criarVeiculo(dados: NovoVeiculo): Promise<Veiculo> {
   const placa = normalizePlaca(dados.placa);
 
   if (veiculos.some((v) => v.placa === placa)) {
-    throw new Error('Ja existe um veiculo com essa placa.');
+    throw new Error('Já existe um veículo com essa placa.');
   }
 
   const veiculo: Veiculo = {
@@ -70,12 +70,12 @@ async function atualizarVeiculo(
   const veiculos = await listarVeiculos();
   const indice = veiculos.findIndex((v) => v.id === id);
   if (indice === -1) {
-    throw new Error('Veiculo nao encontrado.');
+    throw new Error('Veículo não encontrado.');
   }
 
   const placa = patch.placa ? normalizePlaca(patch.placa) : undefined;
   if (placa && veiculos.some((v) => v.placa === placa && v.id !== id)) {
-    throw new Error('Ja existe um veiculo com essa placa.');
+    throw new Error('Já existe um veículo com essa placa.');
   }
 
   const atualizado: Veiculo = {
@@ -99,11 +99,11 @@ async function atualizarVeiculo(
  */
 async function atualizarKm(id: string, km: number): Promise<Veiculo> {
   const veiculo = await obterVeiculo(id);
-  if (!veiculo) throw new Error('Veiculo nao encontrado.');
+  if (!veiculo) throw new Error('Veículo não encontrado.');
 
   if (km < veiculo.kmAtual) {
     throw new Error(
-      `A quilometragem nao pode ser menor que a atual (${veiculo.kmAtual.toLocaleString('pt-BR')} km).`,
+      `A quilometragem não pode ser menor que a atual (${veiculo.kmAtual.toLocaleString('pt-BR')} km).`,
     );
   }
 
@@ -133,17 +133,17 @@ async function kmMinimoPermitido(veiculoId: string): Promise<number> {
  */
 async function corrigirKm(id: string, km: number): Promise<Veiculo> {
   const veiculo = await obterVeiculo(id);
-  if (!veiculo) throw new Error('Veiculo nao encontrado.');
+  if (!veiculo) throw new Error('Veículo não encontrado.');
 
   if (km < 0) {
-    throw new Error('A quilometragem nao pode ser negativa.');
+    throw new Error('A quilometragem não pode ser negativa.');
   }
 
   const minimo = await kmMinimoPermitido(id);
   if (km < minimo) {
     throw new Error(
-      `Ha uma manutencao registrada em ${minimo.toLocaleString('pt-BR')} km. ` +
-        'Corrija ou exclua esse registro antes de baixar o odometro.',
+      `Há uma manutenção registrada em ${minimo.toLocaleString('pt-BR')} km. ` +
+        'Corrija ou exclua esse registro antes de baixar o odômetro.',
     );
   }
 
@@ -221,7 +221,7 @@ async function atualizarManutencao(
   const todas = await readJson<Manutencao[]>(storageKeys.manutencoes, []);
   const indice = todas.findIndex((m) => m.id === id);
   if (indice === -1) {
-    throw new Error('Manutencao nao encontrada.');
+    throw new Error('Manutenção não encontrada.');
   }
 
   const atualizada: Manutencao = { ...todas[indice], ...patch };

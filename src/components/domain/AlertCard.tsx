@@ -93,7 +93,7 @@ export function AlertCard({ lembrete, veiculo, onRegistrar }: AlertCardProps) {
           usuario ache que o app esqueceu de um deles. */}
       {lembrete.kmPrevisto !== undefined && lembrete.dataPrevista ? (
         <Txt variant="bodySM" tone="muted" style={{ marginTop: theme.spacing.sm }}>
-          Tambem vence em {formatDateShort(lembrete.dataPrevista)}.
+          Também vence em {formatDateShort(lembrete.dataPrevista)}.
         </Txt>
       ) : null}
 

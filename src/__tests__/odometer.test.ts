@@ -18,7 +18,7 @@ function m(overrides: Partial<Manutencao> = {}): Manutencao {
 }
 
 describe('kmMinimoPermitido', () => {
-  it('e o maior km do historico do veiculo', () => {
+  it('e o maior km do histórico do veículo', () => {
     const minimo = kmMinimoPermitido(
       [m({ km: 98_000 }), m({ km: 114_000 }), m({ km: 105_000 })],
       'v1',
@@ -26,7 +26,7 @@ describe('kmMinimoPermitido', () => {
     assert.equal(minimo, 114_000);
   });
 
-  it('ignora manutencoes de outro veiculo', () => {
+  it('ignora manutenções de outro veículo', () => {
     const minimo = kmMinimoPermitido(
       [m({ veiculoId: 'v1', km: 50_000 }), m({ veiculoId: 'v2', km: 900_000 })],
       'v1',
@@ -34,14 +34,14 @@ describe('kmMinimoPermitido', () => {
     assert.equal(minimo, 50_000);
   });
 
-  it('e zero sem historico', () => {
+  it('e zero sem histórico', () => {
     assert.equal(kmMinimoPermitido([], 'v1'), 0);
     assert.equal(kmMinimoPermitido([m({ veiculoId: 'v2' })], 'v1'), 0);
   });
 });
 
 describe('validarNovoKm', () => {
-  it('aceita avanco normal do odometro', () => {
+  it('aceita avanço normal do odômetro', () => {
     const r = validarNovoKm({ novo: 115_000, atual: 114_500, minimo: 114_000 });
     assert.equal(r.tipo, 'avanco');
   });
@@ -51,7 +51,7 @@ describe('validarNovoKm', () => {
     assert.equal(r.tipo, 'ok');
   });
 
-  it('trata valor menor como correcao quando o historico permite', () => {
+  it('trata valor menor como correção quando o histórico permite', () => {
     // O usuario digitou 1.145.000 por engano e quer voltar para 114.500.
     const r = validarNovoKm({
       novo: 114_500,
@@ -61,7 +61,7 @@ describe('validarNovoKm', () => {
     assert.equal(r.tipo, 'correcao');
   });
 
-  it('recusa correcao abaixo do maior km registrado', () => {
+  it('recusa correção abaixo do maior km registrado', () => {
     const r = validarNovoKm({ novo: 100_000, atual: 114_500, minimo: 114_000 });
     assert.equal(r.tipo, 'invalido');
     if (r.tipo === 'invalido') {
@@ -74,17 +74,17 @@ describe('validarNovoKm', () => {
     assert.equal(r.tipo, 'invalido');
   });
 
-  it('recusa valor que nao e numero', () => {
+  it('recusa valor que não e número', () => {
     const r = validarNovoKm({ novo: Number.NaN, atual: 100, minimo: 0 });
     assert.equal(r.tipo, 'invalido');
   });
 
-  it('permite zerar o odometro de veiculo sem historico', () => {
+  it('permite zerar o odômetro de veículo sem histórico', () => {
     const r = validarNovoKm({ novo: 0, atual: 999_999, minimo: 0 });
     assert.equal(r.tipo, 'correcao');
   });
 
-  it('distingue correcao de invalido, que e o que da saida ao usuario', () => {
+  it('distingue correção de inválido, que e o que da saída ao usuário', () => {
     // Sem essa distincao, um erro de digitacao ficaria preso para sempre:
     // o valor inflado nao poderia ser desfeito por nenhum caminho do app.
     const correcao = validarNovoKm({

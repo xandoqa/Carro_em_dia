@@ -174,26 +174,26 @@ export function MaintenanceForm({
     const kmNum = parseNumberInput(km);
     const valorNum = parseNumberInput(valor);
 
-    if (!veiculoId) novos.veiculo = 'Escolha o veiculo.';
+    if (!veiculoId) novos.veiculo = 'Escolha o veículo.';
 
     if (!ISO.test(data)) {
       novos.data = 'Use o formato AAAA-MM-DD.';
     } else if (data > today()) {
-      novos.data = 'A data nao pode estar no futuro.';
+      novos.data = 'A data não pode estar no futuro.';
     }
 
     if (!km.trim()) {
-      novos.km = 'Informe a quilometragem do servico.';
+      novos.km = 'Informe a quilometragem do serviço.';
     } else if (kmNum === null || kmNum < 0) {
-      novos.km = 'Informe a quilometragem em numeros.';
+      novos.km = 'Informe a quilometragem em números.';
     }
 
     if (valor.trim() && (valorNum === null || valorNum < 0)) {
-      novos.valor = 'Informe o valor em numeros.';
+      novos.valor = 'Informe o valor em números.';
     }
 
     if (tipo === 'outro' && !descricao.trim()) {
-      novos.descricao = 'Descreva o servico para reconhecer depois.';
+      novos.descricao = 'Descreva o serviço para reconhecer depois.';
     }
 
     return novos;
@@ -231,16 +231,16 @@ export function MaintenanceForm({
 
       if (manutencao) {
         await atualizarManutencao(manutencao.id, dados);
-        mostrar('Manutencao atualizada');
+        mostrar('Manutenção atualizada');
       } else {
         await criarManutencao(dados);
-        mostrar('Manutencao registrada');
+        mostrar('Manutenção registrada');
       }
 
       onSalvo();
     } catch (erro) {
       avisar(
-        'Nao foi possivel salvar',
+        'Não foi possível salvar',
         erro instanceof Error ? erro.message : 'Tente de novo.',
       );
     } finally {
@@ -258,7 +258,7 @@ export function MaintenanceForm({
       {!editando && veiculos.length > 1 ? (
         <View style={{ marginBottom: theme.spacing.lg }}>
           <Txt variant="label" tone="muted" style={{ marginBottom: 6 }}>
-            Veiculo
+            Veículo
           </Txt>
           <VehiclePicker
             veiculos={veiculos}
@@ -292,7 +292,7 @@ export function MaintenanceForm({
       <View style={{ gap: theme.spacing.lg }}>
         {tipo === 'outro' ? (
           <Field
-            label="Qual servico"
+            label="Qual serviço"
             placeholder="Troca de correia dentada"
             value={descricao}
             onChangeText={setDescricao}
@@ -354,15 +354,15 @@ export function MaintenanceForm({
 
         <Field
           label="Oficina ou posto"
-          placeholder="Oficina do Ze"
+          placeholder="Oficina do Zé"
           value={oficina}
           onChangeText={setOficina}
           maxLength={60}
         />
 
         <Field
-          label="Observacoes"
-          placeholder="Oleo sintetico 5W40 e filtro original"
+          label="Observações"
+          placeholder="Óleo sintético 5W40 e filtro original"
           value={observacoes}
           onChangeText={setObservacoes}
           multiline
@@ -407,15 +407,15 @@ export function MaintenanceForm({
       </Card>
 
       <Card style={{ marginTop: theme.spacing.md }}>
-        <SectionHeader title="Proxima troca" />
+        <SectionHeader title="Próxima troca" />
         <Txt
           variant="bodySM"
           tone="muted"
           style={{ marginBottom: theme.spacing.md }}
         >
           {definicao.geraLembrete
-            ? 'Sugerimos o intervalo padrao deste servico. Ajuste se a sua oficina indicou outro, ou apague para nao criar lembrete.'
-            : 'Este tipo de registro normalmente nao gera lembrete, mas voce pode definir um.'}
+            ? 'Sugerimos o intervalo padrão deste serviço. Ajuste se a sua oficina indicou outro, ou apague para não criar lembrete.'
+            : 'Este tipo de registro normalmente não gera lembrete, mas você pode definir um.'}
         </Txt>
 
         <View style={{ flexDirection: 'row', gap: theme.spacing.md }}>
@@ -444,7 +444,7 @@ export function MaintenanceForm({
 
       <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.xxl }}>
         <Button
-          label={editando ? 'Salvar alteracoes' : 'Salvar manutencao'}
+          label={editando ? 'Salvar alterações' : 'Salvar manutenção'}
           onPress={salvar}
           loading={salvando}
         />
@@ -459,7 +459,7 @@ export function MaintenanceForm({
           if (erros.data) setErros((e) => ({ ...e, data: undefined }));
         }}
         onClose={() => setEscolhendoData(false)}
-        title="Data do servico"
+        title="Data do serviço"
       />
     </>
   );

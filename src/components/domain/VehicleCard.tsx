@@ -84,7 +84,7 @@ export function VehicleCard({ veiculo, lembrete, onPress }: VehicleCardProps) {
         ]}
       >
         <Txt variant="label" tone="muted">
-          Odometro
+          Odômetro
         </Txt>
         <Txt variant="meterLG">{formatKmUnit(veiculo.kmAtual)}</Txt>
       </View>
@@ -127,7 +127,7 @@ export function VehicleCard({ veiculo, lembrete, onPress }: VehicleCardProps) {
         </View>
       ) : (
         <Txt variant="bodySM" tone="muted" style={{ marginTop: theme.spacing.md }}>
-          Registre uma manutencao para o app comecar a calcular os lembretes.
+          Registre uma manutenção para o app começar a calcular os lembretes.
         </Txt>
       )}
     </Card>

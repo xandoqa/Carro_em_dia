@@ -30,15 +30,15 @@ export default function AparenciaScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen>
-        <Header title="Aparencia" subtitle={`Usando ${theme.name}`} back />
+        <Header title="Aparência" subtitle={`Usando ${theme.name}`} back />
 
         {/* Previa viva: o cartao abaixo usa o tema aplicado, entao o efeito
             da escolha aparece sem precisar sair da tela. */}
         <Card>
-          <SectionHeader title="Previa" />
+          <SectionHeader title="Prévia" />
           <View style={styles.previaTopo}>
             <View style={{ flex: 1 }}>
-              <Txt variant="titleSM">Troca de oleo e filtro</Txt>
+              <Txt variant="titleSM">Troca de óleo e filtro</Txt>
               <Txt variant="bodySM" tone="muted">
                 Gol do trabalho
               </Txt>
@@ -60,7 +60,7 @@ export default function AparenciaScreen() {
 
           <OptionRow
             title="Seguir o sistema"
-            description="Claro de dia, escuro a noite, conforme o ajuste do celular."
+            description="Claro de dia, escuro à noite, conforme o ajuste do celular."
             selected={preference === 'system'}
             onPress={() => setPreference('system')}
             leading={<AmostraSistema />}
@@ -83,7 +83,7 @@ export default function AparenciaScreen() {
           tone="muted"
           style={{ marginTop: theme.spacing.lg }}
         >
-          A escolha fica salva no aparelho e vale na proxima vez que voce abrir
+          A escolha fica salva no aparelho e vale na próxima vez que você abrir
           o app.
         </Txt>
       </Screen>

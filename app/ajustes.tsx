@@ -76,8 +76,8 @@ export default function AjustesScreen() {
     // que esta tudo certo.
     if (valor && total === 0 && lembretes.some((l) => l.dataPrevista)) {
       avisar(
-        'Avisos nao agendados',
-        'O celular nao autorizou as notificacoes do CarroEmDia. Libere nos ajustes do sistema para receber os lembretes.',
+        'Avisos não agendados',
+        'O celular não autorizou as notificações do CarroEmDia. Libere nos ajustes do sistema para receber os lembretes.',
       );
     }
   }
@@ -86,8 +86,8 @@ export default function AjustesScreen() {
     const enviou = await notificationService.enviarTeste();
     if (!enviou) {
       avisar(
-        'Permissao necessaria',
-        'Libere as notificacoes do CarroEmDia nos ajustes do celular para receber o teste.',
+        'Permissão necessária',
+        'Libere as notificações do CarroEmDia nos ajustes do celular para receber o teste.',
       );
       return;
     }
@@ -101,10 +101,10 @@ export default function AjustesScreen() {
       await recarregar();
       avisar(
         'Dados de exemplo carregados',
-        `${v} veiculos e ${m} registros, com servicos vencidos, proximos do prazo e em dia.`,
+        `${v} veículos e ${m} registros, com serviços vencidos, próximos do prazo e em dia.`,
       );
     } catch {
-      avisar('Nao foi possivel carregar', 'Tente de novo.');
+      avisar('Não foi possível carregar', 'Tente de novo.');
     } finally {
       setCarregandoExemplo(false);
     }
@@ -113,7 +113,7 @@ export default function AjustesScreen() {
   function confirmarLimpeza() {
     confirmar({
       titulo: 'Apagar todos os dados?',
-      mensagem: `Isso remove ${veiculos.length} ${veiculos.length === 1 ? 'veiculo' : 'veiculos'} e ${manutencoes.length} ${manutencoes.length === 1 ? 'registro' : 'registros'} deste aparelho. Nao da para desfazer.`,
+      mensagem: `Isso remove ${veiculos.length} ${veiculos.length === 1 ? 'veículo' : 'veículos'} e ${manutencoes.length} ${manutencoes.length === 1 ? 'registro' : 'registros'} deste aparelho. Não dá para desfazer.`,
       botao: 'Apagar tudo',
       destrutivo: true,
       aoConfirmar: async () => {
@@ -130,7 +130,7 @@ export default function AjustesScreen() {
       <Screen>
         <Header title="Ajustes" back />
 
-        <SectionHeader title="Aparencia" />
+        <SectionHeader title="Aparência" />
         <Card flush>
           <LinhaNavegacao
             titulo="Tema"
@@ -139,12 +139,12 @@ export default function AjustesScreen() {
           />
         </Card>
 
-        <SectionHeader title="Notificacoes" />
+        <SectionHeader title="Notificações" />
         {!notificationService.disponivel ? (
           <Card>
-            <Txt variant="titleSM">Avisos de manutencao</Txt>
+            <Txt variant="titleSM">Avisos de manutenção</Txt>
             <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
-              No navegador nao ha notificacoes agendadas. Abra o app no celular,
+              No navegador não há notificações agendadas. Abra o app no celular,
               pelo Expo Go, para receber os avisos. Os prazos continuam sendo
               calculados e aparecem na aba Alertas.
             </Txt>
@@ -153,7 +153,7 @@ export default function AjustesScreen() {
           <Card>
             <View style={styles.linhaSwitch}>
               <View style={{ flex: 1 }}>
-                <Txt variant="titleSM">Avisos de manutencao</Txt>
+                <Txt variant="titleSM">Avisos de manutenção</Txt>
                 <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
                   {notificacoes
                     ? `${agendadas} ${agendadas === 1 ? 'aviso agendado' : 'avisos agendados'}, ${antecedencia} dias antes do prazo.`
@@ -168,7 +168,7 @@ export default function AjustesScreen() {
                   true: theme.colors.brand,
                 }}
                 thumbColor={theme.colors.surface}
-                accessibilityLabel="Avisos de manutencao"
+                accessibilityLabel="Avisos de manutenção"
               />
             </View>
 
@@ -176,8 +176,8 @@ export default function AjustesScreen() {
               <>
                 <Divider style={{ marginVertical: theme.spacing.md }} />
                 <Txt variant="bodySM" tone="muted">
-                  Servicos que vencem so por quilometragem nao tem data para
-                  agendar. Esses aparecem na aba Alertas assim que o odometro
+                  Serviços que vencem só por quilometragem não tem data para
+                  agendar. Esses aparecem na aba Alertas assim que o odômetro
                   chega perto do limite.
                 </Txt>
                 <Button
@@ -197,7 +197,7 @@ export default function AjustesScreen() {
             <View style={{ flex: 1 }}>
               <Txt variant="meterLG">{veiculos.length}</Txt>
               <Txt variant="bodySM" tone="muted">
-                {veiculos.length === 1 ? 'veiculo' : 'veiculos'}
+                {veiculos.length === 1 ? 'veículo' : 'veículos'}
               </Txt>
             </View>
             <View style={{ flex: 1 }}>
@@ -219,8 +219,8 @@ export default function AjustesScreen() {
             tone="muted"
             style={{ marginTop: theme.spacing.md }}
           >
-            Tudo fica guardado neste aparelho. Nada e enviado para servidor,
-            exceto a consulta publica da tabela FIPE no cadastro de veiculos.
+            Tudo fica guardado neste aparelho. Nada é enviado para servidor,
+            exceto a consulta pública da tabela FIPE no cadastro de veículos.
           </Txt>
 
           {/* Util na apresentacao: um app vazio nao mostra historico, nem
