@@ -60,3 +60,23 @@ jobs:
 
       - name: Compilar para web
         run: npx expo export --platform web --output-dir dist-web
+
+      # Compilar nao e rodar: abre a web num navegador de verdade, percorre
+      # as telas com e sem dados, nos 4 temas, e falha em qualquer erro de
+      # JavaScript.
+      - name: Preparar navegador para o teste da web
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Abrir a web e percorrer as telas
+        run: node scripts/ci/testar-web.mjs dist-web
+
+      - name: Guardar as fotos das telas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telas
+          path: telas/
+          if-no-files-found: ignore
+          retention-days: 30
