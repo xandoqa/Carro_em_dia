@@ -27,10 +27,22 @@ jobs:
       - name: Fotos no log
         if: always()
         run: |
-          for f in telas/*.png; do
-            n=$(basename "$f" .png)
-            convert "$f" -resize 50% -quality 72 "/tmp/$n.jpg"
-            echo "===FOTO-INICIO $n==="
-            base64 -w 120 "/tmp/$n.jpg"
-            echo "===FOTO-FIM==="
-          done
+          cat > /tmp/reduzir.mjs <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { chromium } from 'playwright';
+          const b = await chromium.launch();
+          const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+          for (const f of fs.readdirSync('telas').filter((x) => x.endsWith('.png')).sort()) {
+            const dados = fs.readFileSync(path.join('telas', f)).toString('base64');
+            await p.setContent(`<body style="margin:0"><img style="width:390px;display:block" src="data:image/png;base64,${dados}"></body>`);
+            await p.waitForTimeout(100);
+            const jpg = await p.screenshot({ type: 'jpeg', quality: 78, fullPage: true });
+            console.log(`===FOTO-INICIO ${f.replace('.png', '')}===`);
+            const s = jpg.toString('base64');
+            for (let i = 0; i < s.length; i += 120) console.log(s.slice(i, i + 120));
+            console.log('===FOTO-FIM===');
+          }
+          await b.close();
+          JS
+          cp /tmp/reduzir.mjs ./reduzir.mjs && node reduzir.mjs
