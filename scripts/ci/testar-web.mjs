@@ -7,7 +7,7 @@
  * com o JavaScript executando num navegador.
  *
  * O que faz:
- *   1. Serve a compilação estática (dist-web) com as rotas do expo-router.
+ *   1. Serve a compilação web (dist-web) com as rotas do expo-router.
  *   2. Abre cada tela num Chromium com tamanho de celular.
  *   3. Carrega os dados de exemplo pelo botão dos Ajustes, como um usuário.
  *   4. Percorre as telas com dados, e a tela inicial em cada um dos 4 temas.
@@ -83,7 +83,12 @@ function resolver(urlPath) {
 
 function iniciarServidor() {
   const servidor = http.createServer((req, res) => {
-    const arquivo = resolver(req.url ?? '/');
+    const url = req.url ?? '/';
+    // Aplicação de página única (web.output = "single"): toda rota sem
+    // extensão recebe o index.html, e o roteador do app resolve no navegador.
+    // Com saída estática, o resolver acha o .html da rota antes disso.
+    const semExtensao = !path.extname(url.split('?')[0]);
+    const arquivo = resolver(url) ?? (semExtensao ? path.join(RAIZ, 'index.html') : null);
     if (!arquivo) {
       res.writeHead(404).end('nao encontrado');
       return;

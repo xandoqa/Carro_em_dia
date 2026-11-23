@@ -20,6 +20,7 @@ import { Button } from '../base/Button';
 import { useFeedback } from '../base/Feedback';
 import { Field } from '../base/Field';
 import { Txt } from '../base/Text';
+import { AcimaDoTeclado } from '../base/AcimaDoTeclado';
 
 export interface UpdateKmSheetProps {
   visible: boolean;
@@ -128,95 +129,99 @@ export function UpdateKmSheet({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable
-        style={[styles.fundo, { backgroundColor: theme.colors.scrim }]}
-        onPress={onClose}
-        accessibilityRole="button"
-        accessibilityLabel="Fechar"
-      />
-
-      <View
-        style={[
-          styles.folha,
-          {
-            backgroundColor: theme.colors.surfaceRaised,
-            borderTopLeftRadius: theme.radius.object,
-            borderTopRightRadius: theme.radius.object,
-            padding: theme.spacing.lg,
-            paddingBottom: insets.bottom + theme.spacing.lg,
-          },
-        ]}
-      >
-        <View style={[styles.puxador, { backgroundColor: theme.colors.line }]} />
-
-        <Txt variant="titleMD">Atualizar quilometragem</Txt>
-        <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
-          {veiculo.apelido} esta com {formatKmUnit(veiculo.kmAtual)}.
-        </Txt>
-
-        <Field
-          label="Nova quilometragem"
-          placeholder={formatKm(veiculo.kmAtual + 500)}
-          value={valor}
-          onChangeText={(t: string) => {
-            setValor(t);
-            if (erro) setErro(undefined);
-            if (correcaoPendente !== null) setCorrecaoPendente(null);
-          }}
-          error={erro}
-          keyboardType="number-pad"
-          suffix="km"
-          numeric
-          autoFocus
-          containerStyle={{ marginTop: theme.spacing.lg }}
+      <AcimaDoTeclado>
+        <Pressable
+          style={[styles.fundo, { backgroundColor: theme.colors.scrim }]}
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel="Fechar"
         />
 
-        {correcaoPendente !== null ? (
+        <View
+          style={[
+            styles.folha,
+            {
+              backgroundColor: theme.colors.surfaceRaised,
+              borderTopLeftRadius: theme.radius.object,
+              borderTopRightRadius: theme.radius.object,
+              padding: theme.spacing.lg,
+              paddingBottom: insets.bottom + theme.spacing.lg,
+            },
+          ]}
+        >
           <View
-            style={[
-              styles.aviso,
-              {
-                backgroundColor: theme.colors.warnSoft,
-                borderColor: theme.colors.warn,
-                borderRadius: theme.radius.control,
-                padding: theme.spacing.md,
-                marginTop: theme.spacing.md,
-              },
-            ]}
-            accessibilityRole="alert"
-          >
-            <Txt variant="titleSM" tone="warn">
-              Baixar o odometro?
-            </Txt>
-            <Txt variant="bodySM" tone="muted" style={{ marginTop: 4 }}>
-              O valor vai de {formatKm(veiculo.kmAtual)} para{' '}
-              {formatKm(correcaoPendente)} km. Faca isso so para corrigir um
-              erro de digitacao — os lembretes serao recalculados.
-            </Txt>
-          </View>
-        ) : (
-          <Txt
-            variant="bodySM"
-            tone="muted"
-            style={{ marginTop: theme.spacing.sm }}
-          >
-            Os lembretes sao recalculados com o novo valor.
-          </Txt>
-        )}
+            style={[styles.puxador, { backgroundColor: theme.colors.line }]}
+          />
 
-        <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.lg }}>
+          <Txt variant="titleMD">Atualizar quilometragem</Txt>
+          <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
+            {veiculo.apelido} esta com {formatKmUnit(veiculo.kmAtual)}.
+          </Txt>
+
+          <Field
+            label="Nova quilometragem"
+            placeholder={formatKm(veiculo.kmAtual + 500)}
+            value={valor}
+            onChangeText={(t: string) => {
+              setValor(t);
+              if (erro) setErro(undefined);
+              if (correcaoPendente !== null) setCorrecaoPendente(null);
+            }}
+            error={erro}
+            keyboardType="number-pad"
+            suffix="km"
+            numeric
+            autoFocus
+            containerStyle={{ marginTop: theme.spacing.lg }}
+          />
+
           {correcaoPendente !== null ? (
-            <Button
-              label="Confirmar correcao"
-              onPress={confirmarCorrecao}
-              loading={salvando}
-            />
+            <View
+              style={[
+                styles.aviso,
+                {
+                  backgroundColor: theme.colors.warnSoft,
+                  borderColor: theme.colors.warn,
+                  borderRadius: theme.radius.control,
+                  padding: theme.spacing.md,
+                  marginTop: theme.spacing.md,
+                },
+              ]}
+              accessibilityRole="alert"
+            >
+              <Txt variant="titleSM" tone="warn">
+                Baixar o odometro?
+              </Txt>
+              <Txt variant="bodySM" tone="muted" style={{ marginTop: 4 }}>
+                O valor vai de {formatKm(veiculo.kmAtual)} para{' '}
+                {formatKm(correcaoPendente)} km. Faca isso so para corrigir um
+                erro de digitacao — os lembretes serao recalculados.
+              </Txt>
+            </View>
           ) : (
-            <Button label="Salvar" onPress={salvar} loading={salvando} />
+            <Txt
+              variant="bodySM"
+              tone="muted"
+              style={{ marginTop: theme.spacing.sm }}
+            >
+              Os lembretes sao recalculados com o novo valor.
+            </Txt>
           )}
-          <Button label="Cancelar" variant="ghost" onPress={onClose} />
+
+          <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.lg }}>
+            {correcaoPendente !== null ? (
+              <Button
+                label="Confirmar correcao"
+                onPress={confirmarCorrecao}
+                loading={salvando}
+              />
+            ) : (
+              <Button label="Salvar" onPress={salvar} loading={salvando} />
+            )}
+            <Button label="Cancelar" variant="ghost" onPress={onClose} />
+          </View>
         </View>
-      </View>
+      </AcimaDoTeclado>
     </Modal>
   );
 }

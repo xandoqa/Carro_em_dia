@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme/ThemeProvider';
 import { Loading } from './Screen';
 import { Txt } from './Text';
+import { AcimaDoTeclado } from './AcimaDoTeclado';
 
 export interface PickerItem {
   value: string;
@@ -77,140 +78,150 @@ export function PickerSheet({
       transparent
       onRequestClose={fechar}
     >
-      <Pressable
-        style={[styles.fundo, { backgroundColor: theme.colors.scrim }]}
-        onPress={fechar}
-        accessibilityLabel="Fechar"
-        accessibilityRole="button"
-      />
+      <AcimaDoTeclado>
+        <Pressable
+          style={[styles.fundo, { backgroundColor: theme.colors.scrim }]}
+          onPress={fechar}
+          accessibilityLabel="Fechar"
+          accessibilityRole="button"
+        />
 
-      <View
-        style={[
-          styles.folha,
-          {
-            backgroundColor: theme.colors.surfaceRaised,
-            borderTopLeftRadius: theme.radius.object,
-            borderTopRightRadius: theme.radius.object,
-            paddingBottom: insets.bottom + theme.spacing.md,
-          },
-        ]}
-      >
-        <View style={[styles.puxador, { backgroundColor: theme.colors.line }]} />
-
-        <View style={[styles.cabecalho, { paddingHorizontal: theme.spacing.lg }]}>
-          <Txt variant="titleMD" style={{ flex: 1 }} numberOfLines={1}>
-            {title}
-          </Txt>
-          <Pressable
-            onPress={fechar}
-            hitSlop={12}
-            accessibilityRole="button"
-            accessibilityLabel="Fechar"
-            style={{
-              minWidth: theme.layout.touchTarget,
-              minHeight: theme.layout.touchTarget,
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-            }}
-          >
-            <Ionicons name="close" size={24} color={theme.colors.textMuted} />
-          </Pressable>
-        </View>
-
-        {items.length > LIMIAR_BUSCA ? (
+        <View
+          style={[
+            styles.folha,
+            {
+              backgroundColor: theme.colors.surfaceRaised,
+              borderTopLeftRadius: theme.radius.object,
+              borderTopRightRadius: theme.radius.object,
+              paddingBottom: insets.bottom + theme.spacing.md,
+            },
+          ]}
+        >
           <View
-            style={[
-              styles.busca,
-              {
-                backgroundColor: theme.colors.surfaceSunken,
-                borderColor: theme.colors.line,
-                borderRadius: theme.radius.control,
-                marginHorizontal: theme.spacing.lg,
-                minHeight: theme.layout.touchTarget,
-              },
-            ]}
-          >
-            <Ionicons name="search" size={18} color={theme.colors.textMuted} />
-            <TextInput
-              value={busca}
-              onChangeText={setBusca}
-              placeholder="Buscar"
-              placeholderTextColor={theme.colors.textMuted}
-              style={[
-                styles.buscaInput,
-                theme.typography.body,
-                { color: theme.colors.text },
-              ]}
-              accessibilityLabel={`Buscar em ${title}`}
-              autoCorrect={false}
-            />
-          </View>
-        ) : null}
-
-        {loading ? (
-          <Loading label="Carregando" />
-        ) : filtrados.length === 0 ? (
-          <View style={{ padding: theme.spacing.xxl }}>
-            <Txt variant="body" tone="muted" align="center">
-              {busca
-                ? `Nada encontrado para "${busca}".`
-                : (emptyMessage ?? 'Nenhuma opcao disponivel.')}
-            </Txt>
-          </View>
-        ) : (
-          <FlatList
-            data={filtrados}
-            keyExtractor={(item: PickerItem) => item.value}
-            style={{ marginTop: theme.spacing.sm }}
-            contentContainerStyle={{ paddingHorizontal: theme.spacing.lg }}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }: { item: PickerItem }) => {
-              const selecionado = item.value === value;
-              return (
-                <Pressable
-                  onPress={() => {
-                    setBusca('');
-                    onSelect(item);
-                  }}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected: selecionado }}
-                  accessibilityLabel={item.label}
-                  style={({ pressed }) => [
-                    styles.item,
-                    {
-                      borderBottomColor: theme.colors.line,
-                      minHeight: theme.layout.touchTarget,
-                      opacity: pressed ? 0.6 : 1,
-                    },
-                  ]}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Txt
-                      variant={selecionado ? 'titleSM' : 'body'}
-                      tone={selecionado ? 'brand' : 'default'}
-                      numberOfLines={2}
-                    >
-                      {item.label}
-                    </Txt>
-                    {item.hint ? (
-                      <Txt variant="bodySM" tone="muted" numberOfLines={1}>
-                        {item.hint}
-                      </Txt>
-                    ) : null}
-                  </View>
-                  {selecionado ? (
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color={theme.colors.brand}
-                    />
-                  ) : null}
-                </Pressable>
-              );
-            }}
+            style={[styles.puxador, { backgroundColor: theme.colors.line }]}
           />
-        )}
-      </View>
+
+          <View
+            style={[styles.cabecalho, { paddingHorizontal: theme.spacing.lg }]}
+          >
+            <Txt variant="titleMD" style={{ flex: 1 }} numberOfLines={1}>
+              {title}
+            </Txt>
+            <Pressable
+              onPress={fechar}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Fechar"
+              style={{
+                minWidth: theme.layout.touchTarget,
+                minHeight: theme.layout.touchTarget,
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="close" size={24} color={theme.colors.textMuted} />
+            </Pressable>
+          </View>
+
+          {items.length > LIMIAR_BUSCA ? (
+            <View
+              style={[
+                styles.busca,
+                {
+                  backgroundColor: theme.colors.surfaceSunken,
+                  borderColor: theme.colors.line,
+                  borderRadius: theme.radius.control,
+                  marginHorizontal: theme.spacing.lg,
+                  minHeight: theme.layout.touchTarget,
+                },
+              ]}
+            >
+              <Ionicons
+                name="search"
+                size={18}
+                color={theme.colors.textMuted}
+              />
+              <TextInput
+                value={busca}
+                onChangeText={setBusca}
+                placeholder="Buscar"
+                placeholderTextColor={theme.colors.textMuted}
+                style={[
+                  styles.buscaInput,
+                  theme.typography.body,
+                  { color: theme.colors.text },
+                ]}
+                accessibilityLabel={`Buscar em ${title}`}
+                autoCorrect={false}
+              />
+            </View>
+          ) : null}
+
+          {loading ? (
+            <Loading label="Carregando" />
+          ) : filtrados.length === 0 ? (
+            <View style={{ padding: theme.spacing.xxl }}>
+              <Txt variant="body" tone="muted" align="center">
+                {busca
+                  ? `Nada encontrado para "${busca}".`
+                  : (emptyMessage ?? 'Nenhuma opcao disponivel.')}
+              </Txt>
+            </View>
+          ) : (
+            <FlatList
+              data={filtrados}
+              keyExtractor={(item: PickerItem) => item.value}
+              style={{ marginTop: theme.spacing.sm }}
+              contentContainerStyle={{ paddingHorizontal: theme.spacing.lg }}
+              keyboardShouldPersistTaps="handled"
+              renderItem={({ item }: { item: PickerItem }) => {
+                const selecionado = item.value === value;
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setBusca('');
+                      onSelect(item);
+                    }}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: selecionado }}
+                    accessibilityLabel={item.label}
+                    style={({ pressed }) => [
+                      styles.item,
+                      {
+                        borderBottomColor: theme.colors.line,
+                        minHeight: theme.layout.touchTarget,
+                        opacity: pressed ? 0.6 : 1,
+                      },
+                    ]}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Txt
+                        variant={selecionado ? 'titleSM' : 'body'}
+                        tone={selecionado ? 'brand' : 'default'}
+                        numberOfLines={2}
+                      >
+                        {item.label}
+                      </Txt>
+                      {item.hint ? (
+                        <Txt variant="bodySM" tone="muted" numberOfLines={1}>
+                          {item.hint}
+                        </Txt>
+                      ) : null}
+                    </View>
+                    {selecionado ? (
+                      <Ionicons
+                        name="checkmark"
+                        size={20}
+                        color={theme.colors.brand}
+                      />
+                    ) : null}
+                  </Pressable>
+                );
+              }}
+            />
+          )}
+        </View>
+      </AcimaDoTeclado>
     </Modal>
   );
 }
