@@ -1,7 +1,7 @@
 name: Diagnostico completo
 
-# Rascunho de desenvolvimento: gera as fotos das telas e as imprime no log,
-# porque o ambiente onde o codigo e mantido nao consegue baixar artefatos.
+# Rascunho: reproduz o servidor de desenvolvimento (o que roda na maquina do
+# Alexandre) e a compilacao do GitHub Pages servida no subcaminho.
 
 on:
   workflow_dispatch:
@@ -9,9 +9,9 @@ on:
     branches: ['ci/**']
 
 jobs:
-  telas:
+  dev:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,30 +19,48 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
-      - run: npx expo export --platform web --output-dir dist-web
       - run: |
           npm install --no-save --no-audit --no-fund playwright@1.63.0
           npx playwright install --with-deps chromium
-      - run: node scripts/ci/testar-web.mjs dist-web
-      - name: Fotos no log
-        if: always()
+
+      - name: Subir o servidor de desenvolvimento (npm run web)
         run: |
-          cat > /tmp/reduzir.mjs <<'JS'
-          import fs from 'node:fs';
-          import path from 'node:path';
-          import { chromium } from 'playwright';
-          const b = await chromium.launch();
-          const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
-          for (const f of fs.readdirSync('telas').filter((x) => x.endsWith('.png')).sort()) {
-            const dados = fs.readFileSync(path.join('telas', f)).toString('base64');
-            await p.setContent(`<body style="margin:0"><img style="width:390px;display:block" src="data:image/png;base64,${dados}"></body>`);
-            await p.waitForTimeout(100);
-            const jpg = await p.screenshot({ type: 'jpeg', quality: 78, fullPage: true });
-            console.log(`===FOTO-INICIO ${f.replace('.png', '')}===`);
-            const s = jpg.toString('base64');
-            for (let i = 0; i < s.length; i += 120) console.log(s.slice(i, i + 120));
-            console.log('===FOTO-FIM===');
-          }
-          await b.close();
+          (CI=1 npx expo start --web --port 8081 > /tmp/expo.log 2>&1 &)
+          for i in $(seq 1 90); do curl -sf http://localhost:8081 >/dev/null && break; sleep 2; done
+          curl -sf http://localhost:8081 >/dev/null && echo "servidor no ar" || (echo "SERVIDOR NAO SUBIU"; cat /tmp/expo.log; exit 1)
+
+      - name: Percorrer as telas no servidor de desenvolvimento
+        continue-on-error: true
+        env:
+          BASE_URL: http://localhost:8081
+        run: node scripts/ci/testar-web.mjs
+
+      - name: O que o terminal do Expo imprimiu
+        if: always()
+        run: sed 's/\x1b\[[0-9;]*m//g' /tmp/expo.log | tail -120
+
+      - name: Compilar para o Pages (subcaminho /Carro_em_dia)
+        env:
+          EXPO_BASE_URL: /Carro_em_dia
+        run: npx expo export --platform web --output-dir dist-pages
+
+      - name: Servir no subcaminho e percorrer as telas
+        continue-on-error: true
+        run: |
+          cat > /tmp/servir.mjs <<'JS'
+          import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
+          const R = path.resolve('dist-pages'); const P = '/Carro_em_dia';
+          http.createServer((q, s) => {
+            let u = decodeURIComponent(q.url.split('?')[0]);
+            if (!u.startsWith(P)) { s.writeHead(404).end(); return; }
+            u = u.slice(P.length) || '/';
+            let f = path.join(R, u);
+            if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) f = path.join(R, path.extname(u) ? '__x' : 'index.html');
+            if (!fs.existsSync(f)) { s.writeHead(404).end(); return; }
+            const t = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.ttf': 'font/ttf' }[path.extname(f)] || 'application/octet-stream';
+            s.writeHead(200, { 'Content-Type': t }); fs.createReadStream(f).pipe(s);
+          }).listen(4400);
           JS
-          cp /tmp/reduzir.mjs ./reduzir.mjs && node reduzir.mjs
+          (node /tmp/servir.mjs &)
+          sleep 1
+          BASE_URL=http://localhost:4400/Carro_em_dia node scripts/ci/testar-web.mjs
