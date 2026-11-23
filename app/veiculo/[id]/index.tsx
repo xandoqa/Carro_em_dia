@@ -9,7 +9,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../../../src/components/base/Button';
@@ -46,6 +46,7 @@ import {
   formatPlaca,
   formatRestante,
 } from '../../../src/utils/format';
+import { confirmar } from '../../../src/utils/dialogo';
 
 type Aba = 'historico' | 'alertas' | 'gastos';
 
@@ -78,10 +79,7 @@ export default function PainelVeiculoScreen() {
 
   const gastoMes = useMemo(() => {
     const periodo = periodoMes();
-    return resumirGastos(
-      filtrarManutencoes(manutencoes, { periodo }),
-      periodo,
-    );
+    return resumirGastos(filtrarManutencoes(manutencoes, { periodo }), periodo);
   }, [manutencoes]);
 
   const gastoTotal = useMemo(
@@ -120,21 +118,16 @@ export default function PainelVeiculoScreen() {
 
   function confirmarRemocao() {
     if (!veiculo) return;
-    Alert.alert(
-      `Remover ${veiculo.apelido}?`,
-      `Isso apaga tambem as ${manutencoes.length} ${manutencoes.length === 1 ? 'manutencao registrada' : 'manutencoes registradas'} deste veiculo. Nao da para desfazer.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Remover',
-          style: 'destructive',
-          onPress: async () => {
-            await removerVeiculo(veiculo.id);
-            router.replace('/(tabs)');
-          },
-        },
-      ],
-    );
+    confirmar({
+      titulo: `Remover ${veiculo.apelido}?`,
+      mensagem: `Isso apaga tambem as ${manutencoes.length} ${manutencoes.length === 1 ? 'manutencao registrada' : 'manutencoes registradas'} deste veiculo. Nao da para desfazer.`,
+      botao: 'Remover',
+      destrutivo: true,
+      aoConfirmar: async () => {
+        await removerVeiculo(veiculo.id);
+        router.replace('/(tabs)');
+      },
+    });
   }
 
   return (
@@ -196,12 +189,12 @@ export default function PainelVeiculoScreen() {
               <Txt variant="meterSM" tone="muted">
                 {formatPlaca(veiculo.placa)}
               </Txt>
-              {proximo ? <StatusChip status={proximo.status} size="sm" /> : null}
+              {proximo ? (
+                <StatusChip status={proximo.status} size="sm" />
+              ) : null}
             </View>
 
-            <View
-              style={[styles.odometro, { marginTop: theme.spacing.md }]}
-            >
+            <View style={[styles.odometro, { marginTop: theme.spacing.md }]}>
               <View style={{ flex: 1 }}>
                 <Txt variant="label" tone="muted">
                   Odometro
@@ -409,7 +402,9 @@ function AlertasAba({
   onRegistrar,
 }: {
   lembretes: ReturnType<typeof useGarage>['lembretes'];
-  veiculo: NonNullable<ReturnType<ReturnType<typeof useGarage>['veiculoPorId']>>;
+  veiculo: NonNullable<
+    ReturnType<ReturnType<typeof useGarage>['veiculoPorId']>
+  >;
   onRegistrar: (tipo: string) => void;
 }) {
   const theme = useTheme();
@@ -464,7 +459,12 @@ function GastosAba({
       <Txt variant="label" tone="muted">
         Total gasto com este veiculo
       </Txt>
-      <Txt variant="meterXL" style={{ marginTop: 2 }} numberOfLines={1} adjustsFontSizeToFit>
+      <Txt
+        variant="meterXL"
+        style={{ marginTop: 2 }}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+      >
         {formatCurrency(total)}
       </Txt>
       <View style={{ marginTop: theme.spacing.lg }}>

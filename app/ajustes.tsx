@@ -9,7 +9,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../src/components/base/Button';
@@ -23,6 +23,7 @@ import { useGarage } from '../src/hooks/useGarage';
 import { BrandMark } from '../src/icons/ServiceIcon';
 import { notificationService } from '../src/services/notificationService';
 import { useTheme } from '../src/theme/ThemeProvider';
+import { avisar, confirmar } from '../src/utils/dialogo';
 
 export default function AjustesScreen() {
   const theme = useTheme();
@@ -74,7 +75,7 @@ export default function AjustesScreen() {
     // negada no sistema. Vale dizer isso em vez de deixar o usuario achando
     // que esta tudo certo.
     if (valor && total === 0 && lembretes.some((l) => l.dataPrevista)) {
-      Alert.alert(
+      avisar(
         'Avisos nao agendados',
         'O celular nao autorizou as notificacoes do CarroEmDia. Libere nos ajustes do sistema para receber os lembretes.',
       );
@@ -84,13 +85,13 @@ export default function AjustesScreen() {
   async function testar() {
     const enviou = await notificationService.enviarTeste();
     if (!enviou) {
-      Alert.alert(
+      avisar(
         'Permissao necessaria',
         'Libere as notificacoes do CarroEmDia nos ajustes do celular para receber o teste.',
       );
       return;
     }
-    Alert.alert('Aviso enviado', 'Ele deve chegar em alguns segundos.');
+    avisar('Aviso enviado', 'Ele deve chegar em alguns segundos.');
   }
 
   async function carregarExemplo() {
@@ -98,35 +99,30 @@ export default function AjustesScreen() {
     try {
       const { veiculos: v, manutencoes: m } = await carregarDadosDemo();
       await recarregar();
-      Alert.alert(
+      avisar(
         'Dados de exemplo carregados',
         `${v} veiculos e ${m} registros, com servicos vencidos, proximos do prazo e em dia.`,
       );
     } catch {
-      Alert.alert('Nao foi possivel carregar', 'Tente de novo.');
+      avisar('Nao foi possivel carregar', 'Tente de novo.');
     } finally {
       setCarregandoExemplo(false);
     }
   }
 
   function confirmarLimpeza() {
-    Alert.alert(
-      'Apagar todos os dados?',
-      `Isso remove ${veiculos.length} ${veiculos.length === 1 ? 'veiculo' : 'veiculos'} e ${manutencoes.length} ${manutencoes.length === 1 ? 'registro' : 'registros'} deste aparelho. Nao da para desfazer.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Apagar tudo',
-          style: 'destructive',
-          onPress: async () => {
-            await notificationService.cancelarTodos();
-            await clearAll();
-            await recarregar();
-            router.replace('/(tabs)');
-          },
-        },
-      ],
-    );
+    confirmar({
+      titulo: 'Apagar todos os dados?',
+      mensagem: `Isso remove ${veiculos.length} ${veiculos.length === 1 ? 'veiculo' : 'veiculos'} e ${manutencoes.length} ${manutencoes.length === 1 ? 'registro' : 'registros'} deste aparelho. Nao da para desfazer.`,
+      botao: 'Apagar tudo',
+      destrutivo: true,
+      aoConfirmar: async () => {
+        await notificationService.cancelarTodos();
+        await clearAll();
+        await recarregar();
+        router.replace('/(tabs)');
+      },
+    });
   }
 
   return (
@@ -144,45 +140,56 @@ export default function AjustesScreen() {
         </Card>
 
         <SectionHeader title="Notificacoes" />
-        <Card>
-          <View style={styles.linhaSwitch}>
-            <View style={{ flex: 1 }}>
-              <Txt variant="titleSM">Avisos de manutencao</Txt>
-              <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
-                {notificacoes
-                  ? `${agendadas} ${agendadas === 1 ? 'aviso agendado' : 'avisos agendados'}, ${antecedencia} dias antes do prazo.`
-                  : 'Desligado. Os prazos continuam sendo calculados no app.'}
-              </Txt>
-            </View>
-            <Switch
-              value={notificacoes}
-              onValueChange={(v: boolean) => void alternarNotificacoes(v)}
-              trackColor={{
-                false: theme.colors.line,
-                true: theme.colors.brand,
-              }}
-              thumbColor={theme.colors.surface}
-              accessibilityLabel="Avisos de manutencao"
-            />
-          </View>
-
-          {notificacoes ? (
-            <>
-              <Divider style={{ marginVertical: theme.spacing.md }} />
-              <Txt variant="bodySM" tone="muted">
-                Servicos que vencem so por quilometragem nao tem data para
-                agendar. Esses aparecem na aba Alertas assim que o odometro
-                chega perto do limite.
-              </Txt>
-              <Button
-                label="Enviar aviso de teste"
-                variant="secondary"
-                onPress={testar}
-                style={{ marginTop: theme.spacing.md }}
+        {!notificationService.disponivel ? (
+          <Card>
+            <Txt variant="titleSM">Avisos de manutencao</Txt>
+            <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
+              No navegador nao ha notificacoes agendadas. Abra o app no celular,
+              pelo Expo Go, para receber os avisos. Os prazos continuam sendo
+              calculados e aparecem na aba Alertas.
+            </Txt>
+          </Card>
+        ) : (
+          <Card>
+            <View style={styles.linhaSwitch}>
+              <View style={{ flex: 1 }}>
+                <Txt variant="titleSM">Avisos de manutencao</Txt>
+                <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
+                  {notificacoes
+                    ? `${agendadas} ${agendadas === 1 ? 'aviso agendado' : 'avisos agendados'}, ${antecedencia} dias antes do prazo.`
+                    : 'Desligado. Os prazos continuam sendo calculados no app.'}
+                </Txt>
+              </View>
+              <Switch
+                value={notificacoes}
+                onValueChange={(v: boolean) => void alternarNotificacoes(v)}
+                trackColor={{
+                  false: theme.colors.line,
+                  true: theme.colors.brand,
+                }}
+                thumbColor={theme.colors.surface}
+                accessibilityLabel="Avisos de manutencao"
               />
-            </>
-          ) : null}
-        </Card>
+            </View>
+
+            {notificacoes ? (
+              <>
+                <Divider style={{ marginVertical: theme.spacing.md }} />
+                <Txt variant="bodySM" tone="muted">
+                  Servicos que vencem so por quilometragem nao tem data para
+                  agendar. Esses aparecem na aba Alertas assim que o odometro
+                  chega perto do limite.
+                </Txt>
+                <Button
+                  label="Enviar aviso de teste"
+                  variant="secondary"
+                  onPress={testar}
+                  style={{ marginTop: theme.spacing.md }}
+                />
+              </>
+            ) : null}
+          </Card>
+        )}
 
         <SectionHeader title="Dados" />
         <Card>
@@ -207,7 +214,11 @@ export default function AjustesScreen() {
             </View>
           </View>
 
-          <Txt variant="bodySM" tone="muted" style={{ marginTop: theme.spacing.md }}>
+          <Txt
+            variant="bodySM"
+            tone="muted"
+            style={{ marginTop: theme.spacing.md }}
+          >
             Tudo fica guardado neste aparelho. Nada e enviado para servidor,
             exceto a consulta publica da tabela FIPE no cadastro de veiculos.
           </Txt>
@@ -234,8 +245,17 @@ export default function AjustesScreen() {
         </Card>
 
         <View style={[styles.rodape, { marginTop: theme.spacing.xxl }]}>
-          <BrandMark size={30} color={theme.colors.textMuted} accent={theme.colors.brand} />
-          <Txt variant="bodySM" tone="muted" align="center" style={{ marginTop: 8 }}>
+          <BrandMark
+            size={30}
+            color={theme.colors.textMuted}
+            accent={theme.colors.brand}
+          />
+          <Txt
+            variant="bodySM"
+            tone="muted"
+            align="center"
+            style={{ marginTop: 8 }}
+          >
             CarroEmDia 1.0
           </Txt>
           <Txt variant="bodySM" tone="muted" align="center">

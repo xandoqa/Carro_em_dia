@@ -8,7 +8,7 @@
 
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../../src/components/base/Button';
@@ -31,6 +31,7 @@ import {
 import { useGarage } from '../../src/hooks/useGarage';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { formatCurrency } from '../../src/utils/format';
+import { confirmar } from '../../src/utils/dialogo';
 
 type PeriodoId = 'tudo' | 'ano' | 'doze';
 
@@ -83,21 +84,17 @@ export default function HistoricoScreen() {
   }
 
   function confirmarExclusao(manutencao: Manutencao) {
-    Alert.alert(
-      'Excluir registro?',
-      'Este servico sai do historico e dos gastos, e os lembretes sao recalculados. Nao da para desfazer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            await removerManutencao(manutencao.id);
-            setDetalhe(null);
-          },
-        },
-      ],
-    );
+    confirmar({
+      titulo: 'Excluir registro?',
+      mensagem:
+        'Este servico sai do historico e dos gastos, e os lembretes sao recalculados. Nao da para desfazer.',
+      botao: 'Excluir',
+      destrutivo: true,
+      aoConfirmar: async () => {
+        await removerManutencao(manutencao.id);
+        setDetalhe(null);
+      },
+    });
   }
 
   if (!veiculo) {
@@ -197,9 +194,7 @@ export default function HistoricoScreen() {
               <View style={{ padding: theme.spacing.lg, paddingBottom: 0 }}>
                 <SectionHeader
                   title={`${filtradas.length} ${filtradas.length === 1 ? 'registro' : 'registros'}`}
-                  action={
-                    <Txt variant="meterMD">{formatCurrency(total)}</Txt>
-                  }
+                  action={<Txt variant="meterMD">{formatCurrency(total)}</Txt>}
                 />
               </View>
 
