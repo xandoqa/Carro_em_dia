@@ -14,10 +14,7 @@
  */
 
 import { StyleSheet, View } from 'react-native';
-import Animated, {
-  useReducedMotion,
-  FadeIn,
-} from 'react-native-reanimated';
+import Animated, { useReducedMotion, FadeIn } from 'react-native-reanimated';
 
 import type { GastoPorMes } from '../../domain/models';
 import { useTheme } from '../../theme/ThemeProvider';
@@ -37,13 +34,22 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
   if (data.length === 0) {
     return (
       <Txt variant="bodySM" tone="muted">
-        Sem gastos registrados no periodo.
+        Sem gastos registrados no período.
       </Txt>
     );
   }
 
   const maior = Math.max(...data.map((d) => d.total));
   const indiceMaior = data.findIndex((d) => d.total === maior);
+
+  // Espaço reservado no topo para o valor da barra mais alta, que fica
+  // acima dela e não pode ser cortado pela borda da área.
+  const alturaUtil = height - ESPACO_ROTULO;
+
+  // Com doze meses, cada coluna tem uns 19 px e "dez" precisa de 25: o rótulo
+  // virava "d…". Acima de seis colunas fica só a inicial, a convenção dos
+  // gráficos compactos. O nome completo continua na descrição acessível.
+  const compacto = data.length > 6;
 
   return (
     <View
@@ -55,24 +61,47 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
         {data.map((ponto, i) => {
           // Mes sem gasto vira um traco fino na base em vez de nada.
           const fracao = maior > 0 ? ponto.total / maior : 0;
-          const alturaBarra = Math.max(fracao * height, ponto.total > 0 ? 4 : 2);
+          const alturaBarra = Math.max(
+            fracao * alturaUtil,
+            ponto.total > 0 ? 4 : 2,
+          );
           const destaque = i === indiceMaior && maior > 0;
 
           return (
             <View key={ponto.mes} style={styles.coluna}>
               {destaque ? (
-                <Txt
-                  variant="meterSM"
-                  tone="muted"
-                  style={styles.rotuloTopo}
-                  numberOfLines={1}
+                // O valor é mais largo que a coluna. O posicionamento fica num
+                // contêiner, e não no texto: no navegador, texto de uma linha
+                // ganha max-width: 100% da coluna e era cortado em "3…".
+                // Ancorado na borda quando a barra é a primeira ou a última,
+                // para não sair do cartão.
+                <View
+                  pointerEvents="none"
+                  style={[
+                    styles.rotuloTopo,
+                    { bottom: alturaBarra + 4 },
+                    i === 0
+                      ? styles.rotuloInicio
+                      : i === data.length - 1
+                        ? styles.rotuloFim
+                        : styles.rotuloMeio,
+                  ]}
                 >
-                  {formatAmount(ponto.total)}
-                </Txt>
+                  <Txt
+                    variant="meterSM"
+                    tone="muted"
+                    style={styles.rotuloTexto}
+                    numberOfLines={1}
+                  >
+                    {formatAmount(ponto.total)}
+                  </Txt>
+                </View>
               ) : null}
 
               <Animated.View
-                entering={reduced ? undefined : FadeIn.delay(i * 40).duration(260)}
+                entering={
+                  reduced ? undefined : FadeIn.delay(i * 40).duration(260)
+                }
                 style={[
                   styles.barra,
                   {
@@ -104,7 +133,7 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
             style={styles.rotuloEixo}
             numberOfLines={1}
           >
-            {ponto.rotulo}
+            {compacto ? ponto.rotulo.charAt(0) : ponto.rotulo}
           </Txt>
         ))}
       </View>
@@ -117,9 +146,14 @@ function descrever(data: GastoPorMes[]): string {
     .filter((d) => d.total > 0)
     .map((d) => `${d.rotulo}: ${formatAmount(d.total)} reais`);
 
-  if (partes.length === 0) return 'Grafico sem gastos no periodo.';
-  return `Evolucao mensal. ${partes.join('. ')}.`;
+  if (partes.length === 0) return 'Gráfico sem gastos no período.';
+  return `Evolução mensal. ${partes.join('. ')}.`;
 }
+
+/** Altura reservada acima das barras para o valor da maior. */
+const ESPACO_ROTULO = 18;
+/** Quanto o valor da barra pode passar da largura da coluna, de cada lado. */
+const LARGURA_EXTRA = 28;
 
 const styles = StyleSheet.create({
   area: {
@@ -136,9 +170,25 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   rotuloTopo: {
-    textAlign: 'center',
-    marginBottom: 4,
+    position: 'absolute',
+  },
+  rotuloTexto: {
     fontSize: 11,
+  },
+  rotuloMeio: {
+    left: -LARGURA_EXTRA,
+    right: -LARGURA_EXTRA,
+    alignItems: 'center',
+  },
+  rotuloInicio: {
+    left: 0,
+    right: -2 * LARGURA_EXTRA,
+    alignItems: 'flex-start',
+  },
+  rotuloFim: {
+    left: -2 * LARGURA_EXTRA,
+    right: 0,
+    alignItems: 'flex-end',
   },
   eixo: {
     flexDirection: 'row',

@@ -45,8 +45,8 @@ export const combustiveisLabel: Record<Combustivel, string> = {
   etanol: 'Etanol',
   diesel: 'Diesel',
   gnv: 'GNV',
-  eletrico: 'Eletrico',
-  hibrido: 'Hibrido',
+  eletrico: 'Elétrico',
+  hibrido: 'Híbrido',
 };
 
 export interface Veiculo {
@@ -107,7 +107,7 @@ export interface TipoManutencao {
 export const tiposManutencao: Record<TipoManutencaoId, TipoManutencao> = {
   oleo: {
     id: 'oleo',
-    nome: 'Troca de oleo e filtro',
+    nome: 'Troca de óleo e filtro',
     intervaloKm: 10000,
     intervaloMeses: 12,
     geraLembrete: true,
@@ -134,7 +134,7 @@ export const tiposManutencao: Record<TipoManutencaoId, TipoManutencao> = {
   },
   revisao: {
     id: 'revisao',
-    nome: 'Revisao geral',
+    nome: 'Revisão geral',
     intervaloKm: 10000,
     intervaloMeses: 12,
     geraLembrete: true,
@@ -153,7 +153,7 @@ export const tiposManutencao: Record<TipoManutencaoId, TipoManutencao> = {
   },
   outro: {
     id: 'outro',
-    nome: 'Outro servico',
+    nome: 'Outro serviço',
     geraLembrete: false,
   },
 };

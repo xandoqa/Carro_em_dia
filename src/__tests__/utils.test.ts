@@ -39,11 +39,11 @@ describe('datas', () => {
     assert.equal(toIsoDate(parseIsoDate('2026-12-31')), '2026-12-31');
   });
 
-  it('recusa formato invalido', () => {
+  it('recusa formato inválido', () => {
     assert.throws(() => parseIsoDate('18/05/2026'));
   });
 
-  it('soma meses preservando o fim do mes', () => {
+  it('soma meses preservando o fim do mês', () => {
     // 31 de janeiro mais um mes e o fim de fevereiro, nao 3 de marco.
     assert.equal(addMonths('2026-01-31', 1), '2026-02-28');
     assert.equal(addMonths('2024-01-31', 1), '2024-02-29');
@@ -60,11 +60,11 @@ describe('datas', () => {
     assert.equal(daysBetween('2026-05-18', '2026-05-18'), 0);
   });
 
-  it('conta dias atravessando o horario de verao', () => {
+  it('conta dias atravessando o horário de verão', () => {
     assert.equal(daysBetween('2026-01-01', '2026-12-31'), 364);
   });
 
-  it('monta a chave e o rotulo do mes', () => {
+  it('monta a chave e o rótulo do mês', () => {
     assert.equal(monthKey('2026-05-18'), '2026-05');
     assert.equal(monthLabel('2026-05'), 'mai');
     assert.equal(monthLabel('2026-01'), 'jan');
@@ -79,7 +79,7 @@ describe('datas', () => {
     ]);
   });
 
-  it('lista um unico mes quando as pontas coincidem', () => {
+  it('lista um único mês quando as pontas coincidem', () => {
     assert.deepEqual(monthRange('2026-05-01', '2026-05-31'), ['2026-05']);
   });
 
@@ -96,7 +96,7 @@ describe('numeros', () => {
     assert.equal(formatKm(0), '0');
   });
 
-  it('nao quebra com valor invalido', () => {
+  it('não quebra com valor inválido', () => {
     assert.equal(formatKm(Number.NaN), '0');
     assert.equal(formatAmount(Number.NaN), '0,00');
   });
@@ -121,7 +121,7 @@ describe('placa', () => {
     assert.equal(normalizePlaca('abc 1234'), 'ABC1234');
   });
 
-  it('aceita o padrao antigo e o Mercosul', () => {
+  it('aceita o padrão antigo e o Mercosul', () => {
     assert.equal(isPlacaValida('ABC1234'), true);
     assert.equal(isPlacaValida('BRA2E19'), true);
     assert.equal(isPlacaValida('bra2e19'), true);
@@ -133,32 +133,32 @@ describe('placa', () => {
     assert.equal(isPlacaValida(''), false);
   });
 
-  it('exibe com separacao visual', () => {
+  it('exibe com separação visual', () => {
     assert.equal(formatPlaca('BRA2E19'), 'BRA 2E19');
   });
 });
 
 describe('parseNumberInput', () => {
-  it('le o formato brasileiro', () => {
+  it('lê o formato brasileiro', () => {
     assert.equal(parseNumberInput('1.234,56'), 1234.56);
     assert.equal(parseNumberInput('280,50'), 280.5);
   });
 
-  it('le o formato com ponto decimal', () => {
+  it('lê o formato com ponto decimal', () => {
     assert.equal(parseNumberInput('1234.56'), 1234.56);
     assert.equal(parseNumberInput('1,234.56'), 1234.56);
   });
 
-  it('le inteiro simples', () => {
+  it('lê inteiro simples', () => {
     assert.equal(parseNumberInput('114500'), 114500);
   });
 
-  it('ignora simbolos de moeda e espacos', () => {
+  it('ignora símbolos de moeda e espaços', () => {
     assert.equal(parseNumberInput('R$ 280,50'), 280.5);
     assert.equal(parseNumberInput(' 85000 km '), 85000);
   });
 
-  it('devolve null para entrada vazia ou sem numero', () => {
+  it('devolve null para entrada vazia ou sem número', () => {
     assert.equal(parseNumberInput(''), null);
     assert.equal(parseNumberInput('   '), null);
     assert.equal(parseNumberInput('abc'), null);
@@ -167,19 +167,19 @@ describe('parseNumberInput', () => {
 
 describe('formatRestante', () => {
   it('descreve atraso em km', () => {
-    assert.equal(formatRestante(-300, undefined), 'Venceu ha 300 km');
+    assert.equal(formatRestante(-300, undefined), 'Venceu há 300 km');
   });
 
   it('descreve atraso em dias', () => {
-    assert.equal(formatRestante(undefined, -1), 'Venceu ha 1 dia');
-    assert.equal(formatRestante(undefined, -5), 'Venceu ha 5 dias');
+    assert.equal(formatRestante(undefined, -1), 'Venceu há 1 dia');
+    assert.equal(formatRestante(undefined, -5), 'Venceu há 5 dias');
   });
 
-  it('prioriza o km quando as duas dimensoes existem', () => {
+  it('prioriza o km quando as duas dimensões existem', () => {
     assert.equal(formatRestante(1500, 20), 'Faltam 1.500 km ou 20 dias');
   });
 
-  it('informa quando nao ha previsao', () => {
-    assert.equal(formatRestante(undefined, undefined), 'Sem previsao');
+  it('informa quando não há previsão', () => {
+    assert.equal(formatRestante(undefined, undefined), 'Sem previsão');
   });
 });

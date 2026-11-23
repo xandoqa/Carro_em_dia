@@ -35,7 +35,7 @@ export default function EditarManutencaoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Editar manutencao" back />
+          <Header title="Editar manutenção" back />
           <Loading />
         </Screen>
       </View>
@@ -46,10 +46,10 @@ export default function EditarManutencaoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Editar manutencao" back />
+          <Header title="Editar manutenção" back />
           <EmptyState
-            title="Registro nao encontrado"
-            description="Ele pode ter sido excluido. Volte ao historico para ver a lista atual."
+            title="Registro não encontrado"
+            description="Ele pode ter sido excluído. Volte ao histórico para ver a lista atual."
             actionLabel="Voltar"
             onAction={() => router.back()}
           />
@@ -61,12 +61,12 @@ export default function EditarManutencaoScreen() {
   const nome =
     manutencao.tipo === 'outro' && manutencao.descricao
       ? manutencao.descricao
-      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Servico');
+      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Serviço');
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen avoidKeyboard>
-        <Header title="Editar manutencao" subtitle={nome} back />
+        <Header title="Editar manutenção" subtitle={nome} back />
         <MaintenanceForm
           manutencao={manutencao}
           onSalvo={() => router.back()}

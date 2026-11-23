@@ -115,7 +115,26 @@ export function MeasureStrip({
           endLabel,
         )}
       >
-        {/* Marcas de escala, por tras do preenchimento. */}
+        <Animated.View
+          style={[
+            styles.preenchimento,
+            preenchimento,
+            {
+              backgroundColor: cor,
+              // Vencido preenche solido: o trilho inteiro vira sinal. Dentro do
+              // prazo fica translucido, para o trilho vazio e o preenchido se
+              // distinguirem sem competir com as marcas de escala.
+              opacity: estourou ? 1 : 0.4,
+              borderTopLeftRadius: theme.radius.readout - 1,
+              borderBottomLeftRadius: theme.radius.readout - 1,
+            },
+          ]}
+        />
+
+        {/* Marcas de escala, POR CIMA do preenchimento, como no design
+            (design/preview: .escala { z-index: 2 }). Por baixo, elas sumiam
+            justamente quando o prazo vencia — o preenchimento vencido e
+            solido — e a regua virava uma barra lisa. */}
         <View style={styles.escala} pointerEvents="none">
           {Array.from({ length: ticks - 1 }, (_, i) => (
             <View
@@ -126,28 +145,12 @@ export function MeasureStrip({
                   left: `${((i + 1) / ticks) * 100}%`,
                   backgroundColor: theme.colors.lineStrong,
                   // Marca mais alta no meio da escala, para dar referencia.
-                  height: (i + 1) === ticks / 2 ? '62%' : '36%',
+                  height: i + 1 === ticks / 2 ? '62%' : '36%',
                 },
               ]}
             />
           ))}
         </View>
-
-        <Animated.View
-          style={[
-            styles.preenchimento,
-            preenchimento,
-            {
-              backgroundColor: cor,
-              // Vencido preenche solido: o trilho inteiro vira sinal. Dentro do
-              // prazo fica translucido para as marcas de escala continuarem
-              // visiveis atraves do preenchimento.
-              opacity: estourou ? 1 : 0.4,
-              borderTopLeftRadius: theme.radius.readout - 1,
-              borderBottomLeftRadius: theme.radius.readout - 1,
-            },
-          ]}
-        />
 
         <Animated.View
           style={[
@@ -199,7 +202,7 @@ function descreverParaLeitor(
     status === 'vencido'
       ? 'vencido'
       : status === 'atencao'
-        ? 'proximo do vencimento'
+        ? 'próximo do vencimento'
         : 'em dia';
 
   const trecho =

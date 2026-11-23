@@ -216,7 +216,7 @@ export async function listarAnos(
 /** Traduz qualquer falha em uma frase que cabe na tela. */
 export function mensagemDeErro(erro: unknown): string {
   if (erro instanceof HttpError) return erro.mensagemUsuario;
-  return 'Nao foi possivel consultar a tabela FIPE agora.';
+  return 'Não foi possível consultar a tabela FIPE agora.';
 }
 
 export const fipeService = {

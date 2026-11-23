@@ -30,14 +30,14 @@ function m(overrides: Partial<Manutencao> = {}): Manutencao {
 }
 
 describe('periodos', () => {
-  it('ano vai de 1o de janeiro ate hoje', () => {
+  it('ano vai de 1o de janeiro até hoje', () => {
     assert.deepEqual(periodoAno('2026-05-18'), {
       de: '2026-01-01',
       ate: '2026-05-18',
     });
   });
 
-  it('mes vai do dia 1 ate hoje', () => {
+  it('mês vai do dia 1 até hoje', () => {
     assert.deepEqual(periodoMes('2026-05-18'), {
       de: '2026-05-01',
       ate: '2026-05-18',
@@ -59,7 +59,7 @@ describe('periodos', () => {
     });
   });
 
-  it('inclui as duas pontas do periodo', () => {
+  it('inclui as duas pontas do período', () => {
     const periodo = { de: '2026-01-01', ate: '2026-12-31' };
     assert.equal(dentroDoPeriodo('2026-01-01', periodo), true);
     assert.equal(dentroDoPeriodo('2026-12-31', periodo), true);
@@ -75,12 +75,12 @@ describe('filtrarManutencoes', () => {
     m({ id: 'c', veiculoId: 'v1', tipo: 'freios', data: '2025-11-10' }),
   ];
 
-  it('filtra por veiculo', () => {
+  it('filtra por veículo', () => {
     const r = filtrarManutencoes(dados, { veiculoId: 'v1' });
     assert.deepEqual(r.map((x) => x.id).sort(), ['a', 'c']);
   });
 
-  it('filtra por periodo', () => {
+  it('filtra por período', () => {
     const r = filtrarManutencoes(dados, {
       periodo: { de: '2026-01-01', ate: '2026-12-31' },
     });
@@ -92,7 +92,7 @@ describe('filtrarManutencoes', () => {
     assert.deepEqual(r.map((x) => x.id).sort(), ['b', 'c']);
   });
 
-  it('lista de tipos vazia nao filtra nada', () => {
+  it('lista de tipos vazia não filtra nada', () => {
     assert.equal(filtrarManutencoes(dados, { tipos: [] }).length, 3);
   });
 
@@ -121,7 +121,7 @@ describe('agruparPorCategoria', () => {
     assert.equal(r[1].quantidade, 2);
   });
 
-  it('as fracoes somam 1', () => {
+  it('as frações somam 1', () => {
     const r = agruparPorCategoria([
       m({ tipo: 'oleo', valor: 250 }),
       m({ tipo: 'pneus', valor: 750 }),
@@ -135,7 +135,7 @@ describe('agruparPorCategoria', () => {
     );
   });
 
-  it('nao divide por zero quando tudo e gratuito', () => {
+  it('não divide por zero quando tudo e gratuito', () => {
     const r = agruparPorCategoria([m({ valor: 0 })]);
     assert.equal(r[0].fracao, 0);
     assert.ok(Number.isFinite(r[0].fracao));
@@ -163,12 +163,12 @@ describe('agruparPorMes', () => {
     );
   });
 
-  it('usa rotulo curto em portugues', () => {
+  it('usa rótulo curto em português', () => {
     const r = agruparPorMes([], { de: '2026-05-01', ate: '2026-05-31' });
     assert.equal(r[0].rotulo, 'mai');
   });
 
-  it('soma varios registros do mesmo mes', () => {
+  it('soma vários registros do mesmo mês', () => {
     const r = agruparPorMes(
       [m({ data: '2026-01-05', valor: 100 }), m({ data: '2026-01-25', valor: 50 })],
       { de: '2026-01-01', ate: '2026-01-31' },
@@ -191,7 +191,7 @@ describe('maioresGastos', () => {
     assert.deepEqual(r.map((x) => x.id), ['b', 'c']);
   });
 
-  it('nao altera o array original', () => {
+  it('não altera o array original', () => {
     const dados = [m({ id: 'a', valor: 1 }), m({ id: 'b', valor: 2 })];
     maioresGastos(dados);
     assert.deepEqual(dados.map((x) => x.id), ['a', 'b']);
@@ -199,7 +199,7 @@ describe('maioresGastos', () => {
 });
 
 describe('resumirGastos', () => {
-  it('monta total, media e agregados', () => {
+  it('monta total, média e agregados', () => {
     const r = resumirGastos(
       [
         m({ data: '2026-01-15', valor: 300, tipo: 'oleo' }),
@@ -216,7 +216,7 @@ describe('resumirGastos', () => {
     assert.equal(r.porCategoria.length, 2);
   });
 
-  it('nao quebra sem registros', () => {
+  it('não quebra sem registros', () => {
     const r = resumirGastos([], { de: '2026-01-01', ate: '2026-01-31' });
     assert.equal(r.total, 0);
     assert.equal(r.mediaMensal, 0);
@@ -236,7 +236,7 @@ describe('consumoMedio', () => {
     assert.equal(r, 10);
   });
 
-  it('ignora o primeiro abastecimento no calculo', () => {
+  it('ignora o primeiro abastecimento no cálculo', () => {
     const r = consumoMedio([
       m({ tipo: 'abastecimento', km: 1_000, litros: 999 }),
       m({ tipo: 'abastecimento', km: 1_500, litros: 50 }),
@@ -260,7 +260,7 @@ describe('consumoMedio', () => {
     assert.equal(r, 10);
   });
 
-  it('desconsidera registros que nao sao abastecimento', () => {
+  it('desconsidera registros que não são abastecimento', () => {
     assert.equal(
       consumoMedio([
         m({ tipo: 'oleo', km: 1_000 }),
@@ -272,7 +272,7 @@ describe('consumoMedio', () => {
 });
 
 describe('custoPorKm', () => {
-  it('divide o total pela distancia percorrida', () => {
+  it('divide o total pela distância percorrida', () => {
     const r = custoPorKm([
       m({ km: 100_000, valor: 200 }),
       m({ km: 101_000, valor: 300 }),
@@ -281,7 +281,7 @@ describe('custoPorKm', () => {
     assert.equal(r, 0.5);
   });
 
-  it('devolve null sem distancia', () => {
+  it('devolve null sem distância', () => {
     assert.equal(custoPorKm([m({ km: 100_000 }), m({ km: 100_000 })]), null);
     assert.equal(custoPorKm([m()]), null);
   });

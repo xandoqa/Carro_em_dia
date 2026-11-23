@@ -31,11 +31,11 @@ export default function NovaManutencaoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Registrar manutencao" back />
+          <Header title="Registrar manutenção" back />
           <EmptyState
-            title="Cadastre um veiculo primeiro"
-            description="Toda manutencao pertence a um veiculo. Cadastre o seu para comecar a registrar os servicos."
-            actionLabel="Cadastrar veiculo"
+            title="Cadastre um veículo primeiro"
+            description="Toda manutenção pertence a um veículo. Cadastre o seu para começar a registrar os serviços."
+            actionLabel="Cadastrar veículo"
             onAction={() => router.replace('/veiculo/novo')}
           />
         </Screen>
@@ -46,7 +46,7 @@ export default function NovaManutencaoScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen avoidKeyboard>
-        <Header title="Registrar manutencao" back />
+        <Header title="Registrar manutenção" back />
         <MaintenanceForm
           veiculoIdInicial={params.veiculoId}
           tipoInicial={params.tipo as TipoManutencaoId | undefined}
