@@ -1,7 +1,7 @@
 name: Diagnostico completo
 
-# Executa o fluxo final (npm ci com o lockfile) com cada passo independente,
-# para ver todas as falhas numa execucao so, mais uma medicao do Babel.
+# Rascunho de desenvolvimento: gera as fotos das telas e as imprime no log,
+# porque o ambiente onde o codigo e mantido nao consegue baixar artefatos.
 
 on:
   workflow_dispatch:
@@ -9,59 +9,28 @@ on:
     branches: ['ci/**']
 
 jobs:
-  diagnostico:
+  telas:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
-      - name: npm ci
-        run: npm ci --no-audit --no-fund
-
-      - name: O babel-preset-expo menciona worklets?
-        continue-on-error: true
-        run: grep -rn "worklets" node_modules/babel-preset-expo/build/*.js | head -20
-
-      - name: Plugin de worklets roda uma ou duas vezes?
-        continue-on-error: true
-        run: node scripts/ci/testar-babel.cjs
-
-      - name: expo install --check
-        continue-on-error: true
-        run: npx expo install --check
-
-      - name: expo-doctor
-        continue-on-error: true
-        run: npx expo-doctor
-
-      - name: doctor do projeto
-        continue-on-error: true
-        run: node scripts/doctor.mjs
-
-      - name: Tipos
-        continue-on-error: true
-        run: npm run typecheck
-
-      - name: Lint
-        continue-on-error: true
-        run: npm run lint
-
-      - name: Testes
-        continue-on-error: true
-        run: npm test
-
-      - name: Bundle iOS
-        continue-on-error: true
-        run: npx expo export --platform ios --output-dir dist-ios
-
-      - name: Bundle Android
-        continue-on-error: true
-        run: npx expo export --platform android --output-dir dist-android
-
-      - name: Bundle web
-        continue-on-error: true
-        run: npx expo export --platform web --output-dir dist-web
+      - run: npm ci --no-audit --no-fund
+      - run: npx expo export --platform web --output-dir dist-web
+      - run: |
+          npm install --no-save --no-audit --no-fund playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - run: node scripts/ci/testar-web.mjs dist-web
+      - name: Fotos no log
+        if: always()
+        run: |
+          for f in telas/*.png; do
+            n=$(basename "$f" .png)
+            convert "$f" -resize 50% -quality 72 "/tmp/$n.jpg"
+            echo "===FOTO-INICIO $n==="
+            base64 -w 120 "/tmp/$n.jpg"
+            echo "===FOTO-FIM==="
+          done
