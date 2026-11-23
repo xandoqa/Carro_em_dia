@@ -13,6 +13,37 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.7.1] — 2026-11-23
+
+### Adicionado
+- **Versão web online**, em
+  [xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/).
+  O workflow `pages.yml` compila a web a cada push em `main` e publica na
+  branch `gh-pages`. `app.config.js` acrescenta o caminho-base
+  (`/Carro_em_dia`) só quando a publicação pede; `npm start`, `npm run web` e
+  o Expo Go não mudam. Testado antes de publicar: a compilação foi servida no
+  subcaminho e percorrida tela a tela, sem erro.
+- **O CI passa a testar o servidor de desenvolvimento**, que é o que roda na
+  máquina de quem usa o projeto (`npm start`, `npm run web`). Até aqui só a
+  compilação final era testada, e o modo de desenvolvimento mostra na tela
+  erros e avisos que a compilação esconde. Agora o CI sobe o servidor, percorre
+  as telas e reprova se o terminal do Expo mostrar `ERROR`.
+
+### Corrigido
+- **Aviso amarelo do Reanimated no gráfico de gastos**: a animação de entrada e
+  a opacidade da barra estavam no mesmo elemento ("Property [opacity] may be
+  overwritten by a layout animation"). No celular, aparecia como aviso na tela.
+  A animação foi para um invólucro.
+
+### Documentação
+- Passo a passo atualizado: versão online, conferência da versão antes de rodar
+  (pasta antiga era a causa de "ainda dá o mesmo erro"), `npm run start:limpo`
+  depois de baixar uma versão nova, e o erro `getLastNotificationResponse` /
+  linhas `λ` explicados como sinal de versão antiga.
+- Roteiro da apresentação: a versão online vira o plano B, no lugar da maquete.
+
+---
+
 ## [1.7.0] — 2026-11-22
 
 O app visto rodando pela primeira vez e comparado, tela a tela, com a maquete
@@ -562,6 +593,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.7.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.1
 [1.7.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.0
 [1.6.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.2
 [1.6.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.1
