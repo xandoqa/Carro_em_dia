@@ -9,10 +9,7 @@
 
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import {
-  tiposManutencao,
-  type Manutencao,
-} from '../../domain/models';
+import { tiposManutencao, type Manutencao } from '../../domain/models';
 import { ServiceIcon } from '../../icons/ServiceIcon';
 import { useTheme } from '../../theme/ThemeProvider';
 import { formatDateShort } from '../../utils/date';
@@ -39,7 +36,7 @@ export function MaintenanceRow({
   const nome =
     manutencao.tipo === 'outro' && manutencao.descricao
       ? manutencao.descricao
-      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Servico');
+      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Serviço');
 
   // A segunda linha reune os dados que mudam de registro para registro.
   const detalhes = [
@@ -73,7 +70,14 @@ export function MaintenanceRow({
         <Txt variant="titleSM" numberOfLines={1}>
           {nome}
         </Txt>
-        <Txt variant="meterSM" tone="muted" numberOfLines={1} style={{ marginTop: 2 }}>
+        {/* Duas linhas, como no design: data, quilometragem e litros nem
+            sempre cabem numa, e cortar escondia justamente os litros. */}
+        <Txt
+          variant="meterSM"
+          tone="muted"
+          numberOfLines={2}
+          style={{ marginTop: 2 }}
+        >
           {detalhes}
         </Txt>
         {manutencao.oficina ? (

@@ -16,7 +16,7 @@ function lembrete(overrides: Partial<Lembrete> = {}): Lembrete {
     id: 'v1:oleo',
     veiculoId: 'v1',
     tipo: 'oleo',
-    nome: 'Troca de oleo e filtro',
+    nome: 'Troca de óleo e filtro',
     status: 'atencao',
     progresso: 0.9,
     ...overrides,
@@ -27,7 +27,7 @@ function lembrete(overrides: Partial<Lembrete> = {}): Lembrete {
 const AGORA = new Date(2026, 4, 18, 14, 0, 0, 0);
 
 describe('calcularDisparo', () => {
-  it('agenda a antecedencia antes da data prevista', () => {
+  it('agenda a antecedência antes da data prevista', () => {
     const disparo = calcularDisparo(
       lembrete({ dataPrevista: '2026-06-10' }),
       7,
@@ -43,7 +43,7 @@ describe('calcularDisparo', () => {
     assert.equal(disparo.getMinutes(), 0);
   });
 
-  it('avisa um vencido na proxima hora cheia, nao no passado', () => {
+  it('avisa um vencido na próxima hora cheia, não no passado', () => {
     const disparo = calcularDisparo(
       lembrete({ status: 'vencido', dataPrevista: '2026-01-10' }),
       7,
@@ -61,7 +61,7 @@ describe('calcularDisparo', () => {
     assert.equal(disparo.getHours(), 9);
   });
 
-  it('avisa um vencido hoje mesmo se a hora ainda nao passou', () => {
+  it('avisa um vencido hoje mesmo se a hora ainda não passou', () => {
     const cedo = new Date(2026, 4, 18, 7, 0, 0, 0);
     const disparo = calcularDisparo(
       lembrete({ status: 'vencido' }),
@@ -84,10 +84,10 @@ describe('calcularDisparo', () => {
       AGORA,
     );
 
-    assert.ok(disparo, 'vencido por km tambem precisa gerar aviso');
+    assert.ok(disparo, 'vencido por km também precisa gerar aviso');
   });
 
-  it('nao agenda lembrete sem data que ainda esta no prazo', () => {
+  it('não agenda lembrete sem data que ainda está no prazo', () => {
     const disparo = calcularDisparo(
       lembrete({ status: 'atencao', kmRestantes: 500 }),
       7,
@@ -98,7 +98,7 @@ describe('calcularDisparo', () => {
     assert.equal(disparo, null);
   });
 
-  it('cai para a proxima hora quando a janela de antecedencia ja passou', () => {
+  it('cai para a próxima hora quando a janela de antecedência já passou', () => {
     // Vence em 3 dias, mas a antecedencia e de 7: o momento ideal ficou atras.
     const disparo = calcularDisparo(
       lembrete({ dataPrevista: '2026-05-21' }),
@@ -112,7 +112,7 @@ describe('calcularDisparo', () => {
     assert.equal(disparo.getDate(), 19);
   });
 
-  it('respeita a hora escolhida pelo usuario', () => {
+  it('respeita a hora escolhida pelo usuário', () => {
     const disparo = calcularDisparo(
       lembrete({ dataPrevista: '2026-06-10' }),
       7,
@@ -124,7 +124,7 @@ describe('calcularDisparo', () => {
     assert.equal(disparo.getHours(), 20);
   });
 
-  it('antecedencia zero agenda no proprio dia do vencimento', () => {
+  it('antecedência zero agenda no próprio dia do vencimento', () => {
     const disparo = calcularDisparo(
       lembrete({ dataPrevista: '2026-06-10' }),
       0,
@@ -153,17 +153,17 @@ describe('montarTexto', () => {
     atualizadoEm: '2026-01-01T00:00:00.000Z',
   };
 
-  it('diz que venceu quando o lembrete esta vencido', () => {
+  it('diz que venceu quando o lembrete está vencido', () => {
     const { titulo } = montarTexto(lembrete({ status: 'vencido' }), veiculo);
     assert.match(titulo, /venceu$/);
   });
 
-  it('diz que esta chegando quando ainda ha prazo', () => {
+  it('diz que está chegando quando ainda há prazo', () => {
     const { titulo } = montarTexto(lembrete({ status: 'atencao' }), veiculo);
-    assert.match(titulo, /esta chegando$/);
+    assert.match(titulo, /está chegando$/);
   });
 
-  it('cita o veiculo e a quilometragem prevista', () => {
+  it('cita o veículo e a quilometragem prevista', () => {
     const { corpo } = montarTexto(
       lembrete({ kmPrevisto: 115_000 }),
       veiculo,
@@ -182,7 +182,7 @@ describe('montarTexto', () => {
     assert.match(corpo, /vence hoje/);
   });
 
-  it('nao cita dias negativos no corpo', () => {
+  it('não cita dias negativos no corpo', () => {
     const { corpo } = montarTexto(
       lembrete({ status: 'vencido', diasRestantes: -5 }),
       veiculo,

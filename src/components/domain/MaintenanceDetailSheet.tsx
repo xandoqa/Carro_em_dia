@@ -40,7 +40,7 @@ export function MaintenanceDetailSheet({
   const nome =
     manutencao.tipo === 'outro' && manutencao.descricao
       ? manutencao.descricao
-      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Servico');
+      : (tiposManutencao[manutencao.tipo]?.nome ?? 'Serviço');
 
   const linhas: { rotulo: string; valor: string }[] = [
     { rotulo: 'Data', valor: formatDate(manutencao.data) },
@@ -55,7 +55,7 @@ export function MaintenanceDetailSheet({
     ...(manutencao.proximaEmKm
       ? [
           {
-            rotulo: 'Proxima em',
+            rotulo: 'Próxima em',
             valor: formatKmUnit(manutencao.proximaEmKm),
           },
         ]
@@ -64,7 +64,7 @@ export function MaintenanceDetailSheet({
       ? [
           {
             rotulo: 'Ou em',
-            valor: `${manutencao.proximaEmMeses} ${manutencao.proximaEmMeses === 1 ? 'mes' : 'meses'}`,
+            valor: `${manutencao.proximaEmMeses} ${manutencao.proximaEmMeses === 1 ? 'mês' : 'meses'}`,
           },
         ]
       : []),
@@ -148,7 +148,7 @@ export function MaintenanceDetailSheet({
           {manutencao.observacoes ? (
             <View style={{ marginTop: theme.spacing.lg }}>
               <Txt variant="label" tone="muted" style={{ marginBottom: 4 }}>
-                Observacoes
+                Observações
               </Txt>
               <Txt variant="body">{manutencao.observacoes}</Txt>
             </View>

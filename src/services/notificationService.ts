@@ -92,8 +92,8 @@ export async function prepararCanal(): Promise<void> {
   if (Platform.OS !== 'android') return;
 
   await Notifications.setNotificationChannelAsync(CANAL_ID, {
-    name: 'Manutencao',
-    description: 'Avisos de servicos proximos do vencimento.',
+    name: 'Manutenção',
+    description: 'Avisos de serviços próximos do vencimento.',
     importance: Notifications.AndroidImportance.DEFAULT,
     vibrationPattern: [0, 200, 120, 200],
     lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
@@ -204,8 +204,8 @@ export async function enviarTeste(): Promise<boolean> {
   await prepararCanal();
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'Notificacoes ativas',
-      body: 'E assim que os avisos de manutencao vao chegar.',
+      title: 'Notificações ativas',
+      body: 'É assim que os avisos de manutenção vão chegar.',
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

@@ -66,7 +66,7 @@ export function montarRoteiros(): Roteiro[] {
           km: carroKm - 9_500,
           valor: 280,
           oficina: 'AutoCar Express',
-          observacoes: 'Oleo sintetico 5W40 e filtro original.',
+          observacoes: 'Óleo sintético 5W40 e filtro original.',
           proximaEmKm: 10_000,
         },
         // Em dia: os freios tem folga larga.
@@ -76,7 +76,7 @@ export function montarRoteiros(): Roteiro[] {
           data: mesesAtras(9),
           km: carroKm - 6_300,
           valor: 340,
-          oficina: 'Freio Rapido',
+          oficina: 'Freio Rápido',
           proximaEmKm: 30_000,
         },
         {
@@ -130,7 +130,7 @@ export function montarRoteiros(): Roteiro[] {
           data: mesesAtras(5),
           km: motoKm - 2_700,
           valor: 95,
-          oficina: 'Moto Peças do Joao',
+          oficina: 'Moto Peças do João',
           proximaEmKm: 3_000,
         },
         {
@@ -139,7 +139,7 @@ export function montarRoteiros(): Roteiro[] {
           data: mesesAtras(11),
           km: motoKm - 4_400,
           valor: 140,
-          oficina: 'Moto Peças do Joao',
+          oficina: 'Moto Peças do João',
           proximaEmKm: 5_000,
         },
         {
@@ -147,7 +147,7 @@ export function montarRoteiros(): Roteiro[] {
           data: mesesAtras(13),
           km: motoKm - 8_000,
           valor: 260,
-          oficina: 'Concessionaria Honda',
+          oficina: 'Concessionária Honda',
           proximaEmMeses: 12,
         },
       ],

@@ -78,7 +78,7 @@ export interface ThemeDefinition {
 const oficina: ThemeDefinition = {
   id: 'oficina',
   name: 'Oficina',
-  description: 'Claro, verde-petroleo sobre papel cinza.',
+  description: 'Claro, verde-petróleo sobre papel cinza.',
   scheme: 'light',
   colors: {
     background: '#F2F3F0',
@@ -111,7 +111,7 @@ const oficina: ThemeDefinition = {
 const asfalto: ThemeDefinition = {
   id: 'asfalto',
   name: 'Asfalto',
-  description: 'Escuro, verde-petroleo. Padrao no modo escuro.',
+  description: 'Escuro, verde-petróleo. Padrão no modo escuro.',
   scheme: 'dark',
   colors: {
     background: '#101513',
@@ -143,8 +143,8 @@ const asfalto: ThemeDefinition = {
 
 const ambar: ThemeDefinition = {
   id: 'ambar',
-  name: 'Ambar',
-  description: 'Escuro e quente, como a luz do painel a noite.',
+  name: 'Âmbar',
+  description: 'Escuro e quente, como a luz do painel à noite.',
   scheme: 'dark',
   colors: {
     background: '#140F0A',

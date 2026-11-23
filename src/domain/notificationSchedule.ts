@@ -70,7 +70,7 @@ export function montarTexto(
   const titulo =
     lembrete.status === 'vencido'
       ? `${lembrete.nome} venceu`
-      : `${lembrete.nome} esta chegando`;
+      : `${lembrete.nome} está chegando`;
 
   const partes: string[] = [veiculo.apelido];
 

@@ -95,7 +95,7 @@ export function GarageProvider({ children }: { children: ReactNode }) {
       setVeiculos(v);
       setManutencoes(m);
     } catch {
-      setErro('Nao foi possivel carregar seus dados. Feche e abra o app.');
+      setErro('Não foi possível carregar seus dados. Feche e abra o app.');
     } finally {
       setCarregando(false);
     }

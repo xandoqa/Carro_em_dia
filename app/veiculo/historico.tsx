@@ -87,7 +87,7 @@ export default function HistoricoScreen() {
     confirmar({
       titulo: 'Excluir registro?',
       mensagem:
-        'Este servico sai do historico e dos gastos, e os lembretes sao recalculados. Nao da para desfazer.',
+        'Este serviço sai do histórico e dos gastos, e os lembretes são recalculados. Não dá para desfazer.',
       botao: 'Excluir',
       destrutivo: true,
       aoConfirmar: async () => {
@@ -101,9 +101,9 @@ export default function HistoricoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Historico" back />
+          <Header title="Histórico" back />
           <EmptyState
-            title="Veiculo nao encontrado"
+            title="Veículo não encontrado"
             description="Ele pode ter sido removido. Volte para a garagem para ver a lista atual."
             actionLabel="Voltar para a garagem"
             onAction={() => router.replace('/(tabs)')}
@@ -117,16 +117,16 @@ export default function HistoricoScreen() {
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen>
         <Header
-          title="Historico"
+          title="Histórico"
           subtitle={`${veiculo.apelido} · ${todas.length} ${todas.length === 1 ? 'registro' : 'registros'}`}
           back
         />
 
         {todas.length === 0 ? (
           <EmptyState
-            title="Nenhum servico registrado"
-            description="Registre a primeira manutencao para montar a linha do tempo deste veiculo."
-            actionLabel="Registrar manutencao"
+            title="Nenhum serviço registrado"
+            description="Registre a primeira manutenção para montar a linha do tempo deste veículo."
+            actionLabel="Registrar manutenção"
             onAction={() =>
               router.push({
                 pathname: '/manutencao/nova',
@@ -201,7 +201,7 @@ export default function HistoricoScreen() {
               {filtradas.length === 0 ? (
                 <View style={{ padding: theme.spacing.xxl }}>
                   <Txt variant="body" tone="muted" align="center">
-                    Nenhum servico com esses filtros.
+                    Nenhum serviço com esses filtros.
                   </Txt>
                   <Button
                     label="Limpar filtros"

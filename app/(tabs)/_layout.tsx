@@ -68,7 +68,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Veiculos',
+          title: 'Veículos',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="car-sport-outline" size={size} color={corDoIcone(color)} />
           ),

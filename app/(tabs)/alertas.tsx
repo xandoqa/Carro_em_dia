@@ -66,7 +66,7 @@ export default function AlertasScreen() {
           title="Alertas"
           subtitle={
             pendentes > 0
-              ? `${pendentes} ${pendentes === 1 ? 'servico pendente' : 'servicos pendentes'}`
+              ? `${pendentes} ${pendentes === 1 ? 'serviço pendente' : 'serviços pendentes'}`
               : 'Nada pendente'
           }
         />
@@ -78,14 +78,14 @@ export default function AlertasScreen() {
             icon={
               <BrandMark size={56} color={theme.colors.line} accent={theme.colors.brand} />
             }
-            title="Ainda nao ha o que lembrar"
+            title="Ainda não há o que lembrar"
             description={
               veiculos.length === 0
-                ? 'Cadastre um veiculo e registre a primeira manutencao. A partir dai o app calcula os proximos prazos.'
-                : 'Registre uma manutencao para o app calcular quando o proximo servico vence.'
+                ? 'Cadastre um veículo e registre a primeira manutenção. A partir daí o app calcula os próximos prazos.'
+                : 'Registre uma manutenção para o app calcular quando o próximo serviço vence.'
             }
             actionLabel={
-              veiculos.length === 0 ? 'Cadastrar veiculo' : 'Registrar manutencao'
+              veiculos.length === 0 ? 'Cadastrar veículo' : 'Registrar manutenção'
             }
             onAction={() =>
               router.push(
@@ -108,7 +108,7 @@ export default function AlertasScreen() {
             {visiveis.length === 0 ? (
               <EmptyState
                 title="Tudo em dia"
-                description="Nenhum servico esta vencido ou perto do prazo. Veja a lista completa para conferir os proximos."
+                description="Nenhum serviço está vencido ou perto do prazo. Veja a lista completa para conferir os próximos."
                 actionLabel="Ver todos"
                 onAction={() => setFiltro('todos')}
               />
