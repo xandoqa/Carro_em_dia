@@ -72,6 +72,25 @@ jobs:
       - name: Abrir a web e percorrer as telas
         run: node scripts/ci/testar-web.mjs dist-web
 
+      # O que roda na maquina de quem usa o projeto e o servidor de
+      # desenvolvimento (npm start / npm run web), que mostra na tela erros que
+      # a compilacao final esconde. Ele e testado do mesmo jeito.
+      - name: Subir o servidor de desenvolvimento
+        run: |
+          (CI=1 npx expo start --web --port 8081 > /tmp/expo.log 2>&1 &)
+          for i in $(seq 1 90); do curl -sf http://localhost:8081 >/dev/null && break; sleep 2; done
+          curl -sf http://localhost:8081 >/dev/null || (cat /tmp/expo.log; exit 1)
+
+      - name: Percorrer as telas no servidor de desenvolvimento
+        env:
+          BASE_URL: http://localhost:8081
+        run: node scripts/ci/testar-web.mjs
+
+      - name: Terminal do Expo sem erro
+        run: |
+          sed 's/\x1b\[[0-9;]*m//g' /tmp/expo.log | tail -60
+          if grep -q " ERROR " /tmp/expo.log; then echo "O terminal do Expo mostrou ERROR"; exit 1; fi
+
       - name: Guardar as fotos das telas
         if: always()
         uses: actions/upload-artifact@v4

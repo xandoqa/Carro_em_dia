@@ -98,12 +98,13 @@ Apresentação em que o único caminho falha é apresentação perdida.
 
 | Plano | Como | Quando usar |
 |-------|------|-------------|
-| **A** | Emulador Android no notebook | Padrão — tela já no projetor |
-| **B** | iPhone com Expo Go (`npm start` + QR) | Se o emulador travar |
-| **C** | `design/preview/index.html` no navegador | Se nada subir — são as 11 telas navegáveis, sem depender de instalação |
+| **A** | iPhone com Expo Go (`npm run start:limpo` + QR) | Padrão: é o app de verdade, com notificação e câmera |
+| **B** | **[xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/)** no navegador | Se o celular ou a rede falharem: é o mesmo app React, já publicado, sem instalar nada |
+| **C** | `npm run web` no notebook | Se não houver internet para o plano B |
 
-> O plano C **não é o aplicativo**: é uma maquete em HTML. Se precisar usá-lo,
-> diga isso à banca — e mostre o código real em seguida.
+> O plano B **é o aplicativo**, não uma maquete: o mesmo código React,
+> compilado para web e publicado pelo GitHub Actions. Só notificações e câmera
+> ficam de fora, porque dependem do celular.
 
 ---
 
@@ -184,6 +185,6 @@ login. Todos mapeados em `docs/melhorias.md`, com branch criada para cada um.
 - [ ] `npm start` **já rodando** (o primeiro bundle demora)
 - [ ] Dados de exemplo carregados
 - [ ] iPhone com Expo Go, como plano B
-- [ ] `design/preview/index.html` aberto numa aba, como plano C
+- [ ] [xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/) aberto numa aba, como plano B
 - [ ] Wi-Fi conferido — se a rede da faculdade isolar os aparelhos, use
       `npm run start:tunnel`

@@ -25,7 +25,10 @@ import { chromium } from 'playwright';
 const RAIZ = path.resolve(process.argv[2] ?? 'dist-web');
 const SAIDA = path.resolve('telas');
 const PORTA = 4321;
-const BASE = `http://localhost:${PORTA}`;
+// Com BASE_URL, testa um servidor que já está rodando (por exemplo o de
+// desenvolvimento, `npx expo start --web`) em vez de servir a compilação.
+const EXTERNO = process.env.BASE_URL?.replace(/\/$/, '');
+const BASE = EXTERNO ?? `http://localhost:${PORTA}`;
 const TEMAS = ['oficina', 'asfalto', 'ambar', 'pista'];
 const CHAVE_PREFS = '@carroemdia/preferencias';
 const CHAVE_VEICULOS = '@carroemdia/veiculos';
@@ -110,7 +113,8 @@ let telaAtual = '(inicio)';
 
 async function abrir(page, rota, nome) {
   telaAtual = nome;
-  await page.goto(`${BASE}${rota}`, { waitUntil: 'networkidle' });
+  // O servidor de desenvolvimento compila cada tela na primeira visita.
+  await page.goto(`${BASE}${rota}`, { waitUntil: 'networkidle', timeout: 180000 });
   // Dá tempo para efeitos e animações de entrada assentarem.
   await page.waitForTimeout(900);
   await page.screenshot({ path: path.join(SAIDA, `${nome}.png`) });
@@ -128,13 +132,13 @@ async function definirTema(page, tema) {
 }
 
 async function main() {
-  if (!fs.existsSync(RAIZ)) {
+  if (!EXTERNO && !fs.existsSync(RAIZ)) {
     console.error(`Compilação web não encontrada em ${RAIZ}. Rode antes: npx expo export --platform web --output-dir dist-web`);
     process.exit(1);
   }
   fs.mkdirSync(SAIDA, { recursive: true });
 
-  const servidor = await iniciarServidor();
+  const servidor = EXTERNO ? null : await iniciarServidor();
   const navegador = await chromium.launch();
   const contexto = await navegador.newContext({
     viewport: { width: 390, height: 844 },
@@ -199,7 +203,7 @@ async function main() {
     erros.push(`[${telaAtual}] o teste não conseguiu prosseguir: ${e.message}`);
   } finally {
     await navegador.close();
-    servidor.close();
+    servidor?.close();
   }
 
   console.log('');

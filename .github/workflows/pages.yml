@@ -1,0 +1,57 @@
+name: Web online
+
+# Publica a versao web do app no GitHub Pages a cada push em main:
+# https://xandoqa.github.io/Carro_em_dia/
+#
+# Compila com o caminho-base do Pages e grava o resultado na branch gh-pages.
+# Na primeira vez, o Pages precisa ser ligado no repositorio:
+# Settings -> Pages -> Source: Deploy from a branch -> gh-pages / (root).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Compilar a web para o Pages
+        env:
+          EXPO_BASE_URL: /Carro_em_dia
+        run: npx expo export --platform web --output-dir dist-pages
+
+      - name: Ajustes do Pages
+        run: |
+          # Aplicacao de pagina unica: rota aberta direto cai no 404.html,
+          # que e o proprio app, e o roteador resolve no navegador.
+          cp dist-pages/index.html dist-pages/404.html
+          # Sem isso o Pages ignora pastas que comecam com "_", como _expo.
+          touch dist-pages/.nojekyll
+
+      - name: Publicar na branch gh-pages
+        run: |
+          cd dist-pages
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Web do CarroEmDia ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
