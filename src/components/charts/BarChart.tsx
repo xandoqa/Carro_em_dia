@@ -70,12 +70,13 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
           return (
             <View key={ponto.mes} style={styles.coluna}>
               {destaque ? (
-                <Txt
-                  variant="meterSM"
-                  tone="muted"
-                  // O valor é mais largo que a coluna: ele se estende para os
-                  // lados, ancorado na borda quando a barra é a primeira ou a
-                  // última, para não sair do cartão.
+                // O valor é mais largo que a coluna. O posicionamento fica num
+                // contêiner, e não no texto: no navegador, texto de uma linha
+                // ganha max-width: 100% da coluna e era cortado em "3…".
+                // Ancorado na borda quando a barra é a primeira ou a última,
+                // para não sair do cartão.
+                <View
+                  pointerEvents="none"
                   style={[
                     styles.rotuloTopo,
                     { bottom: alturaBarra + 4 },
@@ -85,10 +86,16 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
                         ? styles.rotuloFim
                         : styles.rotuloMeio,
                   ]}
-                  numberOfLines={1}
                 >
-                  {formatAmount(ponto.total)}
-                </Txt>
+                  <Txt
+                    variant="meterSM"
+                    tone="muted"
+                    style={styles.rotuloTexto}
+                    numberOfLines={1}
+                  >
+                    {formatAmount(ponto.total)}
+                  </Txt>
+                </View>
               ) : null}
 
               <Animated.View
@@ -164,22 +171,24 @@ const styles = StyleSheet.create({
   },
   rotuloTopo: {
     position: 'absolute',
+  },
+  rotuloTexto: {
     fontSize: 11,
   },
   rotuloMeio: {
     left: -LARGURA_EXTRA,
     right: -LARGURA_EXTRA,
-    textAlign: 'center',
+    alignItems: 'center',
   },
   rotuloInicio: {
     left: 0,
     right: -2 * LARGURA_EXTRA,
-    textAlign: 'left',
+    alignItems: 'flex-start',
   },
   rotuloFim: {
     left: -2 * LARGURA_EXTRA,
     right: 0,
-    textAlign: 'right',
+    alignItems: 'flex-end',
   },
   eixo: {
     flexDirection: 'row',

@@ -178,6 +178,11 @@ async function main() {
     await abrir(page, '/alertas', '06-alertas');
     await abrir(page, '/gastos', '07-gastos');
     await abrir(page, `/veiculo/${id}`, '08-veiculo');
+    // Cada veículo de exemplo exercita um caso diferente — um deles tem o
+    // odômetro de seis dígitos que cortava no painel.
+    for (const [n, outro] of veiculos.slice(1).entries()) {
+      await abrir(page, `/veiculo/${outro.id}`, `08-veiculo-${n + 2}`);
+    }
     await abrir(page, `/veiculo/historico?veiculoId=${id}`, '09-historico');
     await abrir(page, `/manutencao/nova?veiculoId=${id}`, '10-nova-manutencao');
     await abrir(page, '/veiculo/novo', '11-novo-veiculo');
