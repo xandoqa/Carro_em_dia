@@ -72,7 +72,7 @@ export default function GastosScreen() {
       <Screen onRefresh={recarregar}>
         <Header
           title="Gastos"
-          subtitle={nomeVeiculo ?? 'Todos os veiculos'}
+          subtitle={nomeVeiculo ?? 'Todos os veículos'}
         />
 
         {carregando ? (
@@ -80,9 +80,9 @@ export default function GastosScreen() {
         ) : manutencoes.length === 0 ? (
           <EmptyState
             title="Nenhum gasto registrado"
-            description="Cada manutencao que voce registrar entra neste relatorio, separada por categoria e por mes."
+            description="Cada manutenção que você registrar entra neste relatório, separada por categoria e por mês."
             actionLabel={
-              veiculos.length === 0 ? 'Cadastrar veiculo' : 'Registrar manutencao'
+              veiculos.length === 0 ? 'Cadastrar veículo' : 'Registrar manutenção'
             }
             onAction={() =>
               router.push(
@@ -104,7 +104,7 @@ export default function GastosScreen() {
 
             <Segmented<PeriodoId>
               options={[
-                { value: 'mes', label: 'Mes' },
+                { value: 'mes', label: 'Mês' },
                 { value: 'ano', label: 'Ano' },
                 { value: 'doze', label: '12 meses' },
               ]}
@@ -115,7 +115,7 @@ export default function GastosScreen() {
 
             <Card>
               <Txt variant="label" tone="muted">
-                Total no periodo
+                Total no período
               </Txt>
               <Txt variant="meterXL" style={{ marginTop: 2 }} adjustsFontSizeToFit numberOfLines={1}>
                 {formatCurrency(resumo.total)}
@@ -123,11 +123,11 @@ export default function GastosScreen() {
               <Txt variant="bodySM" tone="muted" style={{ marginTop: 4 }}>
                 {resumo.quantidade}{' '}
                 {resumo.quantidade === 1 ? 'registro' : 'registros'} ·{' '}
-                {formatCurrency(resumo.mediaMensal)} por mes
+                {formatCurrency(resumo.mediaMensal)} por mês
               </Txt>
 
               <View style={{ marginTop: theme.spacing.lg }}>
-                <SectionHeader title="Evolucao mensal" />
+                <SectionHeader title="Evolução mensal" />
                 <BarChart data={resumo.porMes} />
               </View>
             </Card>
@@ -143,7 +143,7 @@ export default function GastosScreen() {
               >
                 {consumo !== null ? (
                   <Readout
-                    label="Consumo medio"
+                    label="Consumo médio"
                     value={`${consumo.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} km/L`}
                     hint="Entre abastecimentos"
                     style={{ flex: 1 }}
@@ -153,7 +153,7 @@ export default function GastosScreen() {
                   <Readout
                     label="Custo por km"
                     value={formatCurrency(porKm)}
-                    hint="No periodo"
+                    hint="No período"
                     style={{ flex: 1 }}
                   />
                 ) : null}

@@ -138,7 +138,7 @@ export default function NovoVeiculoScreen() {
     if (!permissao.granted) {
       avisar(
         'Acesso as fotos',
-        'Libere o acesso as fotos nos ajustes do celular para escolher uma imagem do veiculo.',
+        'Libere o acesso as fotos nos ajustes do celular para escolher uma imagem do veículo.',
       );
       return;
     }
@@ -164,7 +164,7 @@ export default function NovoVeiculoScreen() {
     const anoLimite = new Date().getFullYear() + 1;
 
     if (!apelido.trim()) {
-      novos.apelido = 'Dê um nome para reconhecer o veiculo na lista.';
+      novos.apelido = 'Dê um nome para reconhecer o veículo na lista.';
     }
     if (!marca.trim()) novos.marca = 'Escolha a marca.';
     if (!modelo.trim()) novos.modelo = 'Escolha o modelo.';
@@ -184,11 +184,11 @@ export default function NovoVeiculoScreen() {
     } else if (!isPlacaValida(placa)) {
       novos.placa = 'Use o formato ABC1234 ou ABC1D23.';
     } else if (veiculos.some((v) => v.placa === normalizePlaca(placa))) {
-      novos.placa = 'Ja existe um veiculo com essa placa.';
+      novos.placa = 'Já existe um veículo com essa placa.';
     }
 
     if (km.trim() && (kmNum === null || kmNum < 0)) {
-      novos.km = 'Informe a quilometragem em numeros.';
+      novos.km = 'Informe a quilometragem em números.';
     }
 
     return novos;
@@ -218,7 +218,7 @@ export default function NovoVeiculoScreen() {
       router.back();
     } catch (erro) {
       avisar(
-        'Nao foi possivel salvar',
+        'Não foi possível salvar',
         erro instanceof Error ? erro.message : 'Tente de novo.',
       );
     } finally {
@@ -231,7 +231,7 @@ export default function NovoVeiculoScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen avoidKeyboard>
-        <Header title="Novo veiculo" back />
+        <Header title="Novo veículo" back />
 
         <Segmented<TipoVeiculo>
           label="Tipo"
@@ -254,7 +254,7 @@ export default function NovoVeiculoScreen() {
         <Pressable
           onPress={escolherFoto}
           accessibilityRole="button"
-          accessibilityLabel="Escolher foto do veiculo"
+          accessibilityLabel="Escolher foto do veículo"
           style={({ pressed }) => [
             styles.foto,
             {
@@ -293,7 +293,7 @@ export default function NovoVeiculoScreen() {
             value={apelido}
             onChangeText={setApelido}
             error={erros.apelido}
-            hint="Como voce chama esse veiculo no dia a dia."
+            hint="Como você chama esse veículo no dia a dia."
             maxLength={40}
           />
 
@@ -327,7 +327,7 @@ export default function NovoVeiculoScreen() {
           {fipe.referencia ? (
             <Card style={{ padding: theme.spacing.md }}>
               <Txt variant="label" tone="muted">
-                Valor de referencia FIPE
+                Valor de referência FIPE
               </Txt>
               <Txt variant="meterLG" style={{ marginTop: 2 }}>
                 {formatCurrency(fipe.referencia.valor)}
@@ -365,7 +365,7 @@ export default function NovoVeiculoScreen() {
           </View>
 
           <PickerField
-            label="Combustivel"
+            label="Combustível"
             selectedLabel={combustiveisLabel[combustivel]}
             placeholder="Escolher"
             onPress={() => setFolha('combustivel')}
@@ -385,7 +385,7 @@ export default function NovoVeiculoScreen() {
         </View>
 
         <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.xxl }}>
-          <Button label="Salvar veiculo" onPress={salvar} loading={salvando} />
+          <Button label="Salvar veículo" onPress={salvar} loading={salvando} />
           <Button
             label="Cancelar"
             variant="ghost"
@@ -404,7 +404,7 @@ export default function NovoVeiculoScreen() {
         loading={fipe.marcas.carregando}
         emptyMessage={
           fipe.marcas.erro ??
-          'Nao foi possivel carregar as marcas. Verifique a conexao.'
+          'Não foi possível carregar as marcas. Verifique a conexão.'
         }
       />
 
@@ -423,7 +423,7 @@ export default function NovoVeiculoScreen() {
 
       <PickerSheet
         visible={folha === 'combustivel'}
-        title="Combustivel"
+        title="Combustível"
         items={itensCombustivel}
         value={combustivel}
         onSelect={(item) => {

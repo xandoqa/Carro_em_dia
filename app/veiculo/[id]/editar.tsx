@@ -115,7 +115,7 @@ export default function EditarVeiculoScreen() {
     const anoLimite = new Date().getFullYear() + 1;
 
     if (!apelido.trim()) {
-      novos.apelido = 'Dê um nome para reconhecer o veiculo na lista.';
+      novos.apelido = 'Dê um nome para reconhecer o veículo na lista.';
     }
     if (!marca.trim()) novos.marca = 'Informe a marca.';
     if (!modelo.trim()) novos.modelo = 'Informe o modelo.';
@@ -137,7 +137,7 @@ export default function EditarVeiculoScreen() {
     } else if (
       veiculos.some((v) => v.placa === normalizePlaca(placa) && v.id !== id)
     ) {
-      novos.placa = 'Ja existe outro veiculo com essa placa.';
+      novos.placa = 'Já existe outro veículo com essa placa.';
     }
 
     return novos;
@@ -160,11 +160,11 @@ export default function EditarVeiculoScreen() {
         combustivel,
         fotoUri,
       });
-      mostrar('Veiculo atualizado');
+      mostrar('Veículo atualizado');
       router.back();
     } catch (erro) {
       avisar(
-        'Nao foi possivel salvar',
+        'Não foi possível salvar',
         erro instanceof Error ? erro.message : 'Tente de novo.',
       );
     } finally {
@@ -176,7 +176,7 @@ export default function EditarVeiculoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Editar veiculo" back />
+          <Header title="Editar veículo" back />
           <Loading />
         </Screen>
       </View>
@@ -187,9 +187,9 @@ export default function EditarVeiculoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Editar veiculo" back />
+          <Header title="Editar veículo" back />
           <EmptyState
-            title="Veiculo nao encontrado"
+            title="Veículo não encontrado"
             description="Ele pode ter sido removido. Volte para a garagem para ver a lista atual."
             actionLabel="Voltar para a garagem"
             onAction={() => router.replace('/(tabs)')}
@@ -202,7 +202,7 @@ export default function EditarVeiculoScreen() {
   return (
     <View style={{ flex: 1, paddingTop: insets.top }}>
       <Screen avoidKeyboard>
-        <Header title="Editar veiculo" subtitle={veiculo.apelido} back />
+        <Header title="Editar veículo" subtitle={veiculo.apelido} back />
 
         <Segmented<TipoVeiculo>
           label="Tipo"
@@ -218,7 +218,7 @@ export default function EditarVeiculoScreen() {
         <Pressable
           onPress={escolherFoto}
           accessibilityRole="button"
-          accessibilityLabel="Trocar foto do veiculo"
+          accessibilityLabel="Trocar foto do veículo"
           style={({ pressed }) => [
             styles.foto,
             {
@@ -315,7 +315,7 @@ export default function EditarVeiculoScreen() {
           </View>
 
           <PickerField
-            label="Combustivel"
+            label="Combustível"
             selectedLabel={combustiveisLabel[combustivel]}
             placeholder="Escolher"
             onPress={() => setFolhaCombustivel(true)}
@@ -327,13 +327,13 @@ export default function EditarVeiculoScreen() {
           tone="muted"
           style={{ marginTop: theme.spacing.lg }}
         >
-          A quilometragem e atualizada no painel do veiculo, onde ela tem regra
-          propria.
+          A quilometragem é atualizada no painel do veículo, onde ela tem regra
+          própria.
         </Txt>
 
         <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.xxl }}>
           <Button
-            label="Salvar alteracoes"
+            label="Salvar alterações"
             onPress={salvar}
             loading={salvando}
           />
@@ -347,7 +347,7 @@ export default function EditarVeiculoScreen() {
 
       <PickerSheet
         visible={folhaCombustivel}
-        title="Combustivel"
+        title="Combustível"
         items={itensCombustivel}
         value={combustivel}
         onSelect={(item) => {

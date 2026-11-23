@@ -60,8 +60,8 @@ export default function GaragemScreen() {
           title="Minha garagem"
           subtitle={
             veiculos.length === 0
-              ? 'Nenhum veiculo cadastrado'
-              : `${veiculos.length} ${veiculos.length === 1 ? 'veiculo' : 'veiculos'}`
+              ? 'Nenhum veículo cadastrado'
+              : `${veiculos.length} ${veiculos.length === 1 ? 'veículo' : 'veículos'}`
           }
           right={
             <Pressable
@@ -98,9 +98,9 @@ export default function GaragemScreen() {
             icon={
               <BrandMark size={56} color={theme.colors.line} accent={theme.colors.brand} />
             }
-            title="Comece pelo primeiro veiculo"
-            description="Cadastre seu carro ou moto para registrar manutencoes, acompanhar gastos e receber avisos antes do prazo vencer."
-            actionLabel="Cadastrar veiculo"
+            title="Comece pelo primeiro veículo"
+            description="Cadastre seu carro ou moto para registrar manutenções, acompanhar gastos e receber avisos antes do prazo vencer."
+            actionLabel="Cadastrar veículo"
             onAction={() => router.push('/veiculo/novo')}
           />
         ) : (
@@ -114,19 +114,19 @@ export default function GaragemScreen() {
                 accentColor={
                   contagem.vencido > 0 ? theme.colors.late : theme.colors.warn
                 }
-                accessibilityLabel={`${pendentes} ${pendentes === 1 ? 'servico pendente' : 'servicos pendentes'}. Abrir alertas.`}
+                accessibilityLabel={`${pendentes} ${pendentes === 1 ? 'serviço pendente' : 'serviços pendentes'}. Abrir alertas.`}
                 style={{ marginBottom: theme.spacing.md }}
               >
                 <View style={styles.resumo}>
                   <View style={styles.resumoTexto}>
                     <Txt variant="titleSM">
                       {contagem.vencido > 0
-                        ? `${contagem.vencido} ${contagem.vencido === 1 ? 'servico vencido' : 'servicos vencidos'}`
-                        : `${contagem.atencao} ${contagem.atencao === 1 ? 'servico chegando' : 'servicos chegando'}`}
+                        ? `${contagem.vencido} ${contagem.vencido === 1 ? 'serviço vencido' : 'serviços vencidos'}`
+                        : `${contagem.atencao} ${contagem.atencao === 1 ? 'serviço chegando' : 'serviços chegando'}`}
                     </Txt>
                     <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
                       {contagem.vencido > 0 && contagem.atencao > 0
-                        ? `E mais ${contagem.atencao} ${contagem.atencao === 1 ? 'proximo' : 'proximos'} do prazo.`
+                        ? `E mais ${contagem.atencao} ${contagem.atencao === 1 ? 'próximo' : 'próximos'} do prazo.`
                         : 'Toque para ver os detalhes.'}
                     </Txt>
                   </View>
@@ -166,7 +166,7 @@ export default function GaragemScreen() {
           botao do estado vazio, e dois convites competiriam. */}
       {!carregando && veiculos.length > 0 ? (
         <Fab
-          label="Novo veiculo"
+          label="Novo veículo"
           icon={
             <Ionicons name="add" size={26} color={theme.colors.textOnBrand} />
           }

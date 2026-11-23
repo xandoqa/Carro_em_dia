@@ -45,10 +45,10 @@ export function validarNovoKm(params: {
   const { novo, atual, minimo } = params;
 
   if (!Number.isFinite(novo)) {
-    return { tipo: 'invalido', motivo: 'Informe a quilometragem em numeros.' };
+    return { tipo: 'invalido', motivo: 'Informe a quilometragem em números.' };
   }
   if (novo < 0) {
-    return { tipo: 'invalido', motivo: 'A quilometragem nao pode ser negativa.' };
+    return { tipo: 'invalido', motivo: 'A quilometragem não pode ser negativa.' };
   }
   if (novo === atual) {
     return { tipo: 'ok' };
@@ -59,7 +59,7 @@ export function validarNovoKm(params: {
   if (novo < minimo) {
     return {
       tipo: 'invalido',
-      motivo: `Ha uma manutencao registrada em ${minimo.toLocaleString('pt-BR')} km. Corrija ou exclua esse registro antes de baixar o odometro.`,
+      motivo: `Há uma manutenção registrada em ${minimo.toLocaleString('pt-BR')} km. Corrija ou exclua esse registro antes de baixar o odômetro.`,
     };
   }
   return { tipo: 'correcao' };

@@ -64,7 +64,7 @@ export function UpdateKmSheet({
     const km = parseNumberInput(valor);
 
     if (km === null) {
-      setErro('Informe a quilometragem em numeros.');
+      setErro('Informe a quilometragem em números.');
       return;
     }
 
@@ -97,10 +97,10 @@ export function UpdateKmSheet({
     setSalvando(true);
     try {
       await atualizarKm(veiculo.id, km);
-      mostrar(`Odometro em ${formatKm(km)} km`);
+      mostrar(`Odômetro em ${formatKm(km)} km`);
       onClose();
     } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Nao foi possivel salvar.');
+      setErro(e instanceof Error ? e.message : 'Não foi possível salvar.');
     } finally {
       setSalvando(false);
     }
@@ -112,11 +112,11 @@ export function UpdateKmSheet({
     setSalvando(true);
     try {
       await corrigirKm(veiculo.id, correcaoPendente);
-      mostrar(`Odometro corrigido para ${formatKm(correcaoPendente)} km`);
+      mostrar(`Odômetro corrigido para ${formatKm(correcaoPendente)} km`);
       onClose();
     } catch (e) {
       setCorrecaoPendente(null);
-      setErro(e instanceof Error ? e.message : 'Nao foi possivel corrigir.');
+      setErro(e instanceof Error ? e.message : 'Não foi possível corrigir.');
     } finally {
       setSalvando(false);
     }
@@ -155,7 +155,7 @@ export function UpdateKmSheet({
 
           <Txt variant="titleMD">Atualizar quilometragem</Txt>
           <Txt variant="bodySM" tone="muted" style={{ marginTop: 2 }}>
-            {veiculo.apelido} esta com {formatKmUnit(veiculo.kmAtual)}.
+            {veiculo.apelido} está com {formatKmUnit(veiculo.kmAtual)}.
           </Txt>
 
           <Field
@@ -190,12 +190,12 @@ export function UpdateKmSheet({
               accessibilityRole="alert"
             >
               <Txt variant="titleSM" tone="warn">
-                Baixar o odometro?
+                Baixar o odômetro?
               </Txt>
               <Txt variant="bodySM" tone="muted" style={{ marginTop: 4 }}>
                 O valor vai de {formatKm(veiculo.kmAtual)} para{' '}
-                {formatKm(correcaoPendente)} km. Faca isso so para corrigir um
-                erro de digitacao — os lembretes serao recalculados.
+                {formatKm(correcaoPendente)} km. Faça isso só para corrigir um
+                erro de digitação — os lembretes serão recalculados.
               </Txt>
             </View>
           ) : (
@@ -204,14 +204,14 @@ export function UpdateKmSheet({
               tone="muted"
               style={{ marginTop: theme.spacing.sm }}
             >
-              Os lembretes sao recalculados com o novo valor.
+              Os lembretes são recalculados com o novo valor.
             </Txt>
           )}
 
           <View style={{ gap: theme.spacing.sm, marginTop: theme.spacing.lg }}>
             {correcaoPendente !== null ? (
               <Button
-                label="Confirmar correcao"
+                label="Confirmar correção"
                 onPress={confirmarCorrecao}
                 loading={salvando}
               />

@@ -93,7 +93,7 @@ export default function PainelVeiculoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Veiculo" back />
+          <Header title="Veículo" back />
           <Loading />
         </Screen>
       </View>
@@ -104,9 +104,9 @@ export default function PainelVeiculoScreen() {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
         <Screen>
-          <Header title="Veiculo" back />
+          <Header title="Veículo" back />
           <EmptyState
-            title="Veiculo nao encontrado"
+            title="Veículo não encontrado"
             description="Ele pode ter sido removido. Volte para a garagem para ver a lista atual."
             actionLabel="Voltar para a garagem"
             onAction={() => router.replace('/(tabs)')}
@@ -120,7 +120,7 @@ export default function PainelVeiculoScreen() {
     if (!veiculo) return;
     confirmar({
       titulo: `Remover ${veiculo.apelido}?`,
-      mensagem: `Isso apaga tambem as ${manutencoes.length} ${manutencoes.length === 1 ? 'manutencao registrada' : 'manutencoes registradas'} deste veiculo. Nao da para desfazer.`,
+      mensagem: `Isso apaga também as ${manutencoes.length} ${manutencoes.length === 1 ? 'manutenção registrada' : 'manutenções registradas'} deste veículo. Não dá para desfazer.`,
       botao: 'Remover',
       destrutivo: true,
       aoConfirmar: async () => {
@@ -141,7 +141,7 @@ export default function PainelVeiculoScreen() {
             <Pressable
               onPress={() => router.push(`/veiculo/${veiculo.id}/editar`)}
               accessibilityRole="button"
-              accessibilityLabel="Editar veiculo"
+              accessibilityLabel="Editar veículo"
               hitSlop={10}
               style={({ pressed }: { pressed: boolean }) => [
                 styles.acaoHeader,
@@ -197,7 +197,7 @@ export default function PainelVeiculoScreen() {
             <View style={[styles.odometro, { marginTop: theme.spacing.md }]}>
               <View style={{ flex: 1 }}>
                 <Txt variant="label" tone="muted">
-                  Odometro
+                  Odômetro
                 </Txt>
                 <Txt variant="meterXL" numberOfLines={1} adjustsFontSizeToFit>
                   {formatKmUnit(veiculo.kmAtual)}
@@ -259,7 +259,7 @@ export default function PainelVeiculoScreen() {
 
         <View style={[styles.resumos, { marginTop: theme.spacing.md }]}>
           <Readout
-            label="Gasto no mes"
+            label="Gasto no mês"
             value={formatCurrency(gastoMes.total)}
             hint={`${gastoMes.quantidade} ${gastoMes.quantidade === 1 ? 'registro' : 'registros'}`}
             style={{ flex: 1 }}
@@ -267,14 +267,14 @@ export default function PainelVeiculoScreen() {
           <Readout
             label="Total acumulado"
             value={formatCurrency(gastoTotal)}
-            hint={`${manutencoes.length} ${manutencoes.length === 1 ? 'servico' : 'servicos'}`}
+            hint={`${manutencoes.length} ${manutencoes.length === 1 ? 'serviço' : 'serviços'}`}
             style={{ flex: 1 }}
           />
         </View>
 
         <Segmented<Aba>
           options={[
-            { value: 'historico', label: 'Historico' },
+            { value: 'historico', label: 'Histórico' },
             {
               value: 'alertas',
               label: `Alertas${lembretes.length > 0 ? ` (${lembretes.length})` : ''}`,
@@ -312,7 +312,7 @@ export default function PainelVeiculoScreen() {
         )}
 
         <Button
-          label="Registrar manutencao"
+          label="Registrar manutenção"
           onPress={() =>
             router.push({
               pathname: '/manutencao/nova',
@@ -326,7 +326,7 @@ export default function PainelVeiculoScreen() {
         />
 
         <Button
-          label="Remover veiculo"
+          label="Remover veículo"
           variant="ghost"
           destructive
           onPress={confirmarRemocao}
@@ -360,8 +360,8 @@ function HistoricoAba({
   if (recentes.length === 0) {
     return (
       <EmptyState
-        title="Nenhum servico registrado"
-        description="Registre a primeira manutencao para o app montar o historico e calcular os proximos prazos."
+        title="Nenhum serviço registrado"
+        description="Registre a primeira manutenção para o app montar o histórico e calcular os próximos prazos."
       />
     );
   }
@@ -370,7 +370,7 @@ function HistoricoAba({
     <Card flush>
       <View style={{ padding: theme.spacing.lg, paddingBottom: 0 }}>
         <SectionHeader
-          title="Ultimos registros"
+          title="Últimos registros"
           action={
             manutencoes.length > recentes.length ? (
               <Button
@@ -413,7 +413,7 @@ function AlertasAba({
     return (
       <EmptyState
         title="Sem lembretes ainda"
-        description="Os lembretes aparecem depois do primeiro registro de cada tipo de servico, quando o app ja sabe quando foi a ultima vez."
+        description="Os lembretes aparecem depois do primeiro registro de cada tipo de serviço, quando o app já sabe quando foi a última vez."
       />
     );
   }
@@ -448,8 +448,8 @@ function GastosAba({
   if (manutencoes.length === 0) {
     return (
       <EmptyState
-        title="Nenhum gasto neste veiculo"
-        description="Os valores que voce informar em cada manutencao aparecem aqui separados por categoria."
+        title="Nenhum gasto neste veículo"
+        description="Os valores que você informar em cada manutenção aparecem aqui separados por categoria."
       />
     );
   }
@@ -457,7 +457,7 @@ function GastosAba({
   return (
     <Card>
       <Txt variant="label" tone="muted">
-        Total gasto com este veiculo
+        Total gasto com este veículo
       </Txt>
       <Txt
         variant="meterXL"

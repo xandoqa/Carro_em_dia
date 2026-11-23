@@ -22,15 +22,15 @@ export class HttpError extends Error {
   /** Mensagem pronta para mostrar ao usuario, sem jargao de rede. */
   get mensagemUsuario(): string {
     if (this.offline) {
-      return 'Sem conexao. Verifique a internet e tente de novo.';
+      return 'Sem conexão. Verifique a internet e tente de novo.';
     }
     if (this.status === 404) {
-      return 'Nao encontramos esse item na consulta.';
+      return 'Não encontramos esse item na consulta.';
     }
     if (this.status >= 500) {
-      return 'O servico de consulta esta fora do ar. Tente mais tarde.';
+      return 'O serviço de consulta está fora do ar. Tente mais tarde.';
     }
-    return 'Nao foi possivel completar a consulta.';
+    return 'Não foi possível completar a consulta.';
   }
 }
 

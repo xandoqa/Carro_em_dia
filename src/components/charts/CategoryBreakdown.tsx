@@ -33,7 +33,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
   if (data.length === 0) {
     return (
       <Txt variant="bodySM" tone="muted">
-        Sem gastos para distribuir no periodo.
+        Sem gastos para distribuir no período.
       </Txt>
     );
   }

@@ -42,8 +42,8 @@ function materializar() {
   return { veiculos, manutencoes };
 }
 
-describe('cenario de demonstracao', () => {
-  it('cria dois veiculos com historico', () => {
+describe('cenário de demonstração', () => {
+  it('cria dois veículos com histórico', () => {
     const { veiculos, manutencoes } = materializar();
     assert.equal(veiculos.length, 2);
     assert.ok(manutencoes.length >= 8);
@@ -56,7 +56,7 @@ describe('cenario de demonstracao', () => {
     );
 
     assert.ok(contagem.vencido >= 1, 'esperava ao menos um vencido');
-    assert.ok(contagem.atencao >= 1, 'esperava ao menos um em atencao');
+    assert.ok(contagem.atencao >= 1, 'esperava ao menos um em atenção');
     assert.ok(contagem['em-dia'] >= 1, 'esperava ao menos um em dia');
   });
 
@@ -66,7 +66,7 @@ describe('cenario de demonstracao', () => {
     assert.equal(lembretes[0].status, 'vencido');
   });
 
-  it('nao gera lembrete para abastecimento', () => {
+  it('não gera lembrete para abastecimento', () => {
     const { veiculos, manutencoes } = materializar();
     const lembretes = calcularTodosLembretes(veiculos, manutencoes);
     assert.equal(
@@ -75,14 +75,14 @@ describe('cenario de demonstracao', () => {
     );
   });
 
-  it('permite calcular consumo medio com os abastecimentos do carro', () => {
+  it('permite calcular consumo médio com os abastecimentos do carro', () => {
     const { manutencoes } = materializar();
     const abastecimentos = manutencoes.filter(
       (m) => m.tipo === 'abastecimento',
     );
     assert.ok(
       abastecimentos.length >= 2,
-      'o cenario precisa de ao menos dois abastecimentos para o consumo medio aparecer',
+      'o cenário precisa de ao menos dois abastecimentos para o consumo médio aparecer',
     );
   });
 
@@ -94,14 +94,14 @@ describe('cenario de demonstracao', () => {
     }
   });
 
-  it('nenhum registro passa da quilometragem atual do veiculo', () => {
+  it('nenhum registro passa da quilometragem atual do veículo', () => {
     const { veiculos, manutencoes } = materializar();
     for (const m of manutencoes) {
       const veiculo = veiculos.find((v) => v.id === m.veiculoId);
       assert.ok(veiculo);
       assert.ok(
         m.km <= veiculo.kmAtual,
-        `registro de ${m.km} km acima do odometro de ${veiculo.kmAtual} km`,
+        `registro de ${m.km} km acima do odômetro de ${veiculo.kmAtual} km`,
       );
     }
   });

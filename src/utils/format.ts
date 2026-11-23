@@ -111,11 +111,11 @@ export function formatRestante(
   diasRestantes: number | undefined,
 ): string {
   if (kmRestantes !== undefined && kmRestantes < 0) {
-    return `Venceu ha ${formatKm(Math.abs(kmRestantes))} km`;
+    return `Venceu há ${formatKm(Math.abs(kmRestantes))} km`;
   }
   if (diasRestantes !== undefined && diasRestantes < 0) {
     const dias = Math.abs(diasRestantes);
-    return `Venceu ha ${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+    return `Venceu há ${dias} ${dias === 1 ? 'dia' : 'dias'}`;
   }
   if (kmRestantes !== undefined && diasRestantes !== undefined) {
     return `Faltam ${formatKm(kmRestantes)} km ou ${diasRestantes} dias`;
@@ -126,5 +126,5 @@ export function formatRestante(
   if (diasRestantes !== undefined) {
     return `Faltam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
   }
-  return 'Sem previsao';
+  return 'Sem previsão';
 }

@@ -83,7 +83,7 @@ export function agruparPorCategoria(
   return [...mapa.entries()]
     .map(([tipo, dados]) => ({
       tipo,
-      nome: tiposManutencao[tipo]?.nome ?? 'Outro servico',
+      nome: tiposManutencao[tipo]?.nome ?? 'Outro serviço',
       total: dados.total,
       quantidade: dados.quantidade,
       // Sem gasto no periodo, a fracao e zero em vez de NaN.

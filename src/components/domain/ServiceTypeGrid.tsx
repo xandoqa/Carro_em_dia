@@ -34,7 +34,7 @@ export interface ServiceTypeGridProps {
 export function ServiceTypeGrid({
   value,
   onChange,
-  label = 'Tipo de servico',
+  label = 'Tipo de serviço',
   style,
 }: ServiceTypeGridProps) {
   const theme = useTheme();
@@ -100,8 +100,8 @@ export function ServiceTypeGrid({
  */
 function nomeCurto(id: TipoManutencaoId, completo: string): string {
   const curtos: Partial<Record<TipoManutencaoId, string>> = {
-    oleo: 'Oleo e filtro',
-    revisao: 'Revisao geral',
+    oleo: 'Óleo e filtro',
+    revisao: 'Revisão geral',
     abastecimento: 'Abastecer',
     outro: 'Outro',
   };
