@@ -186,5 +186,6 @@ login. Todos mapeados em `docs/melhorias.md`, com branch criada para cada um.
 - [ ] Dados de exemplo carregados
 - [ ] iPhone com Expo Go, como plano B
 - [ ] [xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/) aberto numa aba, como plano B
-- [ ] Wi-Fi conferido — se a rede da faculdade isolar os aparelhos, use
-      `npm run start:tunnel`
+- [ ] **iPhone no Wi-Fi da sala, não nos dados móveis** — no 5G o Expo Go mostra
+      "Could not connect to the server". Sem Wi-Fi em comum, ou se a rede
+      isolar os aparelhos, comece direto com `npm run start:tunnel`
