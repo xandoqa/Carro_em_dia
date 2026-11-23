@@ -13,6 +13,20 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.7.2] — 2026-11-23
+
+### Documentação
+- **"Could not connect to the server" no Expo Go**, documentado com causa e
+  solução. Aconteceu no teste no iPhone: o celular estava nos dados móveis
+  (5G), e o QR Code aponta para o endereço do computador dentro da rede Wi-Fi,
+  que só existe para quem está nela. Resolvido conectando o iPhone no mesmo
+  Wi-Fi. O tutorial traz os três passos, na ordem: mesma rede, túnel
+  (`npm run start:tunnel`, que funciona até nos dados móveis) e liberar a porta
+  8081 no firewall do Linux. O README e o checklist da apresentação ganharam o
+  aviso.
+
+---
+
 ## [1.7.1] — 2026-11-23
 
 ### Adicionado
@@ -593,6 +607,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.7.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.2
 [1.7.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.1
 [1.7.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.7.0
 [1.6.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.2

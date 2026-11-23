@@ -15,7 +15,7 @@ para onde o dinheiro está indo.
 ![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.7.1](https://img.shields.io/badge/vers%C3%A3o-1.7.1-0F4D45)
+![versão 1.7.2](https://img.shields.io/badge/vers%C3%A3o-1.7.2-0F4D45)
 
 <br>
 
@@ -322,7 +322,10 @@ Um QR Code aparece no terminal.
 - **Android:** abra o Expo Go e toque em *Scan QR code*
 - **iPhone:** aponte a câmera do sistema e toque na notificação
 
-Se o QR não conectar — rede da faculdade costuma isolar os aparelhos:
+**O celular precisa estar no mesmo Wi-Fi do computador** — nos dados móveis
+(4G/5G) o Expo Go mostra *"Could not connect to the server"*. Sem Wi-Fi em
+comum, ou numa rede que isola os aparelhos (como a da faculdade), use o túnel,
+que funciona em qualquer rede:
 
 ```bash
 npm run start:tunnel

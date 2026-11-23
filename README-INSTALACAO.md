@@ -799,16 +799,49 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
 
-### O QR Code não conecta / "Something went wrong"
+### "Could not connect to the server" / "There was a problem running the requested project"
 
-Quase sempre celular e computador em redes diferentes, ou firewall bloqueando.
+O Expo Go chegou a tentar, mas **o celular não alcança o computador**. O projeto
+está bem — é rede.
+
+O QR Code aponta para o endereço do computador **dentro da rede Wi-Fi**
+(algo como `192.168.0.10:8081`). Esse endereço só existe para quem está na
+mesma rede. A causa mais comum, de longe:
+
+> **O celular está nos dados móveis (4G/5G), e não no Wi-Fi.** Olhe o canto
+> superior do celular: se aparece `5G` ou `4G` no lugar do ícone do Wi-Fi, é
+> isso. Foi exatamente o que aconteceu no primeiro teste no iPhone.
+
+Na ordem:
+
+**1. Mesma rede.** Conecte o celular no **mesmo Wi-Fi do computador** e toque em
+*Try again*. Resolve na maior parte das vezes.
+
+**2. Sem Wi-Fi em comum, ou rede que isola os aparelhos** (Wi-Fi de faculdade,
+de hotel, roteador com "isolamento de clientes"): use o túnel, que passa pela
+internet e funciona até nos dados móveis.
 
 ```bash
 npm run start:tunnel
 ```
 
-Mais lento, mas funciona em qualquer rede. Também resolve no WSL e em Wi-Fi de
-faculdade, que costuma isolar os dispositivos.
+Na primeira vez ele pede para instalar o `@expo/ngrok`: responda **Y**. Depois,
+leia o QR Code novo. É mais lento para carregar, mas funciona em qualquer rede.
+
+**3. Mesma rede e mesmo assim não conecta (Linux):** o firewall pode estar
+bloqueando a porta do Expo.
+
+```bash
+sudo ufw allow 8081
+```
+
+**Na apresentação:** confira antes que o celular está no Wi-Fi da sala, ou já
+comece com `npm run start:tunnel`.
+
+### O QR Code não conecta / "Something went wrong"
+
+Mesma causa e mesma solução do erro acima: celular e computador em redes
+diferentes, ou firewall bloqueando. Comece pelo passo 1 de lá.
 
 ### `Error: Cannot find module` ao iniciar
 
