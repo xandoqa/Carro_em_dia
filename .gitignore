@@ -6,6 +6,7 @@ node_modules/
 .expo-shared/
 dist/
 dist-*/
+telas/
 web-build/
 expo-env.d.ts
 

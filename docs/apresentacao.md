@@ -112,6 +112,7 @@ Apresentação em que o único caminho falha é apresentação perdida.
 ```bash
 cd ~/Documentos/Carro_em_dia
 git pull
+npx expo whoami       # precisa responder com o seu usuário; se não, npx expo login
 npm run doctor        # precisa dizer "Tudo certo" ou só avisos
 npm run verify        # precisa terminar com "# pass 127"
 npm start             # confirme que o QR aparece
@@ -140,7 +141,7 @@ não mostra gráfico, histórico nem alerta vencido.
 | 7 | Fechar e reabrir o app | **Requisito de persistência**: os dados continuam lá. |
 | 8 | **Ajustes** → **Tema** → trocar | Quatro temas, escolha salva. |
 | 9 | **Aba Gastos** | Evolução mensal, categorias, consumo médio, custo por km. |
-| 10 | GitHub: branches e CHANGELOG | **Requisito de Git Flow**: `main`, `develop`, 27 branches de feature e 15 versões. |
+| 10 | GitHub: branches e CHANGELOG | **Requisito de Git Flow**: `main`, `develop`, as branches de feature, as versões no CHANGELOG, Pull Requests e o CI verde na aba Actions. |
 
 ---
 
@@ -156,12 +157,16 @@ Sem servidor, o login seria uma tela que não protege nem sincroniza nada. A
 branch `feature/login` está criada para quando houver backend.
 
 **"Como vocês testaram?"**
-127 testes das regras de negócio, rodando no Node sem emulador em menos de dois
-segundos. Rode `npm test` ao vivo se quiserem ver. O que eles cobrem e o que
-não cobrem está em `docs/validacao.md`.
+Em duas camadas. **127 testes das regras de negócio**, rodando no Node sem
+emulador em menos de dois segundos — rode `npm test` ao vivo se quiserem ver.
+E **integração contínua no GitHub Actions**: a cada push, uma máquina limpa
+instala o projeto do zero, roda a verificação oficial do Expo, tipos, lint e
+testes, e **compila o app para iPhone, Android e web**. Mostre a aba
+**Actions** do repositório, com os ✅. O que cada camada cobre e o que só o
+aparelho prova está em `docs/validacao.md`.
 
 **"Quais problemas vocês encontraram?"**
-`docs/melhorias.md` lista 13 defeitos corrigidos, com como cada um se
+`docs/melhorias.md` lista os defeitos corrigidos, com como cada um se
 manifestava. Vale citar o do odômetro: digitar 1.145.000 em vez de 114.500
 inflava o valor **sem nenhum caminho de volta**, e todos os lembretes do
 veículo passavam a mentir. Foi encontrado em revisão, não por usuário.

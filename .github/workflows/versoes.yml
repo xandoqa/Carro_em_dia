@@ -1,0 +1,77 @@
+name: Versoes
+
+# Publica as tags de versao. Cada versao do CHANGELOG vira uma tag `vX.Y.Z`
+# no GitHub, apontando para o commit da `main` que a entregou.
+#
+# A cada push em `main`, cria a tag da versao que esta no package.json, se
+# ela ainda nao existir. Na primeira execucao, publica tambem as versoes
+# anteriores, listadas abaixo — elas tinham sido criadas localmente, mas
+# nunca chegaram ao GitHub. Tag que ja existe e ignorada, entao rodar de novo
+# nao muda nada.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tags:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Identidade das tags
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Versoes anteriores
+        run: |
+          git fetch --tags --quiet
+          while read -r tag commit mensagem; do
+            [ -z "$tag" ] && continue
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "ja existe: $tag"
+            else
+              git tag -a "$tag" "$commit" -m "$mensagem"
+              echo "criada:    $tag -> ${commit:0:7}"
+            fi
+          done <<'LISTA'
+          v1.0.0 6b9d1b0ad769e0d6098c0f4cbec6c9c053ca25f1 CarroEmDia 1.0.0 — Entrega N2
+          v1.0.1 e443c4ba544496172c7254f516f03d9c8849b0cc CarroEmDia 1.0.1 — Correcoes de notificacao
+          v1.1.0 fa71168109ae6977aec5cc1ceca9503ed119ad1f CarroEmDia 1.1.0 — Edicao de manutencao e guia de execucao
+          v1.2.0 38e8d478aef9a6889f2042aa34ba7ba2bbc0dc3e CarroEmDia 1.2.0 — Prototipo navegavel e polimento
+          v1.2.1 73becc8a2f53240a85cd2ff26e7a326d65ffef0b CarroEmDia 1.2.1 — Esclarecimento sobre o prototipo
+          v1.2.2 76041c0ebd3e5afa6c2e3757813d3b2692f8947b CarroEmDia 1.2.2 — Autoria do desenvolvimento
+          v1.2.3 ebcf5a45e02bd8e4a67e062cd0cf1dedeb998482 CarroEmDia 1.2.3 — Correcao da divisao de papeis
+          v1.3.0 990d74ed4612c8d5a5a2560f2351914cd00eee79 CarroEmDia 1.3.0 — Diagnostico no terminal e compatibilidade
+          v1.3.1 160f49a19b1d1d53c8918c2ba9e5adc9b8ea8add CarroEmDia 1.3.1 — Execucao a partir do .zip
+          v1.4.0 8f3095fac7b98cd4ecc83cf3516e3327448cb8fc CarroEmDia 1.4.0 — Versionamento e assinatura
+          v1.4.1 e1b543cd357d709b3545c93b1b7e43ae79b8a5a4 CarroEmDia 1.4.1 — Tutorial de instalacao na raiz
+          v1.4.2 f9314b26d4cf7e399629e2137e8f23dbc9abcbd1 CarroEmDia 1.4.2 — README explica o que foi implementado
+          v1.5.0 07aaa395d425db9cea1a00c596e41b84594773a7 CarroEmDia 1.5.0 — Corrige o build web e instala o SDK atual
+          v1.5.1 d8b0258680bc6b88f1e8c7de2e62a7a5dd3208dc CarroEmDia 1.5.1 — Alerta sobre npm audit fix --force
+          v1.5.2 726d5d34367a5438ee6387e112e305eb00a28f0b CarroEmDia 1.5.2 — Ordem de correcao no diagnostico
+          v1.5.3 a8cf87d58a076d9bd355c3c0964f5f228ebd0cc7 CarroEmDia 1.5.3 — corrige 33 imports orfaos, documenta todas as dependencias, VS Code e guia da apresentacao
+          v1.5.4 70552e704cb52d3d10253118ee3cc6c26e318d42 CarroEmDia 1.5.4 — corrige a ordem do setup, que falhava com ERESOLVE
+          v1.5.5 64cdf4cf76b14df971f8e48c3522b601349631d4 CarroEmDia 1.5.5 — diagnostico deixa de barrar o npm start; tipos alinhados ao SDK 58
+          v1.5.6 11d00564c2812b7fc305dea63691aa4f522d5428 CarroEmDia 1.5.6 — tipos do SDK 58 verificados com testes e scripts incluidos
+          LISTA
+
+      - name: Versao atual do package.json
+        run: |
+          versao="v$(node -p "require('./package.json').version")"
+          if git rev-parse -q --verify "refs/tags/$versao" >/dev/null; then
+            echo "ja existe: $versao"
+          else
+            git tag -a "$versao" HEAD -m "CarroEmDia ${versao#v}"
+            echo "criada:    $versao -> $(git rev-parse --short HEAD)"
+          fi
+
+      - name: Publicar
+        run: git push origin --tags

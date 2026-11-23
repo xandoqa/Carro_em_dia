@@ -17,17 +17,69 @@ não foi possível, aqui:
 - abrir o app num emulador ou celular;
 - rodar o `tsc` com os tipos reais das bibliotecas.
 
-**Nada neste repositório afirma que essas etapas foram testadas.** Onde elas
-aparecem, aparecem como passos para você executar.
-
-A resposta a essa limitação foi construir o `npm run doctor`: a verificação que
+A primeira resposta a essa limitação foi o `npm run doctor`: a verificação que
 não pôde ser feita aqui, você faz em um comando.
+
+**A segunda, a partir da 1.6.0, foi usar o GitHub Actions como máquina de
+teste.** Os servidores do GitHub alcançam o npm. Desde então, tudo que exige
+instalar o projeto é verificado lá, numa máquina Linux limpa, a cada push —
+e os resultados abaixo vêm de execuções reais, com log.
 
 ---
 
-## ✅ Testado de verdade
+## ✅ Testado em máquina limpa (GitHub Actions, a cada push)
 
-Executado, com saída observada.
+Fluxo do [`ci.yml`](../.github/workflows/ci.yml), executado do zero em Ubuntu
+com Node 22. Primeira execução totalmente verde: 22/11/2026.
+
+| Etapa | Comando | Resultado |
+|-------|---------|-----------|
+| **Instalação travada** | `npm ci` | 902 pacotes, sem conflito, sem `--legacy-peer-deps` |
+| **Versões x SDK 58** | `npx expo install --check` | Todas alinhadas |
+| **Verificação oficial do Expo** | `npx expo-doctor` | **20/20, nenhum problema** |
+| **Plugin de worklets** | `node scripts/ci/testar-babel.cjs` | Roda uma vez só; saída idêntica à do preset puro |
+| **Diagnóstico do projeto** | `node scripts/doctor.mjs` | Sem falso positivo sobre um `node_modules` real |
+| **Tipos (TypeScript 6, tipos reais)** | `npm run typecheck` | 0 erros, incluindo testes e scripts |
+| **Lint** | `npm run lint` | 0 problemas |
+| **Testes** | `npm test` | 127/127 |
+| **Compilação para iPhone** | `npx expo export --platform ios` | Bundle Hermes de 4,7 MB |
+| **Compilação para Android** | `npx expo export --platform android` | Bundle Hermes de 4,7 MB |
+| **Compilação para web** | `npx expo export --platform web` | Aplicação de página única gerada |
+| **Web aberta num navegador** | `node scripts/ci/testar-web.mjs` | As 11 rotas, com e sem dados, nos 4 temas, sem nenhum erro de JavaScript |
+
+A compilação é o que o Expo Go carrega: se ela passa, o JavaScript do app —
+todas as telas, componentes e regras — monta sem erro para cada plataforma.
+
+**O que o CI não prova:** o comportamento no aparelho. Notificação chegando,
+câmera abrindo, toque, aparência na tela real. Isso continua na seção
+"Precisa do aparelho", abaixo.
+
+### Como o CI encontrou o que faltava
+
+Antes de ficar verde, a mesma máquina limpa acusou, em sequência:
+
+1. **Não havia `package-lock.json`** — o CI quebrava no segundo passo, desde o
+   primeiro commit. Nunca tinha instalado nada.
+2. **`package.json` misturado**: `expo` no SDK 53 e parte das dependências de
+   desenvolvimento no 58. Cada instalação tentava acertar isso na hora, com
+   `expo install --fix`, e tropeçava no conflito que ela mesma criava.
+3. **`expo-font` ausente** — o `@expo/vector-icons` o exige. Foi removido por
+   engano na 1.5.0.
+4. **`react-native-worklets` ausente** — o Reanimated 4 o exige.
+5. **Três campos do `app.json` que o SDK 58 removeu**: `newArchEnabled`,
+   `android.edgeToEdgeEnabled` e `splash` (que virou configuração do plugin
+   `expo-splash-screen`).
+6. **Lint que nunca rodou**: o `.eslintrc.js` usava `prettier` sem declarar o
+   pacote.
+7. **Regra nova do React** (`set-state-in-effect`) em quatro lugares.
+8. **Tipos do Node não carregados** — o tsconfig base do Expo 58 restringe
+   quais `@types` entram.
+
+---
+
+## ✅ Testado no ambiente de desenvolvimento
+
+Executado, com saída observada, sem as dependências instaladas.
 
 | O quê | Como | Resultado |
 |-------|------|-----------|
@@ -89,27 +141,15 @@ Conferido lendo o código, sem executar.
 
 ---
 
-## ⚠️ Não testado — precisa da sua máquina
+## ⚠️ Precisa do aparelho
 
 Em ordem de risco.
 
-### 1. Instalação das dependências — RISCO ALTO
+### 1. Instalação das dependências — RESOLVIDO na 1.6.0
 
-```bash
-npm run setup
-```
-
-**Por que é o maior risco:** as versões do `package.json` foram fixadas sem
-poder consultar o registro npm. Elas podem não existir exatamente assim.
-
-**O que fazer se falhar:** o `--fix` dentro do `setup` corrige a maior parte.
-Se não resolver:
-
-```bash
-npm install expo@latest
-npx expo install --fix
-npm run doctor
-```
+Era o maior risco: as versões tinham sido fixadas sem poder consultar o
+registro npm. Hoje elas vêm do `package-lock.json` gerado e testado no CI, e
+`npm run setup` instala exatamente esse conjunto com `npm ci`.
 
 ### 2. Abrir no Expo Go — RESOLVIDO em 22/11
 
@@ -149,7 +189,7 @@ sistema aumentada.
 
 ---
 
-## Roteiro de validação para segunda-feira
+## Roteiro de validação antes de apresentar
 
 Na ordem. Se um passo falhar, pare e resolva antes de seguir.
 
@@ -173,8 +213,9 @@ npm start
 **7.** Percorrer o roteiro da [seção 9.3 do tutorial](../README-INSTALACAO.md#9-como-saber-se-está-funcionando).
 
 Se os passos 2 e 3 passarem, **o projeto está instalado e o código está
-íntegro**. Se o 5 falhar com incompatibilidade de Expo Go, rode
-`npm install expo@latest && npx expo install --fix` e tente de novo.
+íntegro** — os mesmos passos que passam no CI. Se o 5 falhar com
+*"Project is incompatible with this version of Expo Go"*, atualize o Expo Go na
+loja: o projeto está no SDK 58.
 
 ---
 

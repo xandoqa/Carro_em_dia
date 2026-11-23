@@ -14,7 +14,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useMemo, useState } from 'react';
-import { Alert, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 import {
   tiposManutencao,
@@ -37,6 +37,7 @@ import { Card, SectionHeader } from '../base/Surfaces';
 import { Txt } from '../base/Text';
 import { ServiceTypeGrid } from './ServiceTypeGrid';
 import { VehiclePicker } from './VehiclePicker';
+import { avisar } from '../../utils/dialogo';
 
 export interface MaintenanceFormProps {
   /** Quando presente, o formulario edita este registro em vez de criar um. */
@@ -103,9 +104,8 @@ export function MaintenanceForm({
     manutencao?.notaUri,
   );
 
-  const definicaoInicial = tiposManutencao[
-    manutencao?.tipo ?? tipoInicial ?? 'oleo'
-  ];
+  const definicaoInicial =
+    tiposManutencao[manutencao?.tipo ?? tipoInicial ?? 'oleo'];
 
   // Na edicao, mostra exatamente o que foi salvo — inclusive em branco, se o
   // usuario tinha apagado o intervalo para nao gerar lembrete. Na criacao,
@@ -152,7 +152,7 @@ export function MaintenanceForm({
   async function anexarNota() {
     const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
-      Alert.alert(
+      avisar(
         'Acesso as fotos',
         'Libere o acesso as fotos nos ajustes do celular para anexar a nota fiscal.',
       );
@@ -239,7 +239,7 @@ export function MaintenanceForm({
 
       onSalvo();
     } catch (erro) {
-      Alert.alert(
+      avisar(
         'Nao foi possivel salvar',
         erro instanceof Error ? erro.message : 'Tente de novo.',
       );
@@ -274,7 +274,11 @@ export function MaintenanceForm({
       ) : null}
 
       {editando && veiculo ? (
-        <Txt variant="bodySM" tone="muted" style={{ marginBottom: theme.spacing.lg }}>
+        <Txt
+          variant="bodySM"
+          tone="muted"
+          style={{ marginBottom: theme.spacing.lg }}
+        >
           {veiculo.apelido}
         </Txt>
       ) : null}

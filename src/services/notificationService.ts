@@ -17,25 +17,33 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 import type { Lembrete, Veiculo } from '../domain/models';
-import {
-  calcularDisparo,
-  montarTexto,
-} from '../domain/notificationSchedule';
+import { calcularDisparo, montarTexto } from '../domain/notificationSchedule';
 import { readJson, storageKeys, writeJson } from '../data/storage';
 
 /** Canal do Android. Sem ele, a notificacao chega sem som nem prioridade. */
 const CANAL_ID = 'manutencao';
 
+/**
+ * Notificacao agendada so existe no celular. No navegador, varias funcoes do
+ * expo-notifications nao estao implementadas e lancam erro ao ser chamadas —
+ * foi o que derrubou a versao web na abertura. Aqui o servico inteiro vira
+ * "indisponivel" no navegador: devolve sem permissao e sem agendamento, e o
+ * resto do app segue normal.
+ */
+export const notificacoesDisponiveis = Platform.OS !== 'web';
+
 /** Controla como a notificacao aparece com o app aberto. */
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+if (notificacoesDisponiveis) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+}
 
 export interface AgendamentoRegistrado {
   /** Id devolvido pelo expo-notifications, usado para cancelar. */
@@ -52,6 +60,7 @@ export interface AgendamentoRegistrado {
 
 /** Verifica a permissao sem exibir nenhum pedido ao usuario. */
 export async function temPermissao(): Promise<boolean> {
+  if (!notificacoesDisponiveis) return false;
   const atual = await Notifications.getPermissionsAsync();
   return atual.granted;
 }
@@ -67,6 +76,7 @@ export async function temPermissao(): Promise<boolean> {
  * mais rapido de ouvir "nao".
  */
 export async function solicitarPermissao(): Promise<boolean> {
+  if (!notificacoesDisponiveis) return false;
   const atual = await Notifications.getPermissionsAsync();
 
   if (atual.granted) return true;
@@ -91,7 +101,9 @@ export async function prepararCanal(): Promise<void> {
 }
 
 async function cancelarTodos(): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  if (notificacoesDisponiveis) {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  }
   await writeJson(storageKeys.notificacoes, []);
 }
 
@@ -129,7 +141,9 @@ export async function reagendar(params: {
   await cancelarTodos();
   if (!ativado) return 0;
 
-  const permitido = solicitar ? await solicitarPermissao() : await temPermissao();
+  const permitido = solicitar
+    ? await solicitarPermissao()
+    : await temPermissao();
   if (!permitido) return 0;
 
   await prepararCanal();
@@ -144,11 +158,7 @@ export async function reagendar(params: {
     const veiculo = porId.get(lembrete.veiculoId);
     if (!veiculo) continue;
 
-    const disparo = calcularDisparo(
-      lembrete,
-      antecedenciaDias,
-      horaLembrete,
-    );
+    const disparo = calcularDisparo(lembrete, antecedenciaDias, horaLembrete);
     if (!disparo) continue;
 
     const { titulo, corpo } = montarTexto(lembrete, veiculo);
@@ -210,6 +220,7 @@ export async function enviarTeste(): Promise<boolean> {
 export { calcularDisparo, montarTexto };
 
 export const notificationService = {
+  disponivel: notificacoesDisponiveis,
   temPermissao,
   solicitarPermissao,
   prepararCanal,

@@ -150,6 +150,27 @@ corretos apareciam como errados e a diferença entre os dois casos desaparecia. 
 stub foi acertado para espelhar o `@types/react` de verdade, e a correção só foi
 aceita depois de provar que ele acusa os dois erros e aprova o caso correto.
 
+### 12. O projeto não instalava numa máquina limpa
+
+Nenhuma instalação tinha sido feita fora da máquina do Alexandre. Quando uma
+máquina limpa — o GitHub Actions — tentou, apareceram oito problemas em
+sequência: não havia `package-lock.json` (o CI nunca tinha rodado), o
+`package.json` estava metade no SDK 53 e metade no 58, faltavam `expo-font`,
+`react-native-worklets` e `eslint-config-prettier`, o `app.json` tinha três
+campos que o SDK 58 removeu, e havia quatro usos de `setState` dentro de
+efeito que a regra nova do React acusa.
+
+**Correção:** todas as dependências nas versões exatas do SDK 58, travadas num
+`package-lock.json` gerado no próprio CI; `npm run setup` passou a usar
+`npm ci`; e o CI instala do zero e **compila o app para iPhone, Android e web**
+a cada push. Detalhe no CHANGELOG da 1.6.0.
+
+**Por que ficou escondido tanto tempo:** o ambiente onde o código era mantido
+não alcança o registro do npm, então toda verificação era feita com tipos
+simulados. Simulação confere a coerência do código consigo mesmo, não com as
+bibliotecas reais. A lição: verificação que não roda as dependências de
+verdade não prova que o projeto instala.
+
 ---
 
 ## Mapeado, não implementado

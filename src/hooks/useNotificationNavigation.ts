@@ -10,6 +10,7 @@
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 
 interface DadosNotificacao {
   veiculoId?: string;
@@ -20,6 +21,10 @@ export function useNotificationNavigation() {
   const router = useRouter();
 
   useEffect(() => {
+    // No navegador nao ha notificacao para tocar, e o expo-notifications
+    // lanca erro ao consultar a ultima resposta — foi o que derrubava a web.
+    if (Platform.OS === 'web') return;
+
     // Caso 1: o app estava aberto ou em segundo plano.
     const inscricao = Notifications.addNotificationResponseReceivedListener(
       (resposta: unknown) => {
@@ -30,9 +35,11 @@ export function useNotificationNavigation() {
     // Caso 2: o app estava fechado e foi aberto pela notificação. O evento
     // acima já passou, então a última resposta é consultada na montagem.
     let ativo = true;
-    void Notifications.getLastNotificationResponseAsync?.().then((ultima: unknown) => {
-      if (ativo && ultima) navegar(dadosDaResposta(ultima));
-    });
+    void Notifications.getLastNotificationResponseAsync?.().then(
+      (ultima: unknown) => {
+        if (ativo && ultima) navegar(dadosDaResposta(ultima));
+      },
+    );
 
     /**
      * Tira o `data` de dentro da resposta da notificação.
