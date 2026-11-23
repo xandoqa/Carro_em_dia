@@ -13,6 +13,40 @@ O projeto segue [versionamento semântico](https://semver.org/lang/pt-BR/):
 
 ---
 
+## [1.6.2] — 2026-11-22
+
+### Corrigido
+- **iPhone: o teclado cobria a folha de atualizar a quilometragem.** Ao tocar
+  em "Atualizar", o teclado numérico abria por cima da folha inteira, e o campo
+  e o botão Salvar ficavam escondidos. No iOS o teclado se sobrepõe ao Modal
+  sem empurrar nada. `AcimaDoTeclado` sobe a folha junto com o teclado. A busca
+  da lista de marcas e modelos da FIPE tinha o mesmo defeito e recebeu a mesma
+  correção. Achado pelo Alexandre no primeiro uso no iPhone.
+- **A versão web quebrava na abertura** com
+  `ExpoNotifications.getLastNotificationResponse is not available on web`. O
+  serviço de notificações passa a ser explicitamente indisponível no navegador,
+  e os Ajustes explicam que os avisos só existem no celular.
+- **Confirmações mortas no navegador.** O `Alert.alert` do React Native não faz
+  nada na web, então apagar todos os dados, remover veículo e excluir registro
+  eram impossíveis lá. `src/utils/dialogo.ts` usa o Alert nativo no celular e as
+  caixas do navegador na web; os 14 usos foram migrados.
+- **Erro de hidratação do React (#418) na web.** A web era pré-renderizada no
+  servidor, sem dados, e renderizada de novo no navegador com os dados do
+  aparelho. Num app em que todo dado vive no aparelho, isso não traz nada.
+  Passa a ser aplicação de página única (`web.output: "single"`).
+
+### Adicionado
+- **Teste da web num navegador de verdade no CI** (`scripts/ci/testar-web.mjs`).
+  Compilar não é rodar: o CI compilava a web e mesmo assim ela quebrava ao
+  abrir. Agora um Chromium com tamanho de celular percorre as 11 rotas, com e
+  sem dados, nos 4 temas, carrega os dados de exemplo pelo botão dos Ajustes,
+  fotografa cada tela e falha em qualquer erro de JavaScript. As fotos ficam
+  como artefato de cada execução.
+- Antes de confiar no teste, ele foi rodado sobre o código **antigo** (PR #7,
+  fechado sem mesclar) e acusou o erro original em todas as telas.
+
+---
+
 ## [1.6.1] — 2026-11-22
 
 ### Adicionado
@@ -491,6 +525,7 @@ Para publicar todas as tags que ainda não subiram de uma vez:
 bash scripts/publicar-versoes.sh
 ```
 
+[1.6.2]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.2
 [1.6.1]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.1
 [1.6.0]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.6.0
 [1.5.6]: https://github.com/xandoqa/Carro_em_dia/releases/tag/v1.5.6
