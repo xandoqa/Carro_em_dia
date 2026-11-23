@@ -15,7 +15,7 @@ para onde o dinheiro está indo.
 ![React Native 0.88](https://img.shields.io/badge/React%20Native-0.88-0F4D45)
 ![TypeScript estrito](https://img.shields.io/badge/TypeScript-estrito-0F4D45)
 ![127 testes](https://img.shields.io/badge/testes-127%20passando-2F7D5B)
-![versão 1.7.0](https://img.shields.io/badge/vers%C3%A3o-1.7.0-0F4D45)
+![versão 1.7.1](https://img.shields.io/badge/vers%C3%A3o-1.7.1-0F4D45)
 
 <br>
 
@@ -41,6 +41,10 @@ Desenvolvido por **Alexandre Rodrigues Costa**, em dupla com
 > Tutorial passo a passo para **Linux, Windows e macOS**: o que instalar, como
 > conferir, como executar e como resolver os erros mais comuns. Escrito para
 > quem nunca viu o projeto.
+>
+> **Sem instalar nada:** a versão web roda em
+> **[xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/)** —
+> publicada automaticamente a cada versão.
 >
 > **Com pressa?** Baixe o
 > [.zip](https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip),
@@ -112,6 +116,15 @@ navegar, ou use <kbd>←</kbd> <kbd>→</kbd> para percorrer as telas.
 > apresentação. **Na apresentação, o que se mostra é o app no celular.**
 
 ## Rodando o projeto
+
+### Sem instalar nada
+
+**[xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/)** —
+a versão web, publicada pelo GitHub Actions a cada versão que chega à `main`.
+Abre em qualquer navegador, do computador ou do celular. Os dados ficam no
+navegador de quem usa; notificações e câmera só existem no app no celular.
+
+### Na sua máquina
 
 > **📘 [Tutorial completo de instalação](README-INSTALACAO.md)** — o passo a
 > passo desta seção, expandido para **Linux, Windows e macOS**, desde instalar o
@@ -255,6 +268,13 @@ unzip Carro_em_dia-main.zip
 cd Carro_em_dia-main
 ```
 
+**Confira que é a versão atual** antes de seguir. Pasta antiga é a causa mais
+comum de "ainda dá o mesmo erro":
+
+```bash
+grep '"version"' package.json    # precisa bater com o selo de versão no topo deste README
+```
+
 **5. Instale as dependências**
 
 ```bash
@@ -290,8 +310,12 @@ O Expo Go do celular só abre o projeto se o terminal estiver entrado na
 
 ```bash
 npx expo login       # mesmo usuário e senha do Expo Go
-npm start
+npm run start:limpo  # inicia limpando o cache do bundler
 ```
+
+Use `npm run start:limpo` sempre que tiver baixado uma versão nova: o cache do
+bundler guarda o código anterior e pode mostrar erros que já foram corrigidos.
+Nas outras vezes, `npm start` basta.
 
 Um QR Code aparece no terminal.
 

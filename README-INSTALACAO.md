@@ -10,20 +10,36 @@ Tutorial do zero, para quem nunca viu o projeto. Cobre **Linux**, **Windows** e
 > `npm run doctor`. Ele verifica o ambiente e diz o que fazer, com o comando
 > pronto para copiar. É a primeira coisa a tentar, não a última.
 
-> ### Já tem o projeto e nada funciona?
+> ### Só quer ver o app funcionando?
 >
-> Pegue a versão mais nova do projeto (`git pull`, ou baixe o `.zip` de novo) e
-> rode:
+> **[xandoqa.github.io/Carro_em_dia](https://xandoqa.github.io/Carro_em_dia/)** —
+> a versão web, publicada a cada versão. Nada para instalar.
+
+> ### Já tem o projeto e continua dando erro?
+>
+> Na maioria das vezes é **pasta antiga**: o erro já foi corrigido, mas o código
+> na sua máquina é de antes da correção. Confira:
 >
 > ```bash
-> npm run setup
+> grep '"version"' package.json
 > ```
 >
-> Ele apaga o `node_modules` que estiver lá e reinstala **exatamente** as
-> versões que passam no [CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml)
-> — onde o projeto é instalado do zero e compilado para iPhone, Android e web a
-> cada mudança. Desfaz qualquer instalação pela metade ou com versões
-> misturadas.
+> Se não for a versão do selo no topo do [README](README.md), baixe de novo
+> numa pasta nova — **feche o terminal antes**, porque um terminal aberto
+> dentro de uma pasta apagada continua rodando nela:
+>
+> ```bash
+> cd ~/Documentos
+> rm -rf Carro_em_dia-main Carro_em_dia.zip
+> curl -L -o Carro_em_dia.zip https://github.com/xandoqa/Carro_em_dia/archive/refs/heads/main.zip
+> unzip Carro_em_dia.zip && cd Carro_em_dia-main
+> npm run setup
+> npm run start:limpo
+> ```
+>
+> O `setup` reinstala **exatamente** as versões que passam no
+> [CI](https://github.com/xandoqa/Carro_em_dia/actions/workflows/ci.yml), e o
+> `start:limpo` apaga o cache do bundler, que guarda o código anterior.
 
 ---
 
@@ -37,10 +53,12 @@ Se você já tem Node 20 ou maior:
 
 cd Carro_em_dia-main     # ou Carro_em_dia, se clonou com git
 npm run setup
-npm start
+npx expo login           # uma vez só: a mesma conta do Expo Go do celular
+npm run start:limpo
 ```
 
-Leia o QR Code com o app **Expo Go** no celular. Pronto.
+Leia o QR Code com o app **Expo Go** no celular. No navegador: `npm run web`.
+Pronto.
 
 O resto deste documento explica cada etapa em detalhe e o que fazer quando não
 funciona.
@@ -751,6 +769,15 @@ npm start
 **Causa:** foi pressionada a tecla `a` (abrir no Android) sem o emulador
 instalado. Para usar o celular, ignore e leia o QR Code. Para instalar o
 emulador, veja a [seção 3.4](#34-emulador-android-no-linux).
+
+### `ExpoNotifications.getLastNotificationResponse is not available on web`, ou linhas `λ Bundled ... render.js` no terminal
+
+**Causa:** versão antiga do projeto. Esse erro foi corrigido na 1.6.2, e as
+linhas `λ` (pré-renderização no servidor) deixaram de existir na 1.7.0. Se elas
+aparecem, o código na sua pasta é de antes disso.
+
+**Solução:** o quadro "Já tem o projeto e continua dando erro?", no topo deste
+guia.
 
 ### "Project is incompatible with this version of Expo Go"
 

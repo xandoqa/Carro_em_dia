@@ -98,22 +98,31 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
                 </View>
               ) : null}
 
+              {/* A animação de entrada fica num invólucro e a opacidade na
+                  barra: no mesmo elemento, o Reanimated avisa que a entrada
+                  pode sobrescrever a opacidade — aviso amarelo na tela do
+                  celular durante o uso. */}
               <Animated.View
                 entering={
                   reduced ? undefined : FadeIn.delay(i * 40).duration(260)
                 }
-                style={[
-                  styles.barra,
-                  {
-                    height: alturaBarra,
-                    backgroundColor:
-                      ponto.total > 0 ? theme.colors.brand : theme.colors.line,
-                    opacity: ponto.total === 0 ? 1 : destaque ? 1 : 0.65,
-                    borderTopLeftRadius: theme.radius.readout,
-                    borderTopRightRadius: theme.radius.readout,
-                  },
-                ]}
-              />
+              >
+                <View
+                  style={[
+                    styles.barra,
+                    {
+                      height: alturaBarra,
+                      backgroundColor:
+                        ponto.total > 0
+                          ? theme.colors.brand
+                          : theme.colors.line,
+                      opacity: ponto.total === 0 ? 1 : destaque ? 1 : 0.65,
+                      borderTopLeftRadius: theme.radius.readout,
+                      borderTopRightRadius: theme.radius.readout,
+                    },
+                  ]}
+                />
+              </Animated.View>
             </View>
           );
         })}
